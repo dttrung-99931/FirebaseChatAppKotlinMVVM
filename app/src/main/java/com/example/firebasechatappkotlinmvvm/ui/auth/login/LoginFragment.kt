@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.login
+package com.example.firebasechatappkotlinmvvm.ui.auth.login
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,12 +17,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     }
 
     override fun getVMBindingVarId(): Int {
-        return BR.viewModel
+        return BR.viewModel;
     }
 
     override fun getVM(): LoginViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[LoginViewModel::class.java];
+            .of(this, mFactory)[LoginViewModel::class.java]
     }
 
     override fun setupViews() {

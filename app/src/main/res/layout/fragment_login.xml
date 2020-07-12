@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.firebasechatappkotlinmvvm.ui.login.LoginViewModel" />
+            type="com.example.firebasechatappkotlinmvvm.ui.auth.login.LoginViewModel" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -50,7 +50,10 @@
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="25dp"
             android:onClick="@{() -> viewModel.onBtnLoginClicked()}"
-            android:text="login" />
+            android:text="@string/login"
+            android:background="@drawable/shape_main_button"
+            android:textAllCaps="false"
+            android:textSize="18sp"/>
 
     </LinearLayout>
 </layout>

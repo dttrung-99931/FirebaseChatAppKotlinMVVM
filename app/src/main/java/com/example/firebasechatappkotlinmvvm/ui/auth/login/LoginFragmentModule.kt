@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.login
+package com.example.firebasechatappkotlinmvvm.ui.auth.login
 
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import dagger.Module
