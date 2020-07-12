@@ -1,20 +1,19 @@
-package com.example.firebasechatappkotlinmvvm.ui.auth.login
+package com.example.firebasechatappkotlinmvvm.ui.auth.sign_up
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentLoginBinding
-import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpViewModel
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import javax.inject.Inject
 
-class LoginFragment : BaseFragment<FragmentLoginBinding, SignUpViewModel>() {
+class SignUpFragment : BaseFragment<FragmentLoginBinding, SignUpViewModel>() {
     @Inject
     lateinit var mFactory: SignUpViewModel.Factory
 
     override fun getLayoutResId(): Int {
-        return R.layout.fragment_login
+        return R.layout.fragment_sign_up
     }
 
     override fun getVMBindingVarId(): Int {

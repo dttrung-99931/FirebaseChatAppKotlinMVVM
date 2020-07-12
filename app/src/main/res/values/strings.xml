@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">FirebaseChatAppKotlinMvvm</string>
+    <string name="app_name">We chat</string>
     <string name="login">Login</string>
+    <string name="sign_up">Sign up</string>
+    <string name="username">Nickname</string>
+    <string name="password">Password</string>
 </resources>

@@ -1,7 +1,6 @@
-package com.example.firebasechatappkotlinmvvm.ui.auth.login
+package com.example.firebasechatappkotlinmvvm.ui.auth.sign_up
 
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
-import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpViewModel
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider
@@ -11,11 +10,11 @@ import javax.inject.Provider
  * Created by Trung on 7/10/2020
  */
 @Module
-class LoginFragmentModule {
+class SignUpFragmentModule {
     @Provides
     fun provideLoginViewModel(userRepo: UserRepo) = SignUpViewModel(userRepo)
 
     @Provides
-    fun provideFactory(provider: Provider<LoginViewModel>)
-        = LoginViewModel.Factory(provider)
+    fun provideFactory(provider: Provider<SignUpViewModel>)
+        = SignUpViewModel.Factory(provider)
 }

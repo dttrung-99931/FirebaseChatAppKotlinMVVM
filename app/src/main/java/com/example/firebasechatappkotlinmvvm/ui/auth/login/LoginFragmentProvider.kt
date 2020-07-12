@@ -1,5 +1,7 @@
 package com.example.firebasechatappkotlinmvvm.ui.auth.login
 
+import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpFragment
+import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpFragmentModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -9,6 +11,6 @@ import dagger.android.ContributesAndroidInjector
  */
 @Module
 abstract class LoginFragmentProvider {
-    @ContributesAndroidInjector(modules = [LoginFragmentModule::class])
+    @ContributesAndroidInjector(modules = [SignUpFragmentModule::class])
     abstract fun provideLoginFragmentFactory() : LoginFragment
 }

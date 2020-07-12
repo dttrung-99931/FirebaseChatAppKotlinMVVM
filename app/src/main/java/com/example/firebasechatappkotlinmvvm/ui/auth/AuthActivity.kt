@@ -8,6 +8,7 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import kotlinx.android.synthetic.main.activity_auth.*
 import javax.inject.Inject
 
 
@@ -23,6 +24,17 @@ class AuthActivity : BaseActivity(), HasSupportFragmentInjector {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_auth)
+        setupViews()
+    }
+
+    private fun setupViews() {
+        setupViewPager()
+    }
+
+    private fun setupViewPager() {
+        mViewPager.adapter =
+            AuthFramentPagerAdapter(supportFragmentManager, this)
+        mTabLayout.setupWithViewPager(mViewPager)
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
