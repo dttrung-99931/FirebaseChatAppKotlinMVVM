@@ -9,9 +9,9 @@ import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpViewModel
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import javax.inject.Inject
 
-class LoginFragment : BaseFragment<FragmentLoginBinding, SignUpViewModel>() {
+class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     @Inject
-    lateinit var mFactory: SignUpViewModel.Factory
+    lateinit var mFactory: LoginViewModel.Factory
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_login
@@ -21,15 +21,18 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, SignUpViewModel>() {
         return BR.viewModel;
     }
 
-    override fun getVM(): SignUpViewModel {
+    override fun getVM(): LoginViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[SignUpViewModel::class.java]
+            .of(this, mFactory)[LoginViewModel::class.java]
     }
 
     override fun setupViews() {
-        mVm.mLoggedInUser.observe(this, Observer {
-            showToastMsg(it.username)
-        })
+//        mVm.signUpResUser.observe(this, Observer {
+//            showToastMsg(it.nickname)
+//        })
+    }
+
+    override fun observe() {
     }
 
 }

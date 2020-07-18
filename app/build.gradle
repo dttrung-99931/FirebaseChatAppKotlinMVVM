@@ -31,6 +31,9 @@ android {
 }
 
 dependencies {
+    // Cat progress bar
+    implementation 'com.roger.catloadinglibrary:catloadinglibrary:1.0.5'
+
     // Firebase
     implementation 'com.google.firebase:firebase-analytics:17.4.4'
     implementation 'com.google.firebase:firebase-auth-ktx:19.3.2'

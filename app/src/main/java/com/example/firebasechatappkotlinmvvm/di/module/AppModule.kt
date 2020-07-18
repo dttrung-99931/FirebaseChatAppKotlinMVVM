@@ -8,6 +8,7 @@ import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepoImpl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
@@ -22,19 +23,24 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideFireStoreService(): FireStoreService = FireStoreServiceImpl()
+    fun provideFirestore() = FirebaseFirestore.getInstance()
 
     @Singleton
     @Provides
-    fun provideFireBaseAuthService(firebaseAuth: FirebaseAuth):
-            FireBaseAuthService = FireBaseAuthServiceImpl(firebaseAuth)
+    fun provideFireBaseAuth() = FirebaseAuth.getInstance()
 
     @Singleton
     @Provides
-    fun provideUserRepo(userRepoImpl: UserRepoImpl):
-            UserRepo = userRepoImpl
+    fun provideFireStoreService(fireStoreServiceImpl: FireStoreServiceImpl):
+            FireStoreService = fireStoreServiceImpl
 
     @Singleton
     @Provides
-    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
+    fun provideFireBaseAuthService(fireBaseAuthServiceImpl: FireBaseAuthServiceImpl):
+            FireBaseAuthService = fireBaseAuthServiceImpl
+
+    @Singleton
+    @Provides
+    fun provideUserRepo(userRepoImpl: UserRepoImpl): UserRepo = userRepoImpl
+
 }

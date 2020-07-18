@@ -13,7 +13,7 @@ import javax.inject.Provider
 @Module
 class LoginFragmentModule {
     @Provides
-    fun provideLoginViewModel(userRepo: UserRepo) = SignUpViewModel(userRepo)
+    fun provideLoginViewModel(userRepo: UserRepo) = LoginViewModel(userRepo)
 
     @Provides
     fun provideFactory(provider: Provider<LoginViewModel>)

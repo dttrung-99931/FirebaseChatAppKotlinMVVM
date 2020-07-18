@@ -2,6 +2,19 @@
     <string name="app_name">We chat</string>
     <string name="login">Login</string>
     <string name="sign_up">Sign up</string>
-    <string name="username">Nickname</string>
+    <string name="nickname_or_email">Nickname or email</string>
     <string name="password">Password</string>
+    <string name="invalid_sign_up_info">Please, type correct required information.</string>
+    <string name="nickname">Nickname</string>
+    <string name="email">Email</string>
+    <string name="sign_up_successfully">Sign up successfully</string>
+    <string name="invalid_email_format">Invalid email format</string>
+    <string name="invalid_nickname">Invalid nickname</string>
+    <string name="invalid_password">Invalid password</string>
+    <string name="sign_up_unsuccessfully">Sign up failed</string>
+    <string name="sth_went_wrong">Something went wrong!</string>
+    <string name="please_fill_correct_info">Please, fill correct required information.</string>
+    <string name="unavailable_email">Unavailable email</string>
+    <string name="unavailable_nickname">Unavailable nickname</string>
+    <string name="weak_password">Password must be at least 6 characters</string>
 </resources>

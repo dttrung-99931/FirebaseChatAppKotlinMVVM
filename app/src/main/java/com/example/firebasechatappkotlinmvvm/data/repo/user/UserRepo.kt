@@ -1,7 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.user
 
-import androidx.lifecycle.MutableLiveData
+import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 
-interface UserRepo {
-    fun login(value: String?, value1: String?): User
+interface UserRepo: FireBaseAuthService {
 }
