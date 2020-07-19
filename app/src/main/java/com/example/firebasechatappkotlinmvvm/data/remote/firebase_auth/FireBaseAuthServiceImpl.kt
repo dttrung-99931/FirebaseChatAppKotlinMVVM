@@ -68,5 +68,9 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
         fireStoreService.checkUnavailableNickname(nickname, availableEmailCallBack)
     }
 
+    override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
+        checkLoggedInCallBack.onSuccess(auth.currentUser != null)
+    }
+
 
 }

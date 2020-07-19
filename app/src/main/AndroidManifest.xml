@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".di.App">
-        <activity android:name=".ui.splash.SplashActivity"
+        <activity android:name=".ui.start.StartActivity"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/SplashTheme">
             <intent-filter>

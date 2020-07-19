@@ -20,4 +20,7 @@
     <string name="login_failed">Login failed</string>
     <string name="login_successfully">Login successfully</string>
     <string name="no_internet">Opps! No internet connection.</string>
+    <string name="search">Nickname or email</string>
+    <string name="chat">Chat</string>
+    <string name="explore">Explore</string>
 </resources>

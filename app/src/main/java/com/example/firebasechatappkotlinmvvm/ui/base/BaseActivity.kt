@@ -52,8 +52,8 @@ open class BaseActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         loadingView = CatLoadingView()
-        loadingView.setBackgroundColor(Color.parseColor("#000000"))
-        loadingView.setClickCancelAble(false)
+        loadingView.setBackgroundColor(Color.TRANSPARENT)
+        loadingView.isCancelable = false
     }
 
     fun showLoading() {

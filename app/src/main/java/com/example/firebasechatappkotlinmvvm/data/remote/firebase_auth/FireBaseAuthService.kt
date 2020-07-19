@@ -13,4 +13,5 @@ interface FireBaseAuthService {
     fun singUp(user: AppUser, callBack: CallBack<Unit, String>)
     fun checkAvailableEmail(email: String?, availableEmailCallBack: SingleCallBack<Boolean>)
     fun checkAavailableNickname(nickname: String?, availableEmailCallBack: SingleCallBack<Boolean>)
+    fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>)
 }

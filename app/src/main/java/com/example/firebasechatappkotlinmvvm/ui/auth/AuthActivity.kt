@@ -22,12 +22,14 @@ import javax.inject.Inject
 class AuthActivity : BaseActivity(), HasSupportFragmentInjector {
     @Inject
     internal lateinit var mFragmentInjector: DispatchingAndroidInjector<Fragment>
+
     companion object{
         fun open(context: Context) {
             val intent = Intent(context, AuthActivity::class.java)
             context.startActivity(intent)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)

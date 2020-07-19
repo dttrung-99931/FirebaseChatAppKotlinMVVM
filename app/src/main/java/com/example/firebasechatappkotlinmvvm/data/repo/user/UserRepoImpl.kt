@@ -33,4 +33,8 @@ class UserRepoImpl @Inject constructor(val mFireBaseAuthService: FireBaseAuthSer
         mFireBaseAuthService.checkAavailableNickname(nickname, unavailableNicknameCallBack)
     }
 
+    override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
+        mFireBaseAuthService.checkUserLoggedIn(checkLoggedInCallBack)
+    }
+
 }
