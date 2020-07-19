@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentLoginBinding
-import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpViewModel
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
+import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
+import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import javax.inject.Inject
 
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
@@ -27,12 +28,20 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>() {
     }
 
     override fun setupViews() {
-//        mVm.signUpResUser.observe(this, Observer {
-//            showToastMsg(it.nickname)
-//        })
     }
 
     override fun observe() {
+        vm.onLoginFailure.observe(this, Observer {
+            when (it){
+                AppConstants.AuthErr.LOGIN_FAILED -> showToastMsg(R.string.login_failed)
+                AppConstants.CommonErr.UNKNOWN -> showToastMsg(R.string.sth_went_wrong)
+            }
+        })
+
+        vm.onLoginSuccess.observe(this, Observer {
+            MainActivity.open(requireContext())
+            finishActivity()
+        })
     }
 
 }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
-
     <data>
-
         <variable
             name="viewModel"
             type="com.example.firebasechatappkotlinmvvm.ui.auth.login.LoginViewModel" />
@@ -35,7 +33,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginRight="30dp"
                 android:hint="@string/nickname_or_email"
-                android:text="@={viewModel.mUsernameOrEmail}" />
+                android:text="@={viewModel.usernameOrEmail}" />
 
             <EditText
                 android:id="@+id/mEdtPassword"
@@ -46,7 +44,7 @@
                 android:layout_marginRight="30dp"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:text="@={viewModel.mPassword}" />
+                android:text="@={viewModel.password}" />
 
             <Button
                 android:id="@+id/mBtnLogin"

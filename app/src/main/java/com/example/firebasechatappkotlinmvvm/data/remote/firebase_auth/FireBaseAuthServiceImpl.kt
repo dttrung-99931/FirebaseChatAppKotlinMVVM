@@ -18,7 +18,14 @@ import javax.inject.Inject
 class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
     val fireStoreService: FireStoreService): FireBaseAuthService {
 
-    override fun login(appUser: AppUser) {
+    override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
+        auth.signInWithEmailAndPassword(appUser.email, appUser.password)
+            .addOnSuccessListener {
+                callBack.onSuccess()
+            }
+            .addOnFailureListener {
+                callBack.onFailure(AppConstants.AuthErr.LOGIN_FAILED)
+            }
     }
 
     override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {
@@ -32,7 +39,7 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
             .addOnFailureListener(OnFailureListener {
                 Log.d("FireBaseAuthServiceImpl", "signUp onError: ${it.message}")
                 if (it is FirebaseAuthException)
-                    callBack.onFail(it.errorCode)
+                    callBack.onFailure(it.errorCode)
                 else callBack.onError(AppConstants.CommonErr.UNKNOWN)
             })
     }
@@ -44,10 +51,12 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
         if (email != null){
             auth.fetchSignInMethodsForEmail(email)
                 .addOnCompleteListener {
-                    val isAvailable = it.result?.signInMethods?.isEmpty()
-                    if (isAvailable == null || isAvailable == true)
-                        availableEmailCallBack.onSuccess(true)
-                    else availableEmailCallBack.onSuccess(false)
+                    if (it.isSuccessful){
+                        val isAvailable = it.result?.signInMethods?.isEmpty()
+                        if (isAvailable == null || isAvailable == true)
+                            availableEmailCallBack.onSuccess(true)
+                        else availableEmailCallBack.onSuccess(false)
+                    } // Error here
                 }
         }
     }

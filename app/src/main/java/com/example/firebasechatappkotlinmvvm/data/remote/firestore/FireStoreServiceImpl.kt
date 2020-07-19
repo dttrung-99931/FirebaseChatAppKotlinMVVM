@@ -30,11 +30,11 @@ class FireStoreServiceImpl  @Inject constructor(val firestore: FirebaseFirestore
                     callBack.onSuccess()
                 }
                 .addOnFailureListener {
-                    callBack.onFail(AppConstants.CommonErr.UNKNOWN)
+                    callBack.onFailure(AppConstants.CommonErr.UNKNOWN)
                     Log.d(TAG, "addUser: " + it.message)
                 }
         else {
-            callBack.onFail(AppConstants.CommonErr.UNKNOWN)
+            callBack.onFailure(AppConstants.CommonErr.UNKNOWN)
             Log.d(TAG, "addUser: " + " Empty uid")
         }
 

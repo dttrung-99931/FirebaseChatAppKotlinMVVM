@@ -81,6 +81,10 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
         else CommonUtil.log("BaseActivity.showLoading(): mBaseActivity is not init")
     }
 
+    protected fun finishActivity() {
+        mBaseActivity.finish()
+    }
+
     abstract fun getLayoutResId(): Int
     abstract fun getVMBindingVarId(): Int
     abstract fun getVM(): TVModel

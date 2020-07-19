@@ -68,7 +68,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
             isLoading.postValue(false)
         }
 
-        override fun onFail(errCode: String) {
+        override fun onFailure(errCode: String) {
             onSignUpFailureWithCode.postValue(errCode)
             isLoading.postValue(false)
         }

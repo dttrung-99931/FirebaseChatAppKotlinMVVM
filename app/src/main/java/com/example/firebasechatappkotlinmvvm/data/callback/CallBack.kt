@@ -7,5 +7,5 @@ package com.example.firebasechatappkotlinmvvm.data.callback
 interface CallBack<TData, TErrCore> {
     fun onSuccess(data: TData? = null)
     fun onError(errCode: TErrCore)
-    fun onFail(errCode: TErrCore)
+    fun onFailure(errCode: TErrCore)
 }

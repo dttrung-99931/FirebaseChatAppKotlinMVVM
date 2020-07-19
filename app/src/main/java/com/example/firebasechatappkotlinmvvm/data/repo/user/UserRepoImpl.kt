@@ -12,8 +12,8 @@ import javax.inject.Inject
 class UserRepoImpl @Inject constructor(val mFireBaseAuthService: FireBaseAuthService):
     UserRepo {
 
-    override fun login(appUser: AppUser) {
-        mFireBaseAuthService.login(appUser)
+    override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
+        mFireBaseAuthService.login(appUser, callBack)
     }
 
     override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {

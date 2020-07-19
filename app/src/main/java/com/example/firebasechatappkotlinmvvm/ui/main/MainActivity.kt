@@ -1,5 +1,7 @@
 package com.example.firebasechatappkotlinmvvm.ui.main
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,7 +16,12 @@ import javax.inject.Inject
 class MainActivity : BaseActivity(), HasSupportFragmentInjector {
     @Inject
     internal lateinit var mFragmentInjector: DispatchingAndroidInjector<Fragment>
-
+    companion object{
+        fun open(context: Context) {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)

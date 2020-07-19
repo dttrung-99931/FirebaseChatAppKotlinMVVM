@@ -17,4 +17,7 @@
     <string name="unavailable_email">Unavailable email</string>
     <string name="unavailable_nickname">Unavailable nickname</string>
     <string name="weak_password">Password must be at least 6 characters</string>
+    <string name="login_failed">Login failed</string>
+    <string name="login_successfully">Login successfully</string>
+    <string name="no_internet">Opps! No internet connection.</string>
 </resources>
