@@ -36,6 +36,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
         mBtnProfile.setOnClickListener {
             navigate(R.id.action_dashboardFragment_to_profileFragment)
         }
+        mSearchBar.setOnClickListener {
+            navigate(R.id.action_dashboardFragment_to_searchUserFragment)
+        }
     }
 
     private fun setupViewPager() {

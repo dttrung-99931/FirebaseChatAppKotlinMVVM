@@ -8,6 +8,8 @@ interface UserRepo: FireBaseAuthService {
     fun getCurrentAppUser(curAppUserCallBack: CallBack<AppUser, String>)
     fun uploadAvatar(
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<Any, String>
+        uploadAvatarCallBack: CallBack<String, String>
     )
+
+    fun findUsers(userOrEmail: String, mSearchUsersCallBack: CallBack<List<AppUser>, String>)
 }

@@ -14,7 +14,9 @@
             android:layout_height="wrap_content"
             android:padding="10dp">
 
-            <include layout="@layout/search_bar" />
+            <include
+                android:id="@+id/mSearchBar"
+                layout="@layout/search_bar" />
 
             <ImageButton
                 style="@style/ClickAnimStyle"

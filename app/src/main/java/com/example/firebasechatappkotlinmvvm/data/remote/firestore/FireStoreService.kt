@@ -14,4 +14,11 @@ interface FireStoreService {
         nickname: String?,
         availableNicknameCallBack: SingleCallBack<Boolean>
     )
+
+    fun updateAvatarLink(
+        uid: String,
+        avatarUrl: String,
+        updateAvatarUrlFirestoreCallBack: CallBack<Any, String>)
+
+    fun searchUsers(userOrEmail: String, mSearchUsersCallBack: CallBack<List<AppUser>, String>)
 }

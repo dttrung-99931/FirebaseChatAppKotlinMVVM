@@ -2,7 +2,6 @@ package com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.InputStream
@@ -17,11 +16,14 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
     override fun uploadAvatar(
         uid: String,
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<Any, String>
+        uploadAvatarCallBack: CallBack<String, String>
     ) {
-        avatarRef(uid).putStream(avatarInputStream!!)
+        val avatarRef = avatarRef(uid)
+        avatarRef.putStream(avatarInputStream!!)
             .addOnSuccessListener {
-                uploadAvatarCallBack.onSuccess()
+                avatarRef.downloadUrl.addOnSuccessListener {
+                    uploadAvatarCallBack.onSuccess(it.toString())
+                }
             }
     }
 

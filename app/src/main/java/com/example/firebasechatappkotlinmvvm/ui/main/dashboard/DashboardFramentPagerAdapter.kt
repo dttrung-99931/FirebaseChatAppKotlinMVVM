@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatListFragment
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserFragment
 
 
 /**

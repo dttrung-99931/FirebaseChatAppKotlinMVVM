@@ -41,10 +41,6 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
                 if (it.isSuccessful){
                     val createdUser = it.result?.user
                     user.uid = createdUser?.uid
-                    createdUser?.updateProfile(userProfileChangeRequest {
-                        this.displayName = user.nickname
-                    })
-
                     fireStoreService.addUser(user, callBack)
                 }
             }

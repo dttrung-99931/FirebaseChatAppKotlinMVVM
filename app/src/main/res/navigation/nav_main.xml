@@ -9,9 +9,16 @@
         <action
             android:id="@+id/action_dashboardFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_searchUserFragment"
+            app:destination="@id/searchUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.ProfileFragment"
         android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/searchUserFragment"
+        android:name="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserFragment"
+        android:label="SearchUserFragment" />
 </navigation>

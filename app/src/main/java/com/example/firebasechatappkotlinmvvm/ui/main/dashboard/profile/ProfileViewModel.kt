@@ -80,9 +80,9 @@ class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
         userRepo.getCurrentAppUser(getCurrentUserCallBack)
     }
 
-    val uploadAvatarCallBack: CallBack<Any, String> =
-        object : CallBack<Any, String> {
-            override fun onSuccess(data: Any?) {
+    val uploadAvatarCallBack: CallBack<String, String> =
+        object : CallBack<String, String> {
+            override fun onSuccess(data: String?) {
                 isLoading.postValue(false)
             }
 

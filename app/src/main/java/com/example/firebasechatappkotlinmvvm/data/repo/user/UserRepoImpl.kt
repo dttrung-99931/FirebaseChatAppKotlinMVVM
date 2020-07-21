@@ -4,9 +4,9 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
+import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.userProfileChangeRequest
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -16,7 +16,8 @@ import javax.inject.Inject
  */
 class UserRepoImpl @Inject constructor(
     val mFireBaseAuthService: FireBaseAuthService,
-    val mStorageService: FireBaseStorageService
+    val mStorageService: FireBaseStorageService,
+    val mFireStoreService: FireStoreService
 ):
     UserRepo {
     override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
@@ -77,12 +78,56 @@ class UserRepoImpl @Inject constructor(
         else curAppUserCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
     }
 
-    override fun uploadAvatar(avatarInputStream: InputStream?, uploadAvatarCallBack: CallBack<Any, String>) {
+    override fun uploadAvatar(avatarInputStream: InputStream?, uploadAvatarCallBack: CallBack<String, String>) {
         val currentFirebaseUser = getCurrentFirebaseUser()
         val uid = currentFirebaseUser?.uid
         if (uid != null){
             mStorageService.uploadAvatar(uid, avatarInputStream,
-                uploadAvatarCallBack)
+                object : CallBack<String, String> {
+                    override fun onSuccess(avatarUrl: String?) {
+                        mFireStoreService.updateAvatarLink(
+                            uid,
+                            avatarUrl!!,
+                            createUpdateAvatarUrlFirestoreCallBack(
+                                uploadAvatarCallBack, avatarUrl
+                            )
+                        )
+                    }
+
+                    override fun onError(errCode: String) {
+                        uploadAvatarCallBack.onError(errCode)
+                    }
+
+                    override fun onFailure(errCode: String) {
+                        uploadAvatarCallBack.onFailure(errCode)
+                    }
+                })
+        }
+
+
+    }
+
+    override fun findUsers(
+        userOrEmail: String,
+        mSearchUsersCallBack: CallBack<List<AppUser>, String>
+    ) {
+        mFireStoreService.searchUsers(userOrEmail, mSearchUsersCallBack)
+    }
+
+    private fun createUpdateAvatarUrlFirestoreCallBack(
+        uploadAvatarCallBack: CallBack<String, String>,
+        url: String?
+    ): CallBack<Any, String> = object : CallBack<Any, String> {
+        override fun onSuccess(data: Any?) {
+            uploadAvatarCallBack.onSuccess(url)
+        }
+
+        override fun onError(errCode: String) {
+            uploadAvatarCallBack.onError(errCode)
+        }
+
+        override fun onFailure(errCode: String) {
+            uploadAvatarCallBack.onFailure(errCode)
         }
     }
 

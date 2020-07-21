@@ -11,7 +11,7 @@ interface FireBaseStorageService {
     fun uploadAvatar(
         uid: String,
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<Any, String>
+        uploadAvatarCallBack: CallBack<String, String>
     )
 
     fun getAvatarUrl(uid: String?, gatAvatarUrlCallBack: CallBack<String, String>)
