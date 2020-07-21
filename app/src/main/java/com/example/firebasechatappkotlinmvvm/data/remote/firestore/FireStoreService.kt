@@ -3,6 +3,7 @@ package com.example.firebasechatappkotlinmvvm.data.remote.firestore
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
 
 
 /**
@@ -20,5 +21,6 @@ interface FireStoreService {
         avatarUrl: String,
         updateAvatarUrlFirestoreCallBack: CallBack<Any, String>)
 
-    fun searchUsers(userOrEmail: String, mSearchUsersCallBack: CallBack<List<AppUser>, String>)
+    fun searchUsers(userOrEmail: String,
+                    mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>)
 }

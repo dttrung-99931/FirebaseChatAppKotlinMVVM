@@ -5,6 +5,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.google.firebase.auth.FirebaseUser
 import java.io.InputStream
@@ -109,7 +110,7 @@ class UserRepoImpl @Inject constructor(
 
     override fun findUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<List<AppUser>, String>
+        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>
     ) {
         mFireStoreService.searchUsers(userOrEmail, mSearchUsersCallBack)
     }

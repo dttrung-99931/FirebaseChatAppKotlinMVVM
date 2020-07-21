@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.firebase.firestore.FirebaseFirestore
@@ -74,26 +75,36 @@ class FireStoreServiceImpl  @Inject constructor(val firestore: FirebaseFirestore
 
     override fun searchUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<List<AppUser>, String>
+        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>
     ) {
+        val searchUserResult = SearchUserViewModel.SearchUserResult(userOrEmail)
         firestore.collection(COLLECTION_USERS)
             // find users by nickname first
             .whereEqualTo(FIELD_NICKNAME, userOrEmail)
             .get()
             .addOnSuccessListener {
-                if (!it.isEmpty) mSearchUsersCallBack
-                    .onSuccess(AppUser.listFromUserDocuments(it.documents))
-                else searchUsersByEmail(userOrEmail, mSearchUsersCallBack)
+                if (!it.isEmpty) {
+                    searchUserResult.users = AppUser.listFromUserDocuments(it.documents)
+
+                    mSearchUsersCallBack.onSuccess(searchUserResult)
+                }
+                // Keep start time in searchUserResult
+                else searchUsersByEmail(userOrEmail, mSearchUsersCallBack, searchUserResult)
             }
     }
 
-    private fun searchUsersByEmail(userOrEmail: String, mSearchUsersCallBack: CallBack<List<AppUser>, String>) {
+    private fun searchUsersByEmail(
+        userOrEmail: String,
+        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>,
+        searchUserResult: SearchUserViewModel.SearchUserResult
+    ) {
         firestore.collection(COLLECTION_USERS)
             .whereEqualTo(FIELD_EMAIL, userOrEmail)
             .get()
             .addOnSuccessListener {
-                mSearchUsersCallBack
-                .onSuccess(AppUser.listFromUserDocuments(it.documents))
+                searchUserResult.users = AppUser.listFromUserDocuments(it.documents)
+
+                mSearchUsersCallBack.onSuccess(searchUserResult)
         }
     }
 

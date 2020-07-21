@@ -56,20 +56,20 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
         mEdtSearch.showKeyBoard()
         mEdtSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                vm.onSearchTextChanged()
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                vm.onSearchTextChanged()
             }
         })
 
     }
 
     override fun observe() {
-        vm.searchUsersResult.observe(this, Observer {
+        vm.searchUsers.observe(this, Observer {
             showSearchUserResult(it)
         })
     }
