@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    style="@style/ClickAnimStyle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/mImgProfileOption"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_sign_out_50px"/>
+
+        <TextView
+            android:id="@+id/mTvProfileOption"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Sign out"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:gravity="center_vertical"
+            android:paddingStart="10dp"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        android:layout_marginStart="50dp"/>
+
+</LinearLayout>

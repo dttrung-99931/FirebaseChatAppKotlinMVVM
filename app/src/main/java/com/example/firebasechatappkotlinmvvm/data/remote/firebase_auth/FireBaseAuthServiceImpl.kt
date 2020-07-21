@@ -9,6 +9,9 @@ import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.firestore.auth.User
 import javax.inject.Inject
 
 
@@ -28,11 +31,20 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
             }
     }
 
+    /*
+    * Create user (email, password, nickname(displayname)
+    * in firebase auth, then create users/uid in firestore
+    * */
     override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {
         auth.createUserWithEmailAndPassword(user.email, user.password)
             .addOnCompleteListener {
                 if (it.isSuccessful){
-                    user.uid = it.result?.user?.uid
+                    val createdUser = it.result?.user
+                    user.uid = createdUser?.uid
+                    createdUser?.updateProfile(userProfileChangeRequest {
+                        this.displayName = user.nickname
+                    })
+
                     fireStoreService.addUser(user, callBack)
                 }
             }
@@ -72,5 +84,12 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
         checkLoggedInCallBack.onSuccess(auth.currentUser != null)
     }
 
+    override fun signOut() {
+        auth.signOut()
+    }
+
+    override fun getCurrentFirebaseUser(): FirebaseUser? {
+        return auth.currentUser
+    }
 
 }

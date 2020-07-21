@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#C9FFFD">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/width_profile_background"
+                android:src="@drawable/background_profile"
+                android:scaleType="centerCrop"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/mImgAvatar"
+                android:layout_width="@dimen/size_avatar"
+                android:layout_height="@dimen/size_avatar"
+                android:layout_alignParentTop="true"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:src="@drawable/ic_no_avatar_50px"
+                android:layout_marginTop="30dp"
+                app:civ_border_color="#CFC8CF"
+                app:civ_border_width="1dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/mTvNickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Panda"
+                android:textColor="#000"
+                android:textSize="17sp"
+                android:textStyle="italic"
+                android:layout_below="@id/mImgAvatar"
+                android:layout_marginStart="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"/>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</layout>

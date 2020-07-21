@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.util
 
+import android.content.Context
 import android.util.Log
 
 class CommonUtil {
@@ -13,7 +14,15 @@ class CommonUtil {
         }
 
         fun log(msg: String) {
-            Log.d("AAA", msg);
+            Log.d("AAAA", msg);
+        }
+
+        fun toStrings(stringResIds: List<Int>, context: Context): List<String> {
+            val strings =  ArrayList<String>()
+            stringResIds.forEach {
+                strings.add(context.getString(it))
+            }
+            return strings;
         }
     }
 }

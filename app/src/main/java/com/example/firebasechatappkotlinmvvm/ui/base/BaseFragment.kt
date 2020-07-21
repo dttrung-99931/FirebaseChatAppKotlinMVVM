@@ -1,8 +1,9 @@
 package com.example.firebasechatappkotlinmvvm.ui.base
 
 import android.content.Context
+import android.content.DialogInterface
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,9 +12,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.firebasechatappkotlinmvvm.R
+import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import dagger.android.support.AndroidSupportInjection
+import java.io.InputStream
 
 abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewModel> : Fragment() {
     lateinit var vm: TVModel
@@ -84,6 +88,25 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
     protected fun finishActivity() {
         mBaseActivity.finish()
     }
+
+    protected fun navigate(actionResId: Int) {
+        findNavController().navigate(actionResId)
+    }
+
+    fun showConfirmDialog(msgResId: Int,
+                          onYes: DialogInterface.OnClickListener,
+                          onNo: DialogInterface.OnClickListener? = null){
+        mBaseActivity.showConfirmDialog(msgResId, onYes, onNo)
+    }
+
+    protected fun selectMediaImage(selectImgCallBack: SingleCallBack<Uri>) {
+        mBaseActivity.selectMediaImage(selectImgCallBack)
+    }
+
+    protected fun openInputStream(uri: Uri): InputStream? {
+        return mBaseActivity.contentResolver.openInputStream(uri)
+    }
+
 
     abstract fun getLayoutResId(): Int
     abstract fun getVMBindingVarId(): Int

@@ -5,5 +5,13 @@
     <fragment
         android:id="@+id/dashboardFragment"
         android:name="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragment"
-        android:label="DashboardFragment" />
+        android:label="DashboardFragment" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.ProfileFragment"
+        android:label="ProfileFragment" />
 </navigation>

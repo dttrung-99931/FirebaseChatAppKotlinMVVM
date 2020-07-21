@@ -7,6 +7,7 @@ import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivityModule
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatListFragmentProvider
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.ProfileFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.start.StartActivity
 import com.example.firebasechatappkotlinmvvm.ui.start.StartActivityModule
 import dagger.Module
@@ -21,7 +22,9 @@ abstract class ActivityBuilder {
     @ContributesAndroidInjector(modules = [
         MainActivityModule::class,
         DashboardFragmentProvider::class,
-        ChatListFragmentProvider::class])
+        ChatListFragmentProvider::class,
+        ProfileFragmentProvider::class
+    ])
     abstract fun bindMainActivity(): MainActivity
 
     @ContributesAndroidInjector(modules = [

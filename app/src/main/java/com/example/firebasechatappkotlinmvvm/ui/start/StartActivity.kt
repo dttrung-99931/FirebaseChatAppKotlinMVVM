@@ -27,7 +27,7 @@ class StartActivity : BaseActivity() {
     }
 
     private fun observe() {
-        vm.onCheckUserLoggedInRes.observe(this, Observer {
+        vm.onCheckUserLoggedInResult.observe(this, Observer {
             if (it) MainActivity.open(this)
             else AuthActivity.open(this)
             finish()

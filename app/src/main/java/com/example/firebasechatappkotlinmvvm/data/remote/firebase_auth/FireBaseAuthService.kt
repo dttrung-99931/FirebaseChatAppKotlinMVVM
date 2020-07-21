@@ -3,6 +3,7 @@ package com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
+import com.google.firebase.auth.FirebaseUser
 
 
 /**
@@ -14,4 +15,6 @@ interface FireBaseAuthService {
     fun checkAvailableEmail(email: String?, availableEmailCallBack: SingleCallBack<Boolean>)
     fun checkAavailableNickname(nickname: String?, availableEmailCallBack: SingleCallBack<Boolean>)
     fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>)
+    fun signOut()
+    fun getCurrentFirebaseUser(): FirebaseUser?
 }

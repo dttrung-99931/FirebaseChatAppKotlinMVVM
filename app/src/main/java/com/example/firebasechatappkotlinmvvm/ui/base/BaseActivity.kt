@@ -1,19 +1,31 @@
 package com.example.firebasechatappkotlinmvvm.ui.base
 
+import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.firebasechatappkotlinmvvm.R
+import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.google.firebase.FirebaseNetworkException
 import com.roger.catloadinglibrary.CatLoadingView
-import dagger.android.AndroidInjection
-import dagger.android.DaggerActivity
 
 open class BaseActivity : AppCompatActivity() {
+    companion object{
+        const val REQUEST_CODE_PICK_IMG = 1234
+    }
+
+    // when a fragment or self call select SelectMediaImg
+    // then keep the call back here, release call back after calling it
+    private var mSelectMediaImgUriCallBack: SingleCallBack<Uri>? = null
+
     lateinit var loadingView: CatLoadingView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +66,7 @@ open class BaseActivity : AppCompatActivity() {
         loadingView = CatLoadingView()
         loadingView.setBackgroundColor(Color.TRANSPARENT)
         loadingView.isCancelable = false
+        loadingView.setClickCancelAble(false)
     }
 
     fun showLoading() {
@@ -73,4 +86,39 @@ open class BaseActivity : AppCompatActivity() {
         Toast.makeText(this, msgResId, Toast.LENGTH_SHORT)?.show()
     }
 
+    fun showConfirmDialog(msgResId: Int,
+                          onYes: DialogInterface.OnClickListener,
+                          onNo: DialogInterface.OnClickListener? = null) {
+        val alertDialog = AlertDialog.Builder(this).create()
+
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,
+            getString(R.string.yes), onYes)
+
+        if (onNo != null)
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,
+                getString(R.string.no), onNo)
+        else alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE,
+            getString(R.string.no)
+        ) { _, _ -> }
+
+        val msg = getString(msgResId)
+        alertDialog.setMessage(msg)
+
+        alertDialog.show()
+    }
+
+    fun selectMediaImage(selectImgCallBack: SingleCallBack<Uri>) {
+        mSelectMediaImgUriCallBack = selectImgCallBack
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMG)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_PICK_IMG){
+            data?.data?.let { mSelectMediaImgUriCallBack?.onSuccess(it) }
+            mSelectMediaImgUriCallBack = null
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 }

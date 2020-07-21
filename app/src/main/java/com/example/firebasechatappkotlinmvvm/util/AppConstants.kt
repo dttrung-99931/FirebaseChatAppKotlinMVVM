@@ -1,5 +1,7 @@
 package com.example.firebasechatappkotlinmvvm.util
 
+import com.example.firebasechatappkotlinmvvm.R
+
 class AppConstants {
 
     object CommonErr{
@@ -12,5 +14,14 @@ class AppConstants {
         const val UNAVAILABLE_EMAIL = "ERROR_EMAIL_ALREADY_IN_USE"
         const val WEAK_PASSWORD = "ERROR_WEAK_PASSWORD"
         const val LOGIN_FAILED = "LOGIN_FAILED"
+        const val NOT_LOGGED_IN = "NOT_LOGGED_IN"
+    }
+
+    companion object{
+        val STR_IDS_AVATAR_OPTION = listOf(
+            R.string.see,
+            R.string.upload,
+            R.string.take_a_photo
+        )
     }
 }

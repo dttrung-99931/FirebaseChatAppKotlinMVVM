@@ -11,12 +11,12 @@ import javax.inject.Inject
  * Created by Trung on 7/19/2020
  */
 class StartViewModel @Inject constructor(val userRepo: UserRepo): BaseViewModel() {
-    val onCheckUserLoggedInRes = MutableLiveData<Boolean>()
+    val onCheckUserLoggedInResult = MutableLiveData<Boolean>()
 
     private val checkLoggedInCallBack : CallBack<Boolean, String> =
        object : CallBack<Boolean, String> {
            override fun onSuccess(data: Boolean?) {
-               onCheckUserLoggedInRes.postValue(data)
+               onCheckUserLoggedInResult.postValue(data)
            }
 
            override fun onError(errCode: String) {

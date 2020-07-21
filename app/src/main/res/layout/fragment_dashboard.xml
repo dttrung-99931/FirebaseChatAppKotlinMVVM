@@ -17,6 +17,8 @@
             <include layout="@layout/search_bar" />
 
             <ImageButton
+                style="@style/ClickAnimStyle"
+                android:id="@+id/mBtnProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

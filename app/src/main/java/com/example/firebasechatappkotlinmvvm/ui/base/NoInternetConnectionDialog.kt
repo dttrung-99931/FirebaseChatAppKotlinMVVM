@@ -19,15 +19,8 @@ class NoInternetConnectionDialog: BaseDialogFragment() {
         return inflater.inflate(R.layout.dialog_no_internet, container, false)
     }
 
-    override fun onPause() {
-        if (!mBaseActivity.isNetworkAvailable())
-            finishActivity()
-        super.onPause()
+    override fun onDestroyView() {
+        finishActivity()
+        super.onDestroyView()
     }
-
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        if (!mBaseActivity.isNetworkAvailable())
-//            finishActivity()
-//    }
 }

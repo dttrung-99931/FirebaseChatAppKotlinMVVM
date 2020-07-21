@@ -2,6 +2,8 @@ package com.example.firebasechatappkotlinmvvm.ui.main.dashboard
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentDashboardBinding
@@ -31,6 +33,9 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
 
     override fun setupViews() {
         setupViewPager()
+        mBtnProfile.setOnClickListener {
+            navigate(R.id.action_dashboardFragment_to_profileFragment)
+        }
     }
 
     private fun setupViewPager() {
