@@ -35,16 +35,19 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
     override fun setupViews() {
         setupEdtSearch()
         setupSearchResultRecyclerView()
+        mBtnBack.setOnClickListener {
+            popBackFragment()
+        }
     }
 
-    val onSearchUserClickedCallBack: OnItemClickListener<AppUser> =
+    private val onSearchUserClickedCallBack: OnItemClickListener<AppUser> =
         object : OnItemClickListener<AppUser> {
             override fun onItemClicked(position: Int, user: AppUser) {
                 showToastMsg(user.nickname)
             }
         }
 
-    val mSearchUserAdapter = SearchUserResultAdapter(onSearchUserClickedCallBack)
+    private val mSearchUserAdapter = SearchUserResultAdapter(onSearchUserClickedCallBack)
 
     private fun setupSearchResultRecyclerView() {
         mRecyclerView.adapter = mSearchUserAdapter

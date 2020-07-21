@@ -15,7 +15,7 @@
     <style name="SplashTheme" parent="AppTheme">
         <!--        // make background of status bar and container are the same-->
         <item name="android:windowBackground">@drawable/splash</item>
-        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="android:fitsSystemWindows">true</item>
     </style>
 

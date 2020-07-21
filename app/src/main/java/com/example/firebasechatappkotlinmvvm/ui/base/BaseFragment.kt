@@ -93,6 +93,10 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
         findNavController().navigate(actionResId)
     }
 
+    protected fun popBackFragment() {
+        findNavController().popBackStack()
+    }
+
     fun showConfirmDialog(msgResId: Int,
                           onYes: DialogInterface.OnClickListener,
                           onNo: DialogInterface.OnClickListener? = null){

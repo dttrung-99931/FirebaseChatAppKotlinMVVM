@@ -32,7 +32,6 @@ class SearchUserResultAdapter (val onItemClickedCallBack: OnItemClickListener<Ap
     }
 
     override fun onBindViewHolder(holder: SearchUserResultViewholder, position: Int) {
-        CommonUtil.log("Searched user ${searchUsers!!.get(position).nickname} ")
         holder.bindView(position)
     }
 
@@ -52,6 +51,11 @@ class SearchUserResultAdapter (val onItemClickedCallBack: OnItemClickListener<Ap
                 Glide.with(itemView.context)
                     .load(user.avatarUrl)
                     .placeholder(R.drawable.ic_no_avatar_50px)
+                    .centerCrop()
+                    .into(itemView.mImgAvatar)
+            else if (isRecyclable)
+                Glide.with(itemView.context)
+                    .load(R.drawable.ic_no_avatar_50px)
                     .centerCrop()
                     .into(itemView.mImgAvatar)
         }

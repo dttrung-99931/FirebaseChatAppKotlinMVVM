@@ -33,18 +33,15 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
 
     override fun setupViews() {
         setupViewPager()
-        mBtnProfile.setOnClickListener {
-            navigate(R.id.action_dashboardFragment_to_profileFragment)
-        }
-        mSearchBar.setOnClickListener {
-            navigate(R.id.action_dashboardFragment_to_searchUserFragment)
-        }
     }
 
     private fun setupViewPager() {
         mViewPager.adapter = DashboardFramentPagerAdapter(
             childFragmentManager, requireContext())
         mTabLayout.setupWithViewPager(mViewPager)
+        mTabLayout.getTabAt(0)?.setIcon(R.drawable.ic_chat_24px)
+        mTabLayout.getTabAt(1)?.setIcon(R.drawable.ic_explore_24px)
+        mTabLayout.getTabAt(2)?.setIcon(R.drawable.ic_profile_24px)
     }
 
     override fun observe() {
