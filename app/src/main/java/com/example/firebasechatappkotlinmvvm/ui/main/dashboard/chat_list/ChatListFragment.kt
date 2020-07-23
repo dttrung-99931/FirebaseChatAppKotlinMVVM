@@ -1,10 +1,9 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list
 
 import androidx.lifecycle.ViewModelProviders
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatListBinding
-import com.example.firebasechatappkotlinmvvm.databinding.FragmentDashboardBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import javax.inject.Inject
 

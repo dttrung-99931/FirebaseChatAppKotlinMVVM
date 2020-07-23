@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list
 
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import dagger.Module

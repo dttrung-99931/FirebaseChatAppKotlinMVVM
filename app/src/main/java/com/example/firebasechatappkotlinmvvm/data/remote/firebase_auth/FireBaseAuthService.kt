@@ -16,5 +16,6 @@ interface FireBaseAuthService {
     fun checkAavailableNickname(nickname: String?, availableEmailCallBack: SingleCallBack<Boolean>)
     fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>)
     fun signOut()
-    fun getCurrentFirebaseUser(): FirebaseUser?
+    fun getCurAuthUser(): FirebaseUser?
+    fun getCurAuthUserId(): String
 }

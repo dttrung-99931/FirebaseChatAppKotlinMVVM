@@ -6,7 +6,8 @@ import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpFragmentProvi
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivityModule
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragmentProvider
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatListFragmentProvider
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatFragmentProvider
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list.ChatListFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.ProfileFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserFragmentProvider
@@ -27,6 +28,7 @@ abstract class ActivityBuilder {
         ChatListFragmentProvider::class,
         ProfileFragmentProvider::class,
         SearchUserFragmentProvider::class,
+        ChatFragmentProvider::class,
         ExploreFragmentProvider::class
     ])
     abstract fun bindMainActivity(): MainActivity

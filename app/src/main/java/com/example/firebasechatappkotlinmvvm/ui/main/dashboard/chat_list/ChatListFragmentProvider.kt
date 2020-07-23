@@ -1,6 +1,5 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list
 
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

@@ -2,6 +2,8 @@ package com.example.firebasechatappkotlinmvvm.util
 
 import android.content.Context
 import android.util.Log
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
+import com.google.firebase.firestore.DocumentSnapshot
 
 class CommonUtil {
     companion object{
@@ -23,6 +25,14 @@ class CommonUtil {
                 strings.add(context.getString(it))
             }
             return strings;
+        }
+
+        fun toMessagesFromMessageDocuments(documents: List<DocumentSnapshot>): List<Messagee>? {
+            val messages = ArrayList<Messagee>()
+            documents.forEach {
+                messages.add(it.toObject(Messagee::class.java)!!)
+            }
+            return  messages
         }
     }
 }

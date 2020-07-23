@@ -11,6 +11,11 @@ import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentSearchUserBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
+import com.example.firebasechatappkotlinmvvm.ui.base.OnItemWithPositionClickListener
+import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFragment
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatFragment
+import com.example.firebasechatappkotlinmvvm.util.AppConstants
+import com.example.firebasechatappkotlinmvvm.util.extension.hideKeyboard
 import com.example.firebasechatappkotlinmvvm.util.extension.showKeyBoard
 import kotlinx.android.synthetic.main.fragment_search_user.*
 import javax.inject.Inject
@@ -36,6 +41,7 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
         setupEdtSearch()
         setupSearchResultRecyclerView()
         mBtnBack.setOnClickListener {
+            mEdtSearch.hideKeyboard()
             popBackFragment()
         }
     }
@@ -43,9 +49,27 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
     private val onSearchUserClickedCallBack: OnItemClickListener<AppUser> =
         object : OnItemClickListener<AppUser> {
             override fun onItemClicked(position: Int, user: AppUser) {
-                showToastMsg(user.nickname)
+                showUserOptionBottomSheetOnClickSearch(position, user)
             }
         }
+
+    private fun showUserOptionBottomSheetOnClickSearch(
+        position: Int,
+        user: AppUser
+    ) {
+        OptionBottomSheetDialogFragment(
+            AppConstants.STR_IDS_CLICK_SEARCH_USER_OPTION,
+            object : OnItemWithPositionClickListener {
+                override fun onItemWithPositionClicked(position: Int) {
+                    when (position) {
+                        0 -> navigateWithSerializableData(
+                                R.id.action_searchUserFragment_to_chatFragment,
+                                user, ChatFragment.KEY_USER_CHAT_WITH)
+                    }
+                }
+            }
+        ).show(childFragmentManager, "")
+    }
 
     private val mSearchUserAdapter = SearchUserResultAdapter(onSearchUserClickedCallBack)
 

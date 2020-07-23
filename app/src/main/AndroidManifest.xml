@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.MainActivity"
-        android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.auth.AuthActivity" />
     </application>
 

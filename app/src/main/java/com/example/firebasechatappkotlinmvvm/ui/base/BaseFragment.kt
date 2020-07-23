@@ -15,9 +15,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
+import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
+import java.io.Serializable
 
 abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewModel> : Fragment() {
     lateinit var vm: TVModel
@@ -93,6 +95,14 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
         findNavController().navigate(actionResId)
     }
 
+    protected fun navigateWithSerializableData(actionResId: Int, data: Any, dataKey: String){
+        if (data is Serializable) {
+            val bundle = Bundle()
+            bundle.putSerializable(dataKey, data)
+            findNavController().navigate(actionResId, bundle)
+        } else throw Exception("data param must to implement Serializable")
+    }
+
     protected fun popBackFragment() {
         findNavController().popBackStack()
     }
@@ -110,7 +120,6 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
     protected fun openInputStream(uri: Uri): InputStream? {
         return mBaseActivity.contentResolver.openInputStream(uri)
     }
-
 
     abstract fun getLayoutResId(): Int
     abstract fun getVMBindingVarId(): Int

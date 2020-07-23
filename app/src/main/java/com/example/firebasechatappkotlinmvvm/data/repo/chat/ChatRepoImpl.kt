@@ -1,136 +1,69 @@
-package com.example.firebasechatappkotlinmvvm.data.repo.user
+package com.example.firebasechatappkotlinmvvm.data.repo.chat
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
-import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
-import com.example.firebasechatappkotlinmvvm.util.AppConstants
-import com.google.firebase.auth.FirebaseUser
-import java.io.InputStream
+import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import javax.inject.Inject
 
 
 /**
  * Created by Trung on 7/10/2020
  */
-class UserRepoImpl @Inject constructor(
-    val mFireBaseAuthService: FireBaseAuthService,
+class ChatRepoImpl @Inject constructor(
     val mStorageService: FireBaseStorageService,
-    val mFireStoreService: FireStoreService
+    val mFireStoreService: FireStoreService,
+    val mFireBaseAuthService: FireBaseAuthService
 ):
-    UserRepo {
-    override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
-        mFireBaseAuthService.login(appUser, callBack)
-    }
+    ChatRepo {
 
-    override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {
-        mFireBaseAuthService.singUp(user, callBack)
-    }
 
-    override fun checkAvailableEmail(
-        email: String?,
-        availableEmailCallBack: SingleCallBack<Boolean>
+    override fun listenForMessageEvent(
+        chatUser: AppUser,
+        onMessageEvent: CallBack<MessageEvent, String>,
+        onListeningSetupResult: CallBack<String, String>
     ) {
-        mFireBaseAuthService.checkAvailableEmail(email, availableEmailCallBack)
-    }
-
-    override fun checkAavailableNickname(
-        nickname: String?,
-        unavailableNicknameCallBack: SingleCallBack<Boolean>) {
-        mFireBaseAuthService.checkAavailableNickname(nickname, unavailableNicknameCallBack)
-    }
-
-    override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
-        mFireBaseAuthService.checkUserLoggedIn(checkLoggedInCallBack)
-    }
-
-    override fun signOut() {
-        mFireBaseAuthService.signOut()
-    }
-
-    override fun getCurrentFirebaseUser(): FirebaseUser? {
-        return mFireBaseAuthService.getCurrentFirebaseUser()
-    }
-
-    // @return AppUser(nickname, avatarUrl, ...)
-    // get uid, dislayName (nickname) from firebase auth
-    // get avatar link from firebase storage
-    override fun getCurrentAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
-        val curFirebaseUser = getCurrentFirebaseUser()
-        if (curFirebaseUser != null) {
-            val curAppUser = AppUser(curFirebaseUser)
-            mStorageService.getAvatarUrl(curAppUser.uid, object : CallBack<String, String> {
+        val me = AppUser(mFireBaseAuthService.getCurAuthUser()!!)
+        mFireStoreService.getChatId(chatUser, me,
+            object : CallBack<String, String> {
                 override fun onSuccess(data: String?) {
-                    curAppUser.avatarUrl = data!!
-                    curAppUserCallBack.onSuccess(curAppUser)
+                    mFireStoreService.listenForMessageEvent(data!!, onMessageEvent, onListeningSetupResult)
                 }
 
                 override fun onError(errCode: String) {
-                    curAppUserCallBack.onError(errCode)
                 }
 
                 override fun onFailure(errCode: String) {
-                    curAppUserCallBack.onFailure(errCode)
                 }
             })
-        }
-        else curAppUserCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
     }
 
-    override fun uploadAvatar(avatarInputStream: InputStream?, uploadAvatarCallBack: CallBack<String, String>) {
-        val currentFirebaseUser = getCurrentFirebaseUser()
-        val uid = currentFirebaseUser?.uid
-        if (uid != null){
-            mStorageService.uploadAvatar(uid, avatarInputStream,
-                object : CallBack<String, String> {
-                    override fun onSuccess(avatarUrl: String?) {
-                        mFireStoreService.updateAvatarLink(
-                            uid,
-                            avatarUrl!!,
-                            createUpdateAvatarUrlFirestoreCallBack(
-                                uploadAvatarCallBack, avatarUrl
-                            )
-                        )
-                    }
-
-                    override fun onError(errCode: String) {
-                        uploadAvatarCallBack.onError(errCode)
-                    }
-
-                    override fun onFailure(errCode: String) {
-                        uploadAvatarCallBack.onFailure(errCode)
-                    }
-                })
-        }
-
-
+    override fun send(messageInfoProvider: MessageInfoProvider, onSendMessageResult: CallBack<String, String>) {
+        messageInfoProvider.senderUserId = mFireBaseAuthService.getCurAuthUserId()
+        mFireStoreService.send(messageInfoProvider, onSendMessageResult)
     }
 
-    override fun findUsers(
-        userOrEmail: String,
-        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>
+    override fun getLastMessages(
+        chatId: String,
+        onGetLastMessagesResult: CallBack<List<Messagee>, String>,
+        count: Int?
     ) {
-        mFireStoreService.searchUsers(userOrEmail, mSearchUsersCallBack)
+        mFireStoreService.getLastMessages(chatId, object : CallBack<List<Messagee>, String> {
+            override fun onSuccess(data: List<Messagee>?) {
+                onGetLastMessagesResult.onSuccess(data)
+            }
+
+            override fun onError(errCode: String) {
+            }
+
+            override fun onFailure(errCode: String) {
+            }
+        }, count)
     }
 
-    private fun createUpdateAvatarUrlFirestoreCallBack(
-        uploadAvatarCallBack: CallBack<String, String>,
-        url: String?
-    ): CallBack<Any, String> = object : CallBack<Any, String> {
-        override fun onSuccess(data: Any?) {
-            uploadAvatarCallBack.onSuccess(url)
-        }
-
-        override fun onError(errCode: String) {
-            uploadAvatarCallBack.onError(errCode)
-        }
-
-        override fun onFailure(errCode: String) {
-            uploadAvatarCallBack.onFailure(errCode)
-        }
+    override fun removeCurEventMessageListener() {
+        mFireStoreService.removeCurEventMessageListener()
     }
-
-
 }

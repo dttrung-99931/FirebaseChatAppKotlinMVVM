@@ -23,5 +23,10 @@ class AppConstants {
             R.string.upload,
             R.string.take_a_photo
         )
+
+        val STR_IDS_CLICK_SEARCH_USER_OPTION = listOf (
+            R.string.chat
+        )
     }
+
 }

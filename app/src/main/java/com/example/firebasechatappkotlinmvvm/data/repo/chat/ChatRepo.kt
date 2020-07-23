@@ -1,17 +1,25 @@
-package com.example.firebasechatappkotlinmvvm.data.repo.user
+package com.example.firebasechatappkotlinmvvm.data.repo.chat
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
-import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
-import java.io.InputStream
+import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 
-interface UserRepo: FireBaseAuthService {
-    fun getCurrentAppUser(curAppUserCallBack: CallBack<AppUser, String>)
-    fun uploadAvatar(
-        avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<String, String>
+interface ChatRepo {
+    fun listenForMessageEvent(
+        chatUser: AppUser,
+        onMessageEvent: CallBack<MessageEvent, String>,
+        onListeningSetupResult: CallBack<String, String>
     )
 
-    fun findUsers(userOrEmail: String,
-                  mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>)
+    fun send(
+        messageInfoProvider: MessageInfoProvider,
+        onSendMessageResult: CallBack<String, String>
+    )
+
+    fun getLastMessages(
+        chatId: String,
+        onGetLastMessagesResult: CallBack<List<Messagee>, String>,
+        count: Int? = null
+    )
+
+    fun removeCurEventMessageListener()
 }

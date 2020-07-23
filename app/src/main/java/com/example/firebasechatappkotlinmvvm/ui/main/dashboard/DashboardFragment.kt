@@ -42,6 +42,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
         mTabLayout.getTabAt(0)?.setIcon(R.drawable.ic_chat_24px)
         mTabLayout.getTabAt(1)?.setIcon(R.drawable.ic_explore_24px)
         mTabLayout.getTabAt(2)?.setIcon(R.drawable.ic_profile_24px)
+        mViewPager.offscreenPageLimit = 2
     }
 
     override fun observe() {

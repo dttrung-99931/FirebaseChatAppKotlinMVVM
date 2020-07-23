@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatViewModel" />
+    </data>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/llEnterMsg" />
+
+        <LinearLayout
+            android:id="@+id/llEnterMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/mEdtChat"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="@string/enter_message"
+                android:inputType="text"
+                android:singleLine="false"
+                android:text="@={viewModel.messageInput}"/>
+
+            <ImageButton
+                android:id="@+id/mBtnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:paddingHorizontal="7dp"
+                android:src="@drawable/ic_send_24px"
+                style="@style/ClickAnimStyle"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

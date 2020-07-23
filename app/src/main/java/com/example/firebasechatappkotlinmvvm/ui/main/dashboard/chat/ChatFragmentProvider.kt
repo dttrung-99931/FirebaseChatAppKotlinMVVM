@@ -8,7 +8,7 @@ import dagger.android.ContributesAndroidInjector
  * Created by Trung on 7/10/2020
  */
 @Module
-abstract class ExploreFragmentProvider {
-    @ContributesAndroidInjector(modules = [ExploreFragmentModule::class])
-    abstract fun provideDashboardFragmentFactory() : ExploreFragment
+abstract class ChatFragmentProvider {
+    @ContributesAndroidInjector(modules = [ChatFragmentModule::class])
+    abstract fun provideDashboardFragmentFactory() : ChatFragment
 }

@@ -109,7 +109,7 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
             if (it.avatarUrl.isNotEmpty())
                 Glide.with(requireContext())
                     .load(it.avatarUrl)
-                    .placeholder(R.drawable.ic_no_avatar_50px)
+                    .placeholder(R.drawable.ic_no_avatar_100px)
                     .centerCrop()
                     .into(mImgAvatar)
         })

@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.item_profile_optiion.view.*
 
 class ProfileOptionAdapter(val onItemClickListener: OnItemWithPositionClickListener) :
     RecyclerView.Adapter<ProfileOptionAdapter.ProfileOptionViewHolder>() {
-    var a = 1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileOptionViewHolder {
         val view =  LayoutInflater.from(parent.context)
             .inflate(R.layout.item_profile_optiion, parent, false)

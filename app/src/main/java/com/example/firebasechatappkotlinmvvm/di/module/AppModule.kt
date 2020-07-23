@@ -6,6 +6,8 @@ import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBa
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageServiceImpl
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreServiceImpl
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepo
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepoImpl
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepoImpl
 import com.google.firebase.auth.FirebaseAuth
@@ -52,5 +54,9 @@ class AppModule {
     @Provides
     fun provideFireBaseStorageService(storageImpl: FireBaseStorageServiceImpl) :
             FireBaseStorageService = storageImpl
+
+    @Singleton
+    @Provides
+    fun provideChatRepo(chatRepoImpl: ChatRepoImpl): ChatRepo = chatRepoImpl
 
 }

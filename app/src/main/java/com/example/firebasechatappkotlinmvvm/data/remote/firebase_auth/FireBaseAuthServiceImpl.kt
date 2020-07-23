@@ -10,8 +10,6 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.firestore.auth.User
 import javax.inject.Inject
 
 
@@ -40,7 +38,7 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     val createdUser = it.result?.user
-                    user.uid = createdUser?.uid
+                    user.id = createdUser?.uid
                     fireStoreService.addUser(user, callBack)
                 }
             }
@@ -84,8 +82,11 @@ class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
         auth.signOut()
     }
 
-    override fun getCurrentFirebaseUser(): FirebaseUser? {
+    override fun getCurAuthUser(): FirebaseUser? {
         return auth.currentUser
     }
 
+    override fun getCurAuthUserId(): String {
+        return auth.currentUser!!.uid
+    }
 }

@@ -38,8 +38,8 @@ class UserRepoImpl @Inject constructor(
 
     override fun checkAavailableNickname(
         nickname: String?,
-        unavailableNicknameCallBack: SingleCallBack<Boolean>) {
-        mFireBaseAuthService.checkAavailableNickname(nickname, unavailableNicknameCallBack)
+        availableEmailCallBack: SingleCallBack<Boolean>) {
+        mFireBaseAuthService.checkAavailableNickname(nickname, availableEmailCallBack)
     }
 
     override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
@@ -50,37 +50,28 @@ class UserRepoImpl @Inject constructor(
         mFireBaseAuthService.signOut()
     }
 
-    override fun getCurrentFirebaseUser(): FirebaseUser? {
-        return mFireBaseAuthService.getCurrentFirebaseUser()
+    override fun getCurAuthUser(): FirebaseUser? {
+        return mFireBaseAuthService.getCurAuthUser()
+    }
+
+    override fun getCurAuthUserId(): String {
+        return mFireBaseAuthService.getCurAuthUserId()
     }
 
     // @return AppUser(nickname, avatarUrl, ...)
     // get uid, dislayName (nickname) from firebase auth
     // get avatar link from firebase storage
     override fun getCurrentAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
-        val curFirebaseUser = getCurrentFirebaseUser()
-        if (curFirebaseUser != null) {
-            val curAppUser = AppUser(curFirebaseUser)
-            mStorageService.getAvatarUrl(curAppUser.uid, object : CallBack<String, String> {
-                override fun onSuccess(data: String?) {
-                    curAppUser.avatarUrl = data!!
-                    curAppUserCallBack.onSuccess(curAppUser)
-                }
-
-                override fun onError(errCode: String) {
-                    curAppUserCallBack.onError(errCode)
-                }
-
-                override fun onFailure(errCode: String) {
-                    curAppUserCallBack.onFailure(errCode)
-                }
-            })
+        val curAuthUser = getCurAuthUser()
+        if (curAuthUser != null) {
+            mFireStoreService.getAppUser(curAuthUser.uid,
+                curAppUserCallBack)
         }
         else curAppUserCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
     }
 
     override fun uploadAvatar(avatarInputStream: InputStream?, uploadAvatarCallBack: CallBack<String, String>) {
-        val currentFirebaseUser = getCurrentFirebaseUser()
+        val currentFirebaseUser = getCurAuthUser()
         val uid = currentFirebaseUser?.uid
         if (uid != null){
             mStorageService.uploadAvatar(uid, avatarInputStream,
