@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentSearchUserBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
@@ -62,9 +63,9 @@ class SearchUserFragment : BaseFragment<FragmentSearchUserBinding, SearchUserVie
             object : OnItemWithPositionClickListener {
                 override fun onItemWithPositionClicked(position: Int) {
                     when (position) {
-                        0 -> navigateWithSerializableData(
+                        0 -> navigateWithParcelableData(
                                 R.id.action_searchUserFragment_to_chatFragment,
-                                user, ChatFragment.KEY_USER_CHAT_WITH)
+                                ChatUser.fromAppUser(user), ChatFragment.KEY_CHAT_USER)
                     }
                 }
             }

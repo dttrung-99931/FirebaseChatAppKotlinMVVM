@@ -2,9 +2,7 @@ package com.example.firebasechatappkotlinmvvm.data.remote.firestore
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.MessageEvent
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.MessageInfoProvider
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.*
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
 
@@ -22,14 +20,17 @@ interface FireStoreService {
     fun updateAvatarLink(
         uid: String,
         avatarUrl: String,
-        updateAvatarUrlFirestoreCallBack: CallBack<Any, String>)
+        updateAvatarUrlFirestoreCallBack: CallBack<Any, String>
+    )
 
-    fun searchUsers(userOrEmail: String,
-                    mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>)
+    fun searchUsers(
+        userOrEmail: String,
+        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>
+    )
 
     fun getChatId(
-        chatUser: AppUser,
-        me: AppUser,
+        chatUser: ChatUser,
+        me: ChatUser,
         onGetChatIdResult: CallBack<String, String>
     )
 
@@ -41,7 +42,10 @@ interface FireStoreService {
         onListeningSetupResult: CallBack<String, String>
     )
 
-    fun send(messageInfoProvider: MessageInfoProvider, onSendMessageResult: CallBack<String, String>)
+    fun send(
+        messageInfoProvider: MessageInfoProvider,
+        onSendMessageResult: CallBack<String, String>
+    )
 
     fun getLastMessages(
         chatId: String,
@@ -50,4 +54,8 @@ interface FireStoreService {
     )
 
     fun removeCurEventMessageListener()
+
+    fun getChats(userId: String,
+        onGetChatResult: CallBack<List<Chat>, String>, count: Int?
+    )
 }

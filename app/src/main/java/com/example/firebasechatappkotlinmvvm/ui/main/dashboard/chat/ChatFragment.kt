@@ -6,21 +6,18 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
-import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
-import com.google.android.gms.common.internal.service.Common
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.android.synthetic.main.fragment_search_user.*
 import kotlinx.android.synthetic.main.fragment_search_user.mRecyclerView
 import javax.inject.Inject
 
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     companion object{
-        const val KEY_USER_CHAT_WITH = "USER_CHAT_WITH"
+        const val KEY_CHAT_USER = "USER_CHAT_WITH"
     }
 
     @Inject
@@ -41,12 +38,13 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        vm.setupChat(arguments?.getSerializable(KEY_USER_CHAT_WITH) as AppUser)
+        vm.setupChat(arguments?.getParcelable(KEY_CHAT_USER)!!)
     }
 
     val onMsgClickListener : OnItemClickListener<Messagee> =
         object : OnItemClickListener<Messagee> {
             override fun onItemClicked(position: Int, itemData: Messagee) {
+
             }
         }
 

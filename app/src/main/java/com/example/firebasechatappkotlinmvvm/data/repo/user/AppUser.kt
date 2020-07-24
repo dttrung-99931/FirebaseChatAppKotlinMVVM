@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.user
 
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Exclude
@@ -17,6 +18,10 @@ data class AppUser(var nickname: String  = "",
                    @get: Exclude var password: String = "",
                    var avatarUrl: String = "",
                    @get: Exclude var id: String? = ""): Serializable {
+
+    fun toChatUser(): ChatUser {
+        return ChatUser(id!!, nickname, avatarUrl)
+    }
 
     constructor(firebaseUser: FirebaseUser) :
             this(id = firebaseUser.uid)

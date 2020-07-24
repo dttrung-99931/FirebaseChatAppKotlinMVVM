@@ -18,6 +18,7 @@ import javax.inject.Inject
  */
 class FireBaseAuthServiceImpl @Inject constructor(val auth: FirebaseAuth,
     val fireStoreService: FireStoreService): FireBaseAuthService {
+    lateinit var curAppUser: AppUser
 
     override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
         auth.signInWithEmailAndPassword(appUser.email, appUser.password)

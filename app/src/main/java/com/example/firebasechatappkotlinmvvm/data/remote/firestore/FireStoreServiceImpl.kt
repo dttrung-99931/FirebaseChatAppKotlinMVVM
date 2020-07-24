@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Source
 import javax.inject.Inject
 
 
@@ -29,7 +30,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
         const val COLLECTION_CHATS = "chats"
         const val COLLECTION_MESSAGES = "messages"
-        const val FIELD_CHAT_USER_ID = "chatUserId"
+        const val PATH_CHAT_USER_ID = "chatUser.id"
         const val FIELD_MSG_LIST = "msgList"
         const val FIELD_MESSAGE = "message"
         const val FIELD_CREATED_AT = "createdAt"
@@ -129,13 +130,13 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         .document(uid)
 
     override fun getChatId(
-        chatUser: AppUser,
-        me: AppUser,
+        chatUser: ChatUser,
+        me: ChatUser,
         onGetChatIdResult: CallBack<String, String>
     ) {
-        userDocument(me.id!!)
+        userDocument(me.id)
             .collection(COLLECTION_CHATS)
-            .whereEqualTo(FIELD_CHAT_USER_ID, chatUser.id)
+            .whereEqualTo(PATH_CHAT_USER_ID, chatUser.id)
             .get()
             .addOnSuccessListener {
                 if (!it.isEmpty) {
@@ -237,14 +238,30 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         }
     }
 
+    override fun getChats(
+        userId: String,
+        onGetChatResult: CallBack<List<Chat>, String>,
+        count: Int?
+    ) {
+        userDocument(userId)
+            .collection(COLLECTION_CHATS)
+            .get()
+            .addOnSuccessListener {
+                onGetChatResult.onSuccess(Chat.createList(it.documents))
+            }
+            .addOnFailureListener {
+                CommonUtil.log("getChats error: ${it.message}" )
+            }
+    }
+
     private fun chatDocument(id: String) = firestore
         .collection(COLLECTION_CHATS)
         .document(id)
 
 
     private fun createChatAndGetChatId(
-        chatUser: AppUser,
-        me: AppUser,
+        chatUser: ChatUser,
+        me: ChatUser,
         onGetChatIdResult: CallBack<String, String>
     ) {
         firestore
@@ -252,11 +269,11 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .add(mapOf("o" to "")) // just to create a new document
             .addOnSuccessListener {
                 val chatId = it.id
-                createChatForUser(me.id!!, chatUser.id!!, chatId)
+                createChatForUser(me, chatUser, chatId)
                     .addOnSuccessListener {
                         if (chatUser.id!! != me.id!!)
-                            createChatForUser(chatUser.id!!, me.id!!, chatId)
-                                .addOnCanceledListener {
+                            createChatForUser(chatUser, me, chatId)
+                                .addOnSuccessListener {
                                     onGetChatIdResult.onSuccess(chatId)
                                 }
                                 .addOnFailureListener {
@@ -274,14 +291,14 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     private fun createChatForUser(
-        userId: String,
-        chatUserId: String,
+        meUser: ChatUser,
+        otherUser: ChatUser,
         chatId: String
     ): Task<Void> {
-        return userDocument(userId)
+        return userDocument(meUser.id)
             .collection(COLLECTION_CHATS)
             .document(chatId)
-            .set(UserChat(chatUserId))
+            .set(Chat(otherUser))
     }
 
 }

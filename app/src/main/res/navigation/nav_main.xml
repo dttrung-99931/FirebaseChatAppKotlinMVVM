@@ -9,6 +9,9 @@
         <action
             android:id="@+id/action_dashboardFragment_to_searchUserFragment"
             app:destination="@id/searchUserFragment" />
+        <action
+            android:id="@+id/action_dashboardFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchUserFragment"

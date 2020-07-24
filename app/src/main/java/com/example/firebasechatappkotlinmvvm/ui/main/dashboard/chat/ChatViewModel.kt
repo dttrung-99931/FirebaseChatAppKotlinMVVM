@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.*
-import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
 import com.google.firebase.firestore.DocumentChange
@@ -19,7 +18,7 @@ import javax.inject.Provider
 class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: UserRepo) :
     BaseViewModel() {
 
-    lateinit var chatUser: AppUser
+    lateinit var chatUser: ChatUser
     lateinit var curChatId: String
 
     // bind with mEdtChat
@@ -90,9 +89,9 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
             }
         }
 
-    fun setupChat(chatUser: AppUser) {
+    fun setupChat(chatUser: ChatUser) {
         this.chatUser = chatUser
-        chatRepo.listenForMessageEvent(chatUser, onMessageEvent, onListenerSetupResult)
+        chatRepo.setupChat(chatUser, onMessageEvent, onListenerSetupResult)
     }
 
     class Factory(val provider: Provider<ChatViewModel>) : ViewModelProvider.Factory {

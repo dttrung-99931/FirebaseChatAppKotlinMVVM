@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list
 
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepo
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import dagger.Module
 import dagger.Provides
@@ -12,7 +13,8 @@ import javax.inject.Provider
 @Module
 class ChatListFragmentModule {
     @Provides
-    fun provideDashboardViewModel(userRepo: UserRepo) = ChatListViewModel(userRepo)
+    fun provideDashboardViewModel(chatRepo: ChatRepo, userRepo: UserRepo)
+            = ChatListViewModel(chatRepo, userRepo)
 
     @Provides
     fun provideFactory(provider: Provider<ChatListViewModel>)

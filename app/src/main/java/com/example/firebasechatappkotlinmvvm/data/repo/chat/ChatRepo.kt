@@ -1,11 +1,10 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.chat
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
-import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 
 interface ChatRepo {
-    fun listenForMessageEvent(
-        chatUser: AppUser,
+    fun setupChat(
+        otherChatUser: ChatUser,
         onMessageEvent: CallBack<MessageEvent, String>,
         onListeningSetupResult: CallBack<String, String>
     )
@@ -22,4 +21,10 @@ interface ChatRepo {
     )
 
     fun removeCurEventMessageListener()
+
+    fun getChats(
+        userId: String,
+        onGetChatResult: CallBack<List<Chat>, String>,
+        count: Int? = null
+    )
 }

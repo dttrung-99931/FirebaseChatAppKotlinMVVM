@@ -5,7 +5,6 @@ import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseA
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import javax.inject.Inject
 
 
@@ -19,17 +18,39 @@ class ChatRepoImpl @Inject constructor(
 ):
     ChatRepo {
 
-
-    override fun listenForMessageEvent(
-        chatUser: AppUser,
+    override fun setupChat(
+        otherChatUser: ChatUser,
         onMessageEvent: CallBack<MessageEvent, String>,
         onListeningSetupResult: CallBack<String, String>
     ) {
-        val me = AppUser(mFireBaseAuthService.getCurAuthUser()!!)
-        mFireStoreService.getChatId(chatUser, me,
+        mFireStoreService.getAppUser(mFireBaseAuthService.getCurAuthUserId(),
+            object : CallBack<AppUser, String> {
+            override fun onSuccess(data: AppUser?) {
+                getChatIdThenListenChat( // if chat is not exists then create chat
+                    data!!.toChatUser(), otherChatUser,
+                    onMessageEvent, onListeningSetupResult)
+            }
+
+            override fun onError(errCode: String) {
+            }
+
+            override fun onFailure(errCode: String) {
+            }
+        })
+
+    }
+
+    private fun getChatIdThenListenChat(
+        meChatUser: ChatUser,
+        otherChatUser: ChatUser,
+        onMessageEvent: CallBack<MessageEvent, String>,
+        onListeningSetupResult: CallBack<String, String>
+    ) {
+        mFireStoreService.getChatId(otherChatUser, meChatUser,
             object : CallBack<String, String> {
                 override fun onSuccess(data: String?) {
-                    mFireStoreService.listenForMessageEvent(data!!, onMessageEvent, onListeningSetupResult)
+                    mFireStoreService.listenForMessageEvent(data!!,
+                        onMessageEvent, onListeningSetupResult)
                 }
 
                 override fun onError(errCode: String) {
@@ -65,5 +86,13 @@ class ChatRepoImpl @Inject constructor(
 
     override fun removeCurEventMessageListener() {
         mFireStoreService.removeCurEventMessageListener()
+    }
+
+    override fun getChats(
+        userId: String,
+        onGetChatResult: CallBack<List<Chat>, String>,
+        count: Int?
+    ) {
+        mFireStoreService.getChats(userId, onGetChatResult, count)
     }
 }

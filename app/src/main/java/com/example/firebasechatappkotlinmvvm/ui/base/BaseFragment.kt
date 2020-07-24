@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.findNavController
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
@@ -21,7 +26,7 @@ import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
 import java.io.Serializable
 
-abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewModel> : Fragment() {
+abstract class BaseFragment<TViewBinding : ViewDataBinding, TVModel : BaseViewModel> : Fragment() {
     lateinit var vm: TVModel
     lateinit var viewBinding: TViewBinding
     lateinit var mBaseActivity: BaseActivity
@@ -38,11 +43,14 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
         vm = getVM()
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-        container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
 
         viewBinding = DataBindingUtil.inflate(
-            inflater, getLayoutResId(), container, false)
+            inflater, getLayoutResId(), container, false
+        )
         return viewBinding.root
     }
 
@@ -63,17 +71,17 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
         })
     }
 
-    fun setupViewBinding(){
+    fun setupViewBinding() {
         viewBinding.lifecycleOwner = this
         viewBinding.setVariable(getVMBindingVarId(), vm)
         viewBinding.executePendingBindings()
     }
 
-    fun showToastMsg(msg: String){
+    fun showToastMsg(msg: String) {
         Toast.makeText(this.context, msg, Toast.LENGTH_SHORT)?.show()
     }
 
-    fun showToastMsg(msgResId: Int){
+    fun showToastMsg(msgResId: Int) {
         Toast.makeText(this.context, msgResId, Toast.LENGTH_SHORT)?.show()
     }
 
@@ -95,21 +103,21 @@ abstract class BaseFragment<TViewBinding: ViewDataBinding, TVModel: BaseViewMode
         findNavController().navigate(actionResId)
     }
 
-    protected fun navigateWithSerializableData(actionResId: Int, data: Any, dataKey: String){
-        if (data is Serializable) {
-            val bundle = Bundle()
-            bundle.putSerializable(dataKey, data)
-            findNavController().navigate(actionResId, bundle)
-        } else throw Exception("data param must to implement Serializable")
+    protected fun navigateWithParcelableData(actionResId: Int, data: Parcelable, dataKey: String) {
+        val bundle = Bundle()
+        bundle.putParcelable(dataKey, data)
+        findNavController().navigate(actionResId, bundle)
     }
 
     protected fun popBackFragment() {
         findNavController().popBackStack()
     }
 
-    fun showConfirmDialog(msgResId: Int,
-                          onYes: DialogInterface.OnClickListener,
-                          onNo: DialogInterface.OnClickListener? = null){
+    fun showConfirmDialog(
+        msgResId: Int,
+        onYes: DialogInterface.OnClickListener,
+        onNo: DialogInterface.OnClickListener? = null
+    ) {
         mBaseActivity.showConfirmDialog(msgResId, onYes, onNo)
     }
 
