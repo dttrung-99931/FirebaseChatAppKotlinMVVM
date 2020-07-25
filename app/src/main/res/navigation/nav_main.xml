@@ -7,18 +7,7 @@
         android:name="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragment"
         android:label="DashboardFragment" >
         <action
-            android:id="@+id/action_dashboardFragment_to_searchUserFragment"
-            app:destination="@id/searchUserFragment" />
-        <action
             android:id="@+id/action_dashboardFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/searchUserFragment"
-        android:name="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserFragment"
-        android:label="SearchUserFragment" >
-        <action
-            android:id="@+id/action_searchUserFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
     <fragment

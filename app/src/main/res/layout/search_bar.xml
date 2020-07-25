@@ -1,43 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/search_bar"
-    android:layout_width="250dp"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/shape_search_bar"
-    android:padding="4dp"
-    style="@style/ClickAnimStyle"
-    tools:showIn="@layout/fragment_dashboard"
-    android:layout_marginStart="5dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel" />
+    </data>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/search_bar"
+        style="@style/ClickAnimStyle"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="3dp">
+        tools:showIn="@layout/fragment_explore">
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="2dp"
-            android:src="@drawable/ic_search_32px"
-            android:layout_marginTop="1dp"/>
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_search_32px" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/mEdtSearch"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/search"
-            android:textSize="16sp"/>
+            android:background="@drawable/shape_search_bar"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:paddingHorizontal="28dp"
+            android:paddingVertical="5dp"
+            android:textSize="15sp"
+            android:text="@={viewModel.searchText}"/>
 
-    </LinearLayout>
+        <ImageButton
+            style="@style/ClickAnimStyle"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="3dp"
+            android:background="@null"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_voice_search_24dp" />
 
-    <ImageButton
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_voice_search_24dp"
-        android:background="@null"
-        android:layout_alignParentEnd="true"
-        android:scaleType="centerCrop"
-        style="@style/ClickAnimStyle" />
-
-</RelativeLayout>
+    </RelativeLayout>
+</layout>

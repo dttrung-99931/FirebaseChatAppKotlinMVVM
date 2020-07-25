@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user
+package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore
 
 import android.view.LayoutInflater
 import android.view.View

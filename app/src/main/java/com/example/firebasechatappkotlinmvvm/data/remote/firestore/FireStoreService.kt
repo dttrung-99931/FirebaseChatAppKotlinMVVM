@@ -4,7 +4,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.*
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 
 
 /**
@@ -25,7 +25,7 @@ interface FireStoreService {
 
     fun searchUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>
+        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     )
 
     fun getChatId(

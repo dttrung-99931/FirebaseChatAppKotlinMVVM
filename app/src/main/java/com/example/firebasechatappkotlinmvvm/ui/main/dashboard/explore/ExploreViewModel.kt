@@ -7,7 +7,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
-import com.example.firebasechatappkotlinmvvm.util.AppConstants
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -16,43 +16,42 @@ import javax.inject.Provider
  * Created by Trung on 7/10/2020
  */
 class ExploreViewModel @Inject constructor(val userRepo: UserRepo): BaseViewModel() {
-    val usernameOrEmail = MutableLiveData<String>()
-    val password = MutableLiveData<String>()
-    val onLoginFailure = MutableLiveData<String>()
+    val searchText = MutableLiveData("")
 
-    val onLoginSuccess = MutableLiveData<Unit>()
+    val searchUsers = MutableLiveData<List<AppUser>>()
 
-    private val mLoginCallBack: CallBack<Unit, String> =
-        object : CallBack<Unit, String> {
-            override fun onSuccess(data: Unit?) {
-                onLoginSuccess.postValue(Unit)
-                isLoading.postValue(false)
+    var latestStartSearchTimeInMilis = Calendar.getInstance().timeInMillis
+
+    private val mSearchUsersCallBack: CallBack<SearchUserResult, String> =
+        object : CallBack<SearchUserResult, String> {
+            override fun onSuccess(data: SearchUserResult?) {
+                // Update search results if the results are earlier
+                if (latestStartSearchTimeInMilis <
+                    data!!.searchingStartTimeInMilis){
+                    searchUsers.postValue(data.users)
+                    latestStartSearchTimeInMilis = data.searchingStartTimeInMilis
+                }
             }
 
             override fun onError(errCode: String) {
                 onError.postValue(errCode)
-                isLoading.postValue(false)
             }
 
             override fun onFailure(errCode: String) {
-                onLoginFailure.postValue(errCode)
-                isLoading.postValue(false)
             }
         }
 
-    fun onBtnLoginClicked(){
-        isLoading.value = true
-        if (usernameOrEmail.value.isNullOrEmpty() ||
-            password.value.isNullOrEmpty()){
-            onLoginFailure.value = AppConstants.AuthErr.LOGIN_FAILED
-            isLoading.value = false
-        }
-        else {
-            val appUser = AppUser("", usernameOrEmail.value!!, password.value!!)
-            userRepo.login(appUser, mLoginCallBack)
-        }
+    fun onSearchTextChanged() {
+        userRepo.findUsers(searchText.value!!, mSearchUsersCallBack)
     }
 
+    // Use searchingStartTime, searchText to prepare async search results
+    // that have unordered finish
+    data class SearchUserResult(
+        val searchText: String,
+        var users: List<AppUser>? = null,
+        val searchingStartTimeInMilis: Long = Calendar.getInstance().timeInMillis
+    )
 
     class Factory(val provider: Provider<ExploreViewModel>): ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

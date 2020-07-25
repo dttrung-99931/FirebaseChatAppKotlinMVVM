@@ -12,7 +12,6 @@ import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.android.synthetic.main.fragment_search_user.mRecyclerView
 import javax.inject.Inject
 
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {

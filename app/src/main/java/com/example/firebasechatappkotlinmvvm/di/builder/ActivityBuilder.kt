@@ -10,7 +10,6 @@ import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatFragment
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list.ChatListFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.ProfileFragmentProvider
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.start.StartActivity
 import com.example.firebasechatappkotlinmvvm.ui.start.StartActivityModule
 import dagger.Module
@@ -27,7 +26,6 @@ abstract class ActivityBuilder {
         DashboardFragmentProvider::class,
         ChatListFragmentProvider::class,
         ProfileFragmentProvider::class,
-        SearchUserFragmentProvider::class,
         ChatFragmentProvider::class,
         ExploreFragmentProvider::class
     ])

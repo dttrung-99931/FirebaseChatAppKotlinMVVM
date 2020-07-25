@@ -5,7 +5,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.*
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.search_user.SearchUserViewModel
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.android.gms.tasks.Task
@@ -92,9 +92,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun searchUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>
+        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     ) {
-        val searchUserResult = SearchUserViewModel.SearchUserResult(userOrEmail)
+        val searchUserResult = ExploreViewModel.SearchUserResult(userOrEmail)
         firestore.collection(COLLECTION_USERS)
             // find users by nickname first
             .whereEqualTo(FIELD_NICKNAME, userOrEmail)
@@ -112,8 +112,8 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     private fun searchUsersByEmail(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<SearchUserViewModel.SearchUserResult, String>,
-        searchUserResult: SearchUserViewModel.SearchUserResult
+        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>,
+        searchUserResult: ExploreViewModel.SearchUserResult
     ) {
         firestore.collection(COLLECTION_USERS)
             .whereEqualTo(FIELD_EMAIL, userOrEmail)
