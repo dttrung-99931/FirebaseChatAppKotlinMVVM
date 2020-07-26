@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.google.firebase.firestore.DocumentSnapshot
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CommonUtil {
     companion object{
@@ -34,5 +36,6 @@ class CommonUtil {
             }
             return  messages
         }
+
     }
 }

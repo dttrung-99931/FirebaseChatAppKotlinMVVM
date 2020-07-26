@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    style="@style/ClickAnimStyle">
+
     <TextView
-        android:id="@+id/mTvMsg"
+        android:id="@+id/mTvTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="7dp"
+        android:text="6:09"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textSize="12sp"/>
+
+    <TextView
+        android:id="@+id/mTvMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="7dp"
+        android:paddingHorizontal="10dp"
         android:background="@drawable/shape_chat_me"
-        android:text="Heloooooooo"
-        android:textSize="17sp"
+        android:text="Hello. What's your name?"
+        android:textSize="16sp"
         android:textColor="#ffffff"
-        android:layout_marginStart="100dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="2dp"
+        android:layout_below="@id/mTvTime"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:gravity="center"
         />
-</LinearLayout>
+</RelativeLayout>

@@ -3,10 +3,7 @@ package com.example.firebasechatappkotlinmvvm.data.repo.chat
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.Exclude
-import com.google.firebase.firestore.ServerTimestamp
+import com.google.firebase.firestore.*
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList

@@ -14,7 +14,8 @@
             android:id="@+id/mRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/llEnterMsg" />
+            android:layout_above="@id/llEnterMsg"
+            android:paddingTop="0dp"/>
 
         <LinearLayout
             android:id="@+id/llEnterMsg"

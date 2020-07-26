@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
@@ -58,7 +59,19 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     }
 
     private fun setupChatRecyclerView() {
-        mRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val linearLayout = LinearLayoutManager(requireContext())
+        mRecyclerView.layoutManager = linearLayout
+
+        // Make recycler view raise items in bottom up
+        // when the keyboard shown
+        mRecyclerView.addOnLayoutChangeListener { v, left, top, right, bottom,
+                                                  oldLeft, oldTop, oldRight, oldBottom ->
+            if (bottom < oldBottom)
+                mRecyclerView.postDelayed(Runnable {
+                    mRecyclerView.scrollToPosition(chatAdapter.itemCount-1)
+                }, 50)
+        }
+
         chatAdapter.meId = vm.meId
         mRecyclerView.adapter = chatAdapter
     }
