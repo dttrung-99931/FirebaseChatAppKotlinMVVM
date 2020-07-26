@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

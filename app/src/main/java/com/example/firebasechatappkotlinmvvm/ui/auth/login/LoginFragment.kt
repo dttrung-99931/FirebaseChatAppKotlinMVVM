@@ -6,6 +6,7 @@ import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentLoginBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
+import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import javax.inject.Inject

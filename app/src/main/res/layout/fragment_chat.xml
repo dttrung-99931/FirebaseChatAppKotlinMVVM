@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatViewModel" />
+            type="com.example.firebasechatappkotlinmvvm.ui.chat.chat.ChatViewModel" />
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

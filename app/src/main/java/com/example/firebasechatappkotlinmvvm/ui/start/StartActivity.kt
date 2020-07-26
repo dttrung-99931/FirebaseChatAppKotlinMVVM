@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseActivity
+import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
 import dagger.android.AndroidInjection
 import javax.inject.Inject

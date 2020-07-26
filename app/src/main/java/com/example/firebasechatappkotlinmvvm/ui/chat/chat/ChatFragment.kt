@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
 import android.os.Bundle
 import androidx.lifecycle.Observer

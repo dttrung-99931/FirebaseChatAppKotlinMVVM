@@ -1,16 +1,11 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard
 
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentDashboardBinding
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentLoginBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
-import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
-import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import kotlinx.android.synthetic.main.fragment_dashboard.*
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepo
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo

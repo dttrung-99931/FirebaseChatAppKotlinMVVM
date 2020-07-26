@@ -1,4 +1,4 @@
-package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat
+package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

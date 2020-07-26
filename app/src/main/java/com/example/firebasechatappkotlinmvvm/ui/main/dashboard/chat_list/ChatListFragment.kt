@@ -10,8 +10,7 @@ import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatListBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatFragment
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
+import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
 import kotlinx.android.synthetic.main.fragment_chat_list.*
 import javax.inject.Inject
 
@@ -39,9 +38,10 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
     private val onChatItemClick: OnItemClickListener<Chat> =
         object : OnItemClickListener<Chat> {
             override fun onItemClicked(position: Int, itemData: Chat) {
-                navigateWithParcelableData(
-                    R.id.action_dashboardFragment_to_chatFragment,
-                    itemData.chatUser, ChatFragment.KEY_CHAT_USER)
+//                navigateWithParcelableData(
+//                    R.id.action_dashboardFragment_to_chatFragment,
+//                    itemData.chatUser, ChatFragment.KEY_CHAT_USER)
+                ChatActivity.open(requireContext(), itemData.chatUser)
             }
         }
 

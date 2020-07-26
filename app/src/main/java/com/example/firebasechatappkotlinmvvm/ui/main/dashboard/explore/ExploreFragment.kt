@@ -14,7 +14,7 @@ import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemWithPositionClickListener
 import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFragment
-import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat.ChatFragment
+import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import kotlinx.android.synthetic.main.fragment_explore.*
@@ -70,9 +70,7 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>()
             object : OnItemWithPositionClickListener {
                 override fun onItemWithPositionClicked(position: Int) {
                     when (position) {
-                        0 -> navigateWithParcelableData(
-                            R.id.action_dashboardFragment_to_chatFragment,
-                            ChatUser.fromAppUser(user), ChatFragment.KEY_CHAT_USER)
+                        0 -> ChatActivity.open(requireContext(), user.toChatUser())
                     }
                 }
             }
