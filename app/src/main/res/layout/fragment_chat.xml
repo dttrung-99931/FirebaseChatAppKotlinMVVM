@@ -24,7 +24,7 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-            <EditText
+            <com.vanniktech.emoji.EmojiEditText
                 android:id="@+id/mEdtChat"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -32,7 +32,8 @@
                 android:hint="@string/enter_message"
                 android:inputType="text"
                 android:singleLine="false"
-                android:text="@={viewModel.messageInput}"/>
+                android:text="@={viewModel.messageInput}"
+                android:drawableEnd="@drawable/ic_smile_24px"/>
 
             <ImageButton
                 android:id="@+id/mBtnSend"

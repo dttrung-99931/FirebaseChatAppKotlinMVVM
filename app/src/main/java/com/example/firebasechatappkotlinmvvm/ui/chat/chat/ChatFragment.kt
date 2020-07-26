@@ -1,17 +1,19 @@
 package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
+import com.example.firebasechatappkotlinmvvm.util.AppConstants
+import com.vanniktech.emoji.EmojiPopup
 import kotlinx.android.synthetic.main.fragment_chat.*
 import javax.inject.Inject
 
@@ -28,7 +30,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     }
 
     override fun getVMBindingVarId(): Int {
-        return BR.viewModel;
+        return BR.viewModel
     }
 
     override fun getVM(): ChatViewModel {
@@ -56,13 +58,34 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
             vm.onBtnSendClicked()
             mEdtChat.setText("")
         }
+        setupEdtChat()
+    }
+
+    lateinit var mEmojiChoosePopup: EmojiPopup
+
+    private fun setupEdtChat() {
+        mEmojiChoosePopup = EmojiPopup.Builder.fromRootView(view).build(mEdtChat)
+
+        mEdtChat.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+
+                if(event!!.action == MotionEvent.ACTION_UP) {
+                    if(event.rawX >= (mEdtChat.right - mEdtChat.compoundDrawables
+                                [AppConstants.View.DRAWABLE_RIGHT].bounds.width())) {
+                        mEmojiChoosePopup.toggle()
+                        return true
+                    }
+                }
+                return false
+            }
+        })
     }
 
     private fun setupChatRecyclerView() {
         val linearLayout = LinearLayoutManager(requireContext())
         mRecyclerView.layoutManager = linearLayout
 
-        // Make recycler view raise items in bottom up
+        // Make recycler view raise messages in bottom up
         // when the keyboard shown
         mRecyclerView.addOnLayoutChangeListener { v, left, top, right, bottom,
                                                   oldLeft, oldTop, oldRight, oldBottom ->

@@ -8,8 +8,8 @@ import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewHolder
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
-import com.example.firebasechatappkotlinmvvm.util.extension.equalDay
 import com.example.firebasechatappkotlinmvvm.util.extension.format
+import com.example.firebasechatappkotlinmvvm.util.extension.subInMilis
 import kotlinx.android.synthetic.main.item_chat_me.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -56,10 +56,6 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
         notifyItemInserted(messages.size - 1)
     }
 
-    // Used to check whether showing short or long message time
-    // if long time between 2 continuous messages
-    var theSameDay: Date? = null
-
     inner class ChatViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bindView(position: Int) {
             setData(position)
@@ -78,31 +74,54 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
             val message = messages[position]
             itemView.mTvMsg.text = message.content
             setTime(message, position)
-            showTimeIfLongSpace(message, position)
+            showTimeIfLongTimeSpacing(message, position)
         }
 
+        // Set time for message
+        // If the next msg has time with the same day/month/year
+        // then just show time in HH:mm for it
+        // Otherwise show full time in HH:mm dd/MM/yyyy
         private fun setTime(message: Messagee, position: Int) {
             if (message.createdAt == null) {
                 itemView.mTvTime.text = ""
                 return
             }
 
-            if (theSameDay != null && theSameDay!!.equalDay(message.createdAt))
-                itemView.mTvTime.text = message.createdAt?.format("HH:mm")
-            else {
-                itemView.mTvTime.text = message.createdAt?.format("HH:mm dd/MM/yyyy")
-                theSameDay = message.createdAt
-            }
+            val pattern: String = createPatternByCurDate(message.createdAt)
+
+            itemView.mTvTime.text = message.createdAt?.format(pattern)
         }
 
-        private fun showTimeIfLongSpace(message: Messagee, position: Int) {
-            if (message.createdAt == null) return;
-            if (layoutPosition > 0) {
-                val prevMessage = messages[position - 1]
-                val timeSpace = message.createdAt?.time!! - prevMessage.createdAt?.time!!
-                if (timeSpace > 60 * 60 * 1000)
-                    itemView.mTvTime.visibility = View.VISIBLE
-            } else itemView.mTvTime.visibility = View.VISIBLE
+        private fun createPatternByCurDate(createdAt: Date): String {
+            val now = Calendar.getInstance().time
+            return if (createdAt.year == now.year)
+                if (createdAt.month == now.month)
+                    if (createdAt.day == now.day) "HH:mm"
+                    else "HH:mm EEE"
+                else "HH:mm MMM, dd"
+            else "HH:mm MMM, dd, yyyy"
+        }
+
+        // By default msg time is gone
+        // This func check if the spacing time is long then show the time
+        private fun showTimeIfLongTimeSpacing(message: Messagee, position: Int) {
+            if (message.createdAt == null) {
+                // When message.createdAt = null and If the
+                // recycler item view is visible, then hide it
+                if (itemView.mTvTime.visibility == View.VISIBLE)
+                    itemView.mTvTime.visibility = View.GONE
+                return
+            }
+
+            val timeSpacing: Long
+            if (position > 0)
+                timeSpacing = message.createdAt.subInMilis(
+                    messages[position-1].createdAt!!)
+            else timeSpacing = messages[1].createdAt!!.subInMilis(
+                message.createdAt)
+
+            if (timeSpacing > 2 * 60 * 1000) // timeSpacing > 2 minutes
+                itemView.mTvTime.visibility = View.VISIBLE
         }
     }
 }

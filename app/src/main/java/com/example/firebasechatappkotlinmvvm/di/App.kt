@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.Fragment
 import com.example.firebasechatappkotlinmvvm.di.component.DaggerAppComponent
+import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.ios.IosEmojiProvider
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -24,6 +26,8 @@ class App: Application(), HasActivityInjector{
             .application(this)
             .build()
             .inject(this)
+
+        EmojiManager.install(IosEmojiProvider())
     }
 
 }

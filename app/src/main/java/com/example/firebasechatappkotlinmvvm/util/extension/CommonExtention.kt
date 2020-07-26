@@ -22,6 +22,10 @@ fun Date.equalDay(date: Date): Boolean {
            year == date.year;
 }
 
+fun Date.subInMilis(date: Date): Long {
+    return time - date.time
+}
+
 val gson = Gson()
 
 //convert a data class to a map
