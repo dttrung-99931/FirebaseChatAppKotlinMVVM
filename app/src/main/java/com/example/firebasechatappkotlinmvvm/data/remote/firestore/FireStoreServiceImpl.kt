@@ -161,6 +161,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         onMessageEvent: CallBack<MessageEvent, String>,
         onListeningSetupResult: CallBack<String, String>
     ) {
+        onListeningSetupResult.onSuccess(chatId)
         ignoredDocumentsChangedEventsAfterSetListener = false
         listenRemover = chatDocument(chatId)
             .collection(COLLECTION_MESSAGES)
@@ -175,10 +176,6 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     notifyMessageEvent(value, onMessageEvent)
                 }
             }
-
-        // Still don't find a way to know listening setup is successfully
-        // so assume if no error the success is after call the addSnapshotListener
-        onListeningSetupResult.onSuccess(chatId)
     }
 
     private fun notifyMessageEvent(
@@ -220,11 +217,21 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .collection(COLLECTION_MESSAGES)
             // Do not implement pagination wit count param
             .orderBy(FIELD_CREATED_AT)
-            .get()
+            .get(Source.CACHE)
             .addOnSuccessListener {
                 onGetLastMessagesResult.onSuccess(
                     CommonUtil.toMessagesFromMessageDocuments(it.documents)
                 )
+                chatDocument(chatId)
+                    .collection(COLLECTION_MESSAGES)
+                    // Do not implement pagination wit count param
+                    .orderBy(FIELD_CREATED_AT)
+                    .get()
+                    .addOnSuccessListener { it1 ->
+                        onGetLastMessagesResult.onSuccess(
+                            CommonUtil.toMessagesFromMessageDocuments(it1.documents)
+                        )
+                    }
             }
             .addOnFailureListener {
                 CommonUtil.log("getLastMessages err: ${it.message}")
@@ -244,9 +251,22 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     ) {
         userDocument(userId)
             .collection(COLLECTION_CHATS)
-            .get()
+            .get(Source.CACHE)
             .addOnSuccessListener {
-                onGetChatResult.onSuccess(Chat.createList(it.documents))
+                // Display cached chats first
+                val cachedChats = Chat.createList(it.documents)
+                onGetChatResult.onSuccess(cachedChats)
+
+                userDocument(userId)
+                    .collection(COLLECTION_CHATS)
+                    .get()
+                    .addOnSuccessListener {
+                        val refreshChats = Chat.createList(it.documents)
+                        onGetChatResult.onSuccess(refreshChats)
+                    }
+                    .addOnFailureListener {
+                        CommonUtil.log("getChats refresh error: ${it.message}" )
+                    }
             }
             .addOnFailureListener {
                 CommonUtil.log("getChats error: ${it.message}" )
@@ -268,12 +288,12 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .add(mapOf("o" to "")) // just to create a new document
             .addOnSuccessListener {
                 val chatId = it.id
+                onGetChatIdResult.onSuccess(chatId)
                 createChatForUser(me, chatUser, chatId)
                     .addOnSuccessListener {
                         if (chatUser.id!! != me.id!!)
                             createChatForUser(chatUser, me, chatId)
                                 .addOnSuccessListener {
-                                    onGetChatIdResult.onSuccess(chatId)
                                 }
                                 .addOnFailureListener {
                                     CommonUtil.log("createChatAndGetChatId createUserChat(chatUser) failed ${it.message}")

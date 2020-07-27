@@ -19,6 +19,8 @@ import kotlinx.android.synthetic.main.item_text_msg_me.view.*
 class ChatListAdapter(val onChatClickListener: OnItemClickListener<Chat>) :
     RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
+    val areCachedChats = true
+
     var chats: MutableList<Chat> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {

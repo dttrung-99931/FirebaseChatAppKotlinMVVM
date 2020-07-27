@@ -34,35 +34,52 @@
 
                 <ImageButton
                     android:id="@+id/mBtnMediaMsgMenu"
+                    style="@style/ClickAnimStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_msg_option_menu_16px"
                     android:background="@null"
                     android:padding="5dp"
-                    style="@style/ClickAnimStyle"/>
+                    android:src="@drawable/ic_msg_option_menu_16px" />
 
                 <com.vanniktech.emoji.EmojiEditText
                     android:id="@+id/mEdtChat"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:drawableEnd="@drawable/ic_smile_24px"
                     android:hint="@string/enter_message"
-                    android:inputType="text"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
                     android:singleLine="false"
-                    android:text="@={viewModel.messageInput}"
-                    android:maxLines="5"/>
+                    android:text="@={viewModel.messageInput}" />
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/mBtnSend"
-                style="@style/ClickAnimStyle"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@null"
-                android:paddingHorizontal="7dp"
-                android:src="@drawable/ic_send_24px" />
+                android:layout_gravity="center_vertical">
+
+                <ProgressBar
+                    android:id="@+id/mProgressLoadChat"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:paddingHorizontal="7dp"
+                    android:layout_gravity="center"
+                    android:visibility="visible"/>
+
+                <ImageButton
+                    android:id="@+id/mBtnSend"
+                    style="@style/ClickAnimStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:paddingHorizontal="7dp"
+                    android:src="@drawable/ic_send_24px"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
 
         </LinearLayout>
 

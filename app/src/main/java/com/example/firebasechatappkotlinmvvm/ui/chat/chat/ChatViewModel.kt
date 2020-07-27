@@ -29,6 +29,8 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
     val newMessage = MutableLiveData<Messagee>()
     val meId: String = userRepo.getCurAuthUserId()
 
+    val onGetCurChatIdSuccess = MutableLiveData<String>()
+
     private val onSendMessageResult: CallBack<String, String> =
         object : CallBack<String, String> {
             override fun onSuccess(data: String?) {
@@ -80,6 +82,7 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
     private val onListenerSetupResult: CallBack<String, String> =
         object : CallBack<String, String> {
             override fun onSuccess(data: String?) {
+                onGetCurChatIdSuccess.postValue(data)
                 curChatId = data!!
                 chatRepo.getLastMessages(curChatId, onGetLastMessagesResult)
             }

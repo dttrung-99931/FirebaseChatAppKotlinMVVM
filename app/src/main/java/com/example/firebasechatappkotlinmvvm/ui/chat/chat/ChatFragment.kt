@@ -136,6 +136,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     }
 
     override fun observe() {
+        vm.onGetCurChatIdSuccess.observe(this, Observer {
+            mProgressLoadChat.visibility = View.GONE
+            mBtnSend.visibility = View.VISIBLE
+        })
+
         vm.messages.observe(this, Observer {
             chatAdapter.messages = it.toMutableList()
             chatAdapter.notifyDataSetChanged()
