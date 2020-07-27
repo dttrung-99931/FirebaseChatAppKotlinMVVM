@@ -31,4 +31,6 @@
     <string name="take_a_photo">Take a photo</string>
     <string name="no">No</string>
     <string name="enter_message">Enter message</string>
+    <string name="upload_image">Upload image</string>
+    <string name="sound_msg">Sound message</string>
 </resources>

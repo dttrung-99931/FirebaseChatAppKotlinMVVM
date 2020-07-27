@@ -1,18 +1,20 @@
 package com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.MessageInfoProvider
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.InputStream
+import java.util.*
 import javax.inject.Inject
 
 
 /**
  * Created by Trung on 7/10/2020
  */
-class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorage):
-    FireBaseStorageService{
+class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorage) :
+    FireBaseStorageService {
     override fun uploadAvatar(
         uid: String,
         avatarInputStream: InputStream?,
@@ -42,4 +44,30 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
             }
     }
 
+    override fun uploadMsgImg(
+        messageInfoProvider: MessageInfoProvider,
+        callBack: CallBack<String, String>
+    ) {
+        val msgImgRef = randomMsgImgRef(messageInfoProvider.chatId)
+        msgImgRef
+            .putStream(messageInfoProvider.imgStream!!)
+            .addOnSuccessListener {
+                messageInfoProvider.imgStream!!.close()
+                msgImgRef.downloadUrl
+                    .addOnSuccessListener {
+                        callBack.onSuccess(it.toString())
+                    }
+                    .addOnFailureListener {
+                        CommonUtil.log("uploadMsgImg get url error ${it.message}")
+                    }
+            }
+            .addOnFailureListener {
+                CommonUtil.log("uploadMsgImg error ${it.message}")
+            }
+    }
+
+    private fun randomMsgImgRef(chatId: String): StorageReference {
+        val uuid = UUID.randomUUID().toString()
+        return storage.reference.child("chats/$chatId/images/$uuid.jpg");
+    }
 }

@@ -1,9 +1,11 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.chat
 
+import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.google.firebase.firestore.*
+import java.io.InputStream
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
@@ -14,18 +16,31 @@ import kotlin.collections.ArrayList
  */
 
 // double 'e' for separating with other Message classes
-data class Messagee(val senderUserId: String, val content: String,
-                    @ServerTimestamp val createdAt: Date? = null){
-    constructor(): this("", "")
+data class Messagee(
+    val senderUserId: String,
+    val type: String,
+    var content: String = "",
+    @ServerTimestamp val createdAt: Date? = null
+) {
+
+    companion object {
+        const val MSG_TYPE_TEXT = "text"
+        const val MSG_TYPE_IMG = "img"
+        const val MSG_TYPE_VOICE = "voice"
+    }
+
+    constructor() : this("", MSG_TYPE_TEXT, "")
 }
 
-data class Chat(var chatUser: ChatUser = ChatUser.DEFAULT_CHAT_USER,
-                val newMsgNum: Int = 0,
-                val thumbMsg: String = ""){
+data class Chat(
+    var chatUser: ChatUser = ChatUser.DEFAULT_CHAT_USER,
+    val newMsgNum: Int = 0,
+    val thumbMsg: String = ""
+) {
 
-    constructor(): this(ChatUser.DEFAULT_CHAT_USER)
+    constructor() : this(ChatUser.DEFAULT_CHAT_USER)
 
-    companion object{
+    companion object {
         fun createList(chatDocuments: List<DocumentSnapshot>): List<Chat> {
             val chats = ArrayList<Chat>();
             chatDocuments.forEach {
@@ -38,8 +53,8 @@ data class Chat(var chatUser: ChatUser = ChatUser.DEFAULT_CHAT_USER,
 }
 
 // Like AppUser but less infor
-data class ChatUser(val id: String, val nickname: String, val avatarUrl: String):
-    Parcelable{
+data class ChatUser(val id: String, val nickname: String, val avatarUrl: String) :
+    Parcelable {
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -47,7 +62,7 @@ data class ChatUser(val id: String, val nickname: String, val avatarUrl: String)
         parcel.readString()!!
     )
 
-    constructor(): this("", "", "")
+    constructor() : this("", "", "")
 
 
     companion object CREATOR : Parcelable.Creator<ChatUser> {
@@ -59,7 +74,7 @@ data class ChatUser(val id: String, val nickname: String, val avatarUrl: String)
             return arrayOfNulls(size)
         }
 
-        fun fromAppUser(user: AppUser): ChatUser{
+        fun fromAppUser(user: AppUser): ChatUser {
             return ChatUser(user.id!!, user.nickname, user.avatarUrl)
         }
 
@@ -78,11 +93,12 @@ data class ChatUser(val id: String, val nickname: String, val avatarUrl: String)
     }
 }
 
-data class MessageInfoProvider(val massage: String, val chatId: String, var senderUserId: String = "") {
-    fun toMsg(): Messagee {
-        return Messagee(senderUserId, massage)
-    }
+data class MessageInfoProvider(
+    val message: Messagee,
+    val chatId: String,
+    var imgStream: InputStream? = null
+) {
 }
 
-data class MessageEvent(val message: Messagee, val eventType: DocumentChange.Type){
+data class MessageEvent(val message: Messagee, val eventType: DocumentChange.Type) {
 }

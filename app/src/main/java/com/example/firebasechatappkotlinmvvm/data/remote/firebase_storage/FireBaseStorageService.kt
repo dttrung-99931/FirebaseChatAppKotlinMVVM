@@ -1,6 +1,7 @@
 package com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage
 
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.MessageInfoProvider
 import java.io.InputStream
 
 
@@ -15,4 +16,6 @@ interface FireBaseStorageService {
     )
 
     fun getAvatarUrl(uid: String?, gatAvatarUrlCallBack: CallBack<String, String>)
+
+    fun uploadMsgImg(messageInfoProvider: MessageInfoProvider, callBack: CallBack<String, String>)
 }

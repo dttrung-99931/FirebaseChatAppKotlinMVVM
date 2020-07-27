@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_item_image"
+        android:title="@string/upload_image"
+        android:icon="@drawable/ic_image_24px"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_item_camera"
+        android:title="@string/take_a_photo"
+        android:icon="@drawable/ic_camera_24px"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_item_mic"
+        android:title="@string/sound_msg"
+        android:icon="@drawable/ic_voice_search_24dp"
+        app:showAsAction="always"/>
+
+</menu>

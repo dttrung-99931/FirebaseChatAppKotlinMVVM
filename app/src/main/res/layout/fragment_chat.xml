@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <variable
             name="viewModel"
             type="com.example.firebasechatappkotlinmvvm.ui.chat.chat.ChatViewModel" />
@@ -15,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/llEnterMsg"
-            android:paddingTop="0dp"/>
+            android:paddingTop="0dp" />
 
         <LinearLayout
             android:id="@+id/llEnterMsg"
@@ -24,25 +26,43 @@
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-            <com.vanniktech.emoji.EmojiEditText
-                android:id="@+id/mEdtChat"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint="@string/enter_message"
-                android:inputType="text"
-                android:singleLine="false"
-                android:text="@={viewModel.messageInput}"
-                android:drawableEnd="@drawable/ic_smile_24px"/>
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/mBtnMediaMsgMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_msg_option_menu_16px"
+                    android:background="@null"
+                    android:padding="5dp"
+                    style="@style/ClickAnimStyle"/>
+
+                <com.vanniktech.emoji.EmojiEditText
+                    android:id="@+id/mEdtChat"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableEnd="@drawable/ic_smile_24px"
+                    android:hint="@string/enter_message"
+                    android:inputType="text"
+                    android:singleLine="false"
+                    android:text="@={viewModel.messageInput}"
+                    android:maxLines="5"/>
+
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/mBtnSend"
+                style="@style/ClickAnimStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:paddingHorizontal="7dp"
-                android:src="@drawable/ic_send_24px"
-                style="@style/ClickAnimStyle"/>
+                android:src="@drawable/ic_send_24px" />
 
         </LinearLayout>
 

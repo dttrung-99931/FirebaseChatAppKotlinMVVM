@@ -15,7 +15,7 @@ class ChatRepoImpl @Inject constructor(
     val mStorageService: FireBaseStorageService,
     val mFireStoreService: FireStoreService,
     val mFireBaseAuthService: FireBaseAuthService
-):
+) :
     ChatRepo {
 
     override fun setupChat(
@@ -25,18 +25,19 @@ class ChatRepoImpl @Inject constructor(
     ) {
         mFireStoreService.getAppUser(mFireBaseAuthService.getCurAuthUserId(),
             object : CallBack<AppUser, String> {
-            override fun onSuccess(data: AppUser?) {
-                getChatIdThenListenChat( // if chat is not exists then create chat
-                    data!!.toChatUser(), otherChatUser,
-                    onMessageEvent, onListeningSetupResult)
-            }
+                override fun onSuccess(data: AppUser?) {
+                    getChatIdThenListenChat( // if chat is not exists then create chat
+                        data!!.toChatUser(), otherChatUser,
+                        onMessageEvent, onListeningSetupResult
+                    )
+                }
 
-            override fun onError(errCode: String) {
-            }
+                override fun onError(errCode: String) {
+                }
 
-            override fun onFailure(errCode: String) {
-            }
-        })
+                override fun onFailure(errCode: String) {
+                }
+            })
 
     }
 
@@ -49,8 +50,10 @@ class ChatRepoImpl @Inject constructor(
         mFireStoreService.getChatId(otherChatUser, meChatUser,
             object : CallBack<String, String> {
                 override fun onSuccess(data: String?) {
-                    mFireStoreService.listenForMessageEvent(data!!,
-                        onMessageEvent, onListeningSetupResult)
+                    mFireStoreService.listenForMessageEvent(
+                        data!!,
+                        onMessageEvent, onListeningSetupResult
+                    )
                 }
 
                 override fun onError(errCode: String) {
@@ -61,9 +64,41 @@ class ChatRepoImpl @Inject constructor(
             })
     }
 
-    override fun send(messageInfoProvider: MessageInfoProvider, onSendMessageResult: CallBack<String, String>) {
-        messageInfoProvider.senderUserId = mFireBaseAuthService.getCurAuthUserId()
-        mFireStoreService.send(messageInfoProvider, onSendMessageResult)
+    override fun send(
+        messageInfoProvider: MessageInfoProvider,
+        onSendMessageResult: CallBack<String, String>
+    ) {
+
+        when (messageInfoProvider.message.type) {
+            Messagee.MSG_TYPE_TEXT -> mFireStoreService.send(
+                messageInfoProvider,
+                onSendMessageResult
+            )
+            Messagee.MSG_TYPE_IMG -> sendSoundMsg(messageInfoProvider, onSendMessageResult)
+        }
+    }
+
+    private fun sendSoundMsg(
+        messageInfoProvider: MessageInfoProvider,
+        onSendMessageResult: CallBack<String, String>
+    ) {
+        mStorageService.uploadMsgImg(messageInfoProvider,
+            object : CallBack<String, String>{
+                override fun onSuccess(data: String?) {
+                    messageInfoProvider.message.content = data!!
+                    mFireStoreService.send(
+                        messageInfoProvider,
+                        onSendMessageResult
+                    )
+                }
+
+                override fun onError(errCode: String) {
+                }
+
+                override fun onFailure(errCode: String) {
+                }
+
+            })
     }
 
     override fun getLastMessages(

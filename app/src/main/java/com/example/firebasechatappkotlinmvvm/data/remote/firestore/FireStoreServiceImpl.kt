@@ -202,7 +202,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     ) {
         chatDocument(messageInfoProvider.chatId)
             .collection(COLLECTION_MESSAGES)
-            .add(messageInfoProvider.toMsg())
+            .add(messageInfoProvider.message)
             .addOnSuccessListener {
                 onSendMessageResult.onSuccess()
             }

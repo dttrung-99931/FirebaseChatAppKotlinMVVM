@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_profile.view.*
 import kotlinx.android.synthetic.main.item_chat.view.*
 import kotlinx.android.synthetic.main.item_chat.view.mImgAvatar
 import kotlinx.android.synthetic.main.item_chat.view.mTvNickname
-import kotlinx.android.synthetic.main.item_chat_me.view.*
+import kotlinx.android.synthetic.main.item_text_msg_me.view.*
 
 class ChatListAdapter(val onChatClickListener: OnItemClickListener<Chat>) :
     RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {

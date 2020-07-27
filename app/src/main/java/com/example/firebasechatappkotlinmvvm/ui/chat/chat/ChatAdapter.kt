@@ -4,13 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewHolder
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.util.extension.format
 import com.example.firebasechatappkotlinmvvm.util.extension.subInMilis
-import kotlinx.android.synthetic.main.item_chat_me.view.*
+import kotlinx.android.synthetic.main.item_img_msg_me.view.*
+import kotlinx.android.synthetic.main.item_text_msg_me.view.*
+import kotlinx.android.synthetic.main.item_text_msg_me.view.mTvTime
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -20,26 +23,45 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
     var messages: MutableList<Messagee> = ArrayList()
 
     companion object {
-        const val VIEW_TYPE_CHAT_ME = 0
-        const val VIEW_TYPE_CHAT_OTHER = 1
+        const val VIEW_TYPE_TEXT_MSG_ME = 0
+        const val VIEW_TYPE_TEXT_MSG_OTHER = 1
+        const val VIEW_TYPE_IMG_MSG_ME = 2
+        const val VIEW_TYPE_IMG_MSG_OTHER = 3
+        const val VIEW_TYPE_VOICE_MSG_ME = 4
+        const val VIEW_TYPE_VOICE_MSG_OTHER = 5
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (messages[position].senderUserId == meId)
-            VIEW_TYPE_CHAT_ME
-        else VIEW_TYPE_CHAT_OTHER
+        return if (messages[position].senderUserId == meId) {
+            when (messages[position].type) {
+                Messagee.MSG_TYPE_TEXT -> VIEW_TYPE_TEXT_MSG_ME
+                Messagee.MSG_TYPE_IMG -> VIEW_TYPE_IMG_MSG_ME
+                Messagee.MSG_TYPE_VOICE -> VIEW_TYPE_VOICE_MSG_ME
+                else -> VIEW_TYPE_TEXT_MSG_ME
+            }
+        } else when (messages[position].type) {
+            Messagee.MSG_TYPE_TEXT -> VIEW_TYPE_TEXT_MSG_OTHER
+            Messagee.MSG_TYPE_IMG -> VIEW_TYPE_IMG_MSG_OTHER
+            Messagee.MSG_TYPE_VOICE -> VIEW_TYPE_VOICE_MSG_OTHER
+            else -> VIEW_TYPE_TEXT_MSG_OTHER
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        if (viewType == VIEW_TYPE_CHAT_ME) {
-            return ChatViewHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_chat_me, parent, false)
-            )
-        }
+        val viewResId: Int =
+            when (viewType) {
+                VIEW_TYPE_TEXT_MSG_ME -> R.layout.item_text_msg_me
+                VIEW_TYPE_IMG_MSG_ME -> R.layout.item_img_msg_me
+                VIEW_TYPE_VOICE_MSG_ME -> R.layout.item_text_msg_me
+                VIEW_TYPE_TEXT_MSG_OTHER -> R.layout.item_text_msg_other
+                VIEW_TYPE_IMG_MSG_OTHER -> R.layout.item_img_msg_other
+                VIEW_TYPE_VOICE_MSG_OTHER -> R.layout.item_text_msg_other
+                else -> R.layout.item_text_msg_me
+            }
+
         return ChatViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_chat_other, parent, false)
+                .inflate(viewResId, parent, false)
         )
     }
 
@@ -72,9 +94,23 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
 
         private fun setData(position: Int) {
             val message = messages[position]
-            itemView.mTvMsg.text = message.content
+            setContentMessageByType(message)
             setTime(message, position)
             showTimeIfLongTimeSpacing(message, position)
+        }
+
+        private fun setContentMessageByType(message: Messagee) {
+            when (message.type) {
+                Messagee.MSG_TYPE_TEXT -> itemView.mTvMsg.text = message.content
+
+                Messagee.MSG_TYPE_IMG ->
+                    Glide.with(itemView.context)
+                        .load(message.content)
+                        .centerCrop()
+                        .into(itemView.mImgMsg)
+
+                Messagee.MSG_TYPE_VOICE -> itemView.mTvMsg.text = message.content
+            }
         }
 
         // Set time for message
@@ -102,6 +138,9 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
             else "HH:mm MMM, dd, yyyy"
         }
 
+
+        private val TIME_SPACING_ENOUGH_LONG: Long = 2 * 60 * 1000
+
         // By default msg time is gone
         // This func check if the spacing time is long then show the time
         private fun showTimeIfLongTimeSpacing(message: Messagee, position: Int) {
@@ -113,14 +152,18 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
                 return
             }
 
-            val timeSpacing: Long
-            if (position > 0)
-                timeSpacing = message.createdAt.subInMilis(
-                    messages[position-1].createdAt!!)
-            else timeSpacing = messages[1].createdAt!!.subInMilis(
-                message.createdAt)
+            val timeSpacing: Long =
+            if (messages.size == 1)
+                TIME_SPACING_ENOUGH_LONG + 1
+            else
+            if (position > 0) message.createdAt.subInMilis(
+                    messages[position - 1].createdAt!!
+                )
+            else messages[1].createdAt!!.subInMilis(
+                message.createdAt
+            )
 
-            if (timeSpacing > 2 * 60 * 1000) // timeSpacing > 2 minutes
+            if (timeSpacing > TIME_SPACING_ENOUGH_LONG) // timeSpacing > 2 minutes
                 itemView.mTvTime.visibility = View.VISIBLE
         }
     }

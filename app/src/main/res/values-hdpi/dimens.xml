@@ -3,4 +3,6 @@
     <dimen name="width_profile_background">180dp</dimen>
     <dimen name="size_avatar">90dp</dimen>
     <dimen name="size_avatar_search">50dp</dimen>
+    <dimen name="width_msg_img">180dp</dimen>
+    <dimen name="height_msg_img">250dp</dimen>
 </resources>

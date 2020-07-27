@@ -8,6 +8,7 @@ import com.example.firebasechatappkotlinmvvm.data.repo.chat.*
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
 import com.google.firebase.firestore.DocumentChange
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -42,7 +43,8 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
 
     fun onBtnSendClicked() {
         if (!messageInput.value.isNullOrEmpty()) {
-            val messageInfoProvider = MessageInfoProvider(messageInput.value!!, curChatId)
+            val msg = Messagee(meId, Messagee.MSG_TYPE_TEXT, messageInput.value!!)
+            val messageInfoProvider = MessageInfoProvider(msg, curChatId)
             chatRepo.send(messageInfoProvider, onSendMessageResult)
         }
     }
@@ -103,5 +105,12 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
     override fun onCleared() {
         chatRepo.removeCurEventMessageListener()
         super.onCleared()
+    }
+
+    fun sendImageMessage(imgStream: InputStream?) {
+        val msg = Messagee(meId, Messagee.MSG_TYPE_IMG)
+        val messageInfoProvider = MessageInfoProvider(msg, curChatId)
+        messageInfoProvider.imgStream = imgStream
+        chatRepo.send(messageInfoProvider, onSendMessageResult)
     }
 }
