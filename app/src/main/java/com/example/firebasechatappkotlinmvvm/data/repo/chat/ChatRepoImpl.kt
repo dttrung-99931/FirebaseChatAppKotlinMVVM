@@ -50,7 +50,7 @@ class ChatRepoImpl @Inject constructor(
         mFireStoreService.getChatId(otherChatUser, meChatUser,
             object : CallBack<String, String> {
                 override fun onSuccess(data: String?) {
-                    mFireStoreService.listenForMessageEvent(
+                    mFireStoreService.listenMessageEvent(
                         data!!,
                         onMessageEvent, onListeningSetupResult
                     )

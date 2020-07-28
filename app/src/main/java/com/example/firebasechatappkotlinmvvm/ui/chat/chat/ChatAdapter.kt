@@ -125,7 +125,7 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
 
             val pattern: String = createPatternByCurDate(message.createdAt)
 
-            itemView.mTvTime.text = message.createdAt?.format(pattern)
+            itemView.mTvTime.text = message.createdAt.format(pattern)
         }
 
         private fun createPatternByCurDate(createdAt: Date): String {
@@ -144,24 +144,31 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
         // By default msg time is gone
         // This func check if the spacing time is long then show the time
         private fun showTimeIfLongTimeSpacing(message: Messagee, position: Int) {
-            if (message.createdAt == null) {
+            // check in the case of self message
+            // message.createdAt is provided from firebase server
+            // so at that time message.createdAt = null, do not
+            // load createdAt because no need
+            if (message.createdAt == null ||
+                position >= 1 &&
+                messages[position - 1].createdAt == null
+            ) {
                 // When message.createdAt = null and If the
-                // recycler item view is visible, then hide it
+                // tv time is visible, then hide it
                 if (itemView.mTvTime.visibility == View.VISIBLE)
                     itemView.mTvTime.visibility = View.GONE
                 return
             }
 
             val timeSpacing: Long =
-            if (messages.size == 1)
-                TIME_SPACING_ENOUGH_LONG + 1
-            else
-            if (position > 0) message.createdAt.subInMilis(
-                    messages[position - 1].createdAt!!
-                )
-            else messages[1].createdAt!!.subInMilis(
-                message.createdAt
-            )
+                when {
+                    messages.size == 1 -> TIME_SPACING_ENOUGH_LONG + 1
+                    position > 0 -> message.createdAt.subInMilis(
+                        messages[position - 1].createdAt!!
+                    )
+                    else -> messages[1].createdAt!!.subInMilis(
+                        message.createdAt
+                    )
+                }
 
             if (timeSpacing > TIME_SPACING_ENOUGH_LONG) // timeSpacing > 2 minutes
                 itemView.mTvTime.visibility = View.VISIBLE

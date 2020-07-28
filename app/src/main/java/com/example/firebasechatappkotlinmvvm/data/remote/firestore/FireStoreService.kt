@@ -5,6 +5,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.*
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
+import com.google.firebase.auth.FirebaseUser
 
 
 /**
@@ -36,7 +37,7 @@ interface FireStoreService {
 
     fun getAppUser(uid: String, callBack: CallBack<AppUser, String>)
 
-    fun listenForMessageEvent(
+    fun listenMessageEvent(
         chatId: String,
         onMessageEvent: CallBack<MessageEvent, String>,
         onListeningSetupResult: CallBack<String, String>
@@ -58,4 +59,9 @@ interface FireStoreService {
     fun getChats(userId: String,
         onGetChatResult: CallBack<List<Chat>, String>, count: Int?
     )
+
+    fun updateUserOnline(user: FirebaseUser?)
+
+    fun updateUserOffline(user: FirebaseUser?)
+    fun listenAppUser(id: String, onChange: CallBack<AppUser, String>)
 }

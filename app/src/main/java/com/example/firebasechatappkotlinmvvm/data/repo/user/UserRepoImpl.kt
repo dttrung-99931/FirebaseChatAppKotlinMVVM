@@ -5,6 +5,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.google.firebase.auth.FirebaseUser
@@ -47,6 +48,7 @@ class UserRepoImpl @Inject constructor(
     }
 
     override fun signOut() {
+        updateUserOffline()
         mFireBaseAuthService.signOut()
     }
 
@@ -104,6 +106,36 @@ class UserRepoImpl @Inject constructor(
         mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     ) {
         mFireStoreService.searchUsers(userOrEmail, mSearchUsersCallBack)
+    }
+
+    override fun listenUserStatus(
+        chat: Chat,
+        onUserStatusInChatChange: CallBack<Chat, String>
+    ) {
+        mFireStoreService.listenAppUser(chat.chatUser.id,
+            object : CallBack<AppUser, String> {
+                override fun onSuccess(data: AppUser?) {
+                    chat.chatUser.online = data!!.online
+                    chat.chatUser.offlineAt = data.offlineAt
+                    onUserStatusInChatChange.onSuccess(chat)
+                }
+
+                override fun onError(errCode: String) {
+                }
+
+                override fun onFailure(errCode: String) {
+                }
+            })
+    }
+
+    override fun updateUserOnline() {
+        if (getCurAuthUser() != null)
+            mFireStoreService.updateUserOnline(getCurAuthUser())
+    }
+
+    override fun updateUserOffline() {
+        if (getCurAuthUser() != null)
+            mFireStoreService.updateUserOffline(getCurAuthUser())
     }
 
     private fun createUpdateAvatarUrlFirestoreCallBack(

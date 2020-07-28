@@ -8,10 +8,10 @@ import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
-import com.example.firebasechatappkotlinmvvm.util.extension.serializeToMap
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
-import java.util.HashMap
+import java.util.ArrayList
 import javax.inject.Inject
 
 
@@ -33,11 +33,14 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         const val FIELD_MSG_LIST = "msgList"
         const val FIELD_MESSAGE = "message"
         const val FIELD_CREATED_AT = "createdAt"
+        const val FIELD_IS_ONLINE = "online"
+        const val FIELD_OFFLINE_AT = "offlineAt"
 
         const val TAG = "FireStoreServiceImpl"
     }
 
-    private var listenRemover: ListenerRegistration? = null
+    private var chatListenerRemover: ListenerRegistration? = null
+    private var appUserListenerRemovers: MutableList<ListenerRegistration>? = null
 
     private var ignoredDocumentsChangedEventsAfterSetListener = false
 
@@ -156,14 +159,14 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
     }
 
-    override fun listenForMessageEvent(
+    override fun listenMessageEvent(
         chatId: String,
         onMessageEvent: CallBack<MessageEvent, String>,
         onListeningSetupResult: CallBack<String, String>
     ) {
         onListeningSetupResult.onSuccess(chatId)
         ignoredDocumentsChangedEventsAfterSetListener = false
-        listenRemover = chatDocument(chatId)
+        chatListenerRemover = chatDocument(chatId)
             .collection(COLLECTION_MESSAGES)
             .addSnapshotListener { value, error ->
                 if (error != null) {
@@ -239,8 +242,8 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     override fun removeCurEventMessageListener() {
-        listenRemover.let {
-            listenRemover!!.remove()
+        chatListenerRemover.let {
+            chatListenerRemover!!.remove()
         }
     }
 
@@ -271,6 +274,38 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .addOnFailureListener {
                 CommonUtil.log("getChats error: ${it.message}" )
             }
+    }
+
+    override fun updateUserOnline(user: FirebaseUser?) {
+        userDocument(user!!.uid)
+            .update(FIELD_IS_ONLINE, true)
+    }
+
+    override fun updateUserOffline(user: FirebaseUser?) {
+        val map = mapOf(
+            FIELD_IS_ONLINE to false,
+            FIELD_OFFLINE_AT to FieldValue.serverTimestamp()
+        )
+        userDocument(user!!.uid)
+            .update(map)
+    }
+
+    override fun listenAppUser(id: String, onChange: CallBack<AppUser, String>) {
+        if (appUserListenerRemovers == null)
+            appUserListenerRemovers = ArrayList()
+
+        appUserListenerRemovers!!.add(
+            userDocument(id)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    CommonUtil.log("listenAppUserChange error: ${error.message}")
+                    return@addSnapshotListener
+                }
+
+                if (value != null) {
+                    onChange.onSuccess(value.toObject(AppUser::class.java))
+                }
+            })
     }
 
     private fun chatDocument(id: String) = firestore

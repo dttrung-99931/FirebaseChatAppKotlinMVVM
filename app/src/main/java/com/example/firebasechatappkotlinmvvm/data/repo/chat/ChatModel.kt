@@ -52,8 +52,16 @@ data class Chat(
     }
 }
 
-// Like AppUser but less infor
-data class ChatUser(val id: String, val nickname: String, val avatarUrl: String) :
+// Used in ChatList
+// Like AppUser, but the excluded fields will be loaded latter
+// after the rest load completely
+data class ChatUser(
+    val id: String,
+    val nickname: String,
+    val avatarUrl: String,
+    @get: Exclude var online: Boolean = false,
+    @get: Exclude var offlineAt: Date? = null
+) :
     Parcelable {
 
     constructor(parcel: Parcel) : this(
