@@ -27,4 +27,12 @@ interface ChatRepo {
         onGetChatResult: CallBack<List<Chat>, String>,
         count: Int? = null
     )
+
+    fun listenMetaChatInUserChange(
+        chat: Chat,
+        meUserId: String,
+        onChatChange: CallBack<Chat, String>
+    )
+
+    fun resetNewMsg(meUserId: String, chatId: String)
 }

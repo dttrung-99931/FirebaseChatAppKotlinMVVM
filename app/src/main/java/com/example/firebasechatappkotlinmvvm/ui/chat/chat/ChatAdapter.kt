@@ -9,12 +9,12 @@ import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewHolder
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.example.firebasechatappkotlinmvvm.util.extension.format
 import com.example.firebasechatappkotlinmvvm.util.extension.subInMilis
 import kotlinx.android.synthetic.main.item_img_msg_me.view.*
 import kotlinx.android.synthetic.main.item_text_msg_me.view.*
 import kotlinx.android.synthetic.main.item_text_msg_me.view.mTvTime
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
@@ -123,21 +123,10 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
                 return
             }
 
-            val pattern: String = createPatternByCurDate(message.createdAt)
+            val pattern: String = CommonUtil.createDatePattern(message.createdAt)
 
             itemView.mTvTime.text = message.createdAt.format(pattern)
         }
-
-        private fun createPatternByCurDate(createdAt: Date): String {
-            val now = Calendar.getInstance().time
-            return if (createdAt.year == now.year)
-                if (createdAt.month == now.month)
-                    if (createdAt.day == now.day) "HH:mm"
-                    else "HH:mm EEE"
-                else "HH:mm MMM, dd"
-            else "HH:mm MMM, dd, yyyy"
-        }
-
 
         private val TIME_SPACING_ENOUGH_LONG: Long = 2 * 60 * 1000
 

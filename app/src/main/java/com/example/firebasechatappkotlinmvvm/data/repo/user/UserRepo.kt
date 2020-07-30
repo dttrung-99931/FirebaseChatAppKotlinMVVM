@@ -23,4 +23,9 @@ interface UserRepo: FireBaseAuthService {
     fun updateUserOnline()
 
     fun updateUserOffline()
+
+    fun listenAppUser(
+        userId: String,
+        onAppUserChange: CallBack<AppUser, String>
+    )
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepo
+import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
@@ -26,8 +27,8 @@ class ChatListViewModel @Inject constructor(
 
     // first load chats (containing avatar, nickname),
     // then load chatWithMoreInfo (containing isOnline, offlineAt) for each chat in chats
-    val changedChat = MutableLiveData<Chat>()
-    val changedChatQueue = LinkedList<Chat>()
+    val changedChatMeta = MutableLiveData<Chat>()
+    val changedChatMetaQueue = LinkedList<Chat>()
 
     val onLoginFailure = MutableLiveData<String>()
     var loadCachedChats = false
@@ -65,11 +66,29 @@ class ChatListViewModel @Inject constructor(
         meUserId = userRepo.getCurAuthUserId()
     }
 
-    private val onUserStatusInChatChange: CallBack<Chat, String> =
+    private val onChatChange: CallBack<Chat, String> =
         object : CallBack<Chat, String> {
             override fun onSuccess(data: Chat?) {
-                changedChatQueue.push(data)
-                changedChat.postValue(data)
+                changedChatMetaQueue.push(data)
+                changedChatMeta.postValue(data)
+            }
+
+            override fun onError(errCode: String) {
+            }
+
+            override fun onFailure(errCode: String) {
+            }
+        }
+
+    val changedAppUser = MutableLiveData<AppUser>()
+    val changedAppUserQueue = LinkedList<AppUser>()
+
+    private val onAppUserChange: CallBack<AppUser, String> =
+        object : CallBack<AppUser, String> {
+            override fun onSuccess(data: AppUser?) {
+                CommonUtil.log("Update chat user: ${data!!.toChatUser()}")
+                changedAppUserQueue.push(data)
+                changedAppUser.postValue(data)
             }
 
             override fun onError(errCode: String) {
@@ -82,9 +101,8 @@ class ChatListViewModel @Inject constructor(
     private fun listenChatChange(chatList: List<Chat>?) {
         for (chat in chatList!!) {
             // listen off/online user status, offlineAt
-            userRepo.listenUserStatus(chat, onUserStatusInChatChange)
-
-//          latter add  chatRepo.listenMessageChange(chat, onUserStatusInChatChange)
+            userRepo.listenAppUser(chat.chatUser.id, onAppUserChange)
+            chatRepo.listenMetaChatInUserChange(chat, meUserId, onChatChange)
         }
     }
 
@@ -96,9 +114,15 @@ class ChatListViewModel @Inject constructor(
     // because changedChat.postValue() do not post all values to main thread
     // if there is changedChat is not still updated then post it again
     fun onUpdateChangedChatComplete() {
-        changedChatQueue.pollLast()
-        if (changedChatQueue.size != 0)
-            changedChat.value = changedChatQueue.last
+        changedChatMetaQueue.pollLast()
+        if (changedChatMetaQueue.size != 0)
+            changedChatMeta.value = changedChatMetaQueue.last
+    }
+
+    fun onUpdateChatUserComplete() {
+        changedAppUserQueue.pollLast()
+        if (changedAppUserQueue.size != 0)
+            changedAppUser.value = changedAppUserQueue.last
     }
 
     class Factory(val provider: Provider<ChatListViewModel>) : ViewModelProvider.Factory {

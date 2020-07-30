@@ -27,7 +27,7 @@ data class AppUser(var nickname: String  = "",
                    @ServerTimestamp var offlineAt: Date? = null): Serializable {
 
     fun toChatUser(): ChatUser {
-        return ChatUser(id!!, nickname, avatarUrl)
+        return ChatUser(id!!, nickname, avatarUrl, online, offlineAt)
     }
 
     constructor(firebaseUser: FirebaseUser) :

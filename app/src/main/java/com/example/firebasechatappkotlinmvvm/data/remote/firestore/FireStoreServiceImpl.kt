@@ -35,6 +35,8 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         const val FIELD_CREATED_AT = "createdAt"
         const val FIELD_IS_ONLINE = "online"
         const val FIELD_OFFLINE_AT = "offlineAt"
+        const val FIELD_THUMB_MSG = "thumbMsg"
+        const val FIELD_NEW_MSG_NUM = "newMsgNum"
 
         const val TAG = "FireStoreServiceImpl"
     }
@@ -200,6 +202,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         messageInfoProvider: MessageInfoProvider,
         onSendMessageResult: CallBack<String, String>
     ) {
+        // add the message to chat with chatId
         chatDocument(messageInfoProvider.chatId)
             .collection(COLLECTION_MESSAGES)
             .add(messageInfoProvider.message)
@@ -208,6 +211,20 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
             .addOnFailureListener {
                 CommonUtil.log("send error ${it.message}")
+            }
+
+        // add thumb message, update new msg num to chat of receiver user
+        val thumbMsg = messageInfoProvider.message.getThumbMsg()
+        val metaChatUpdate = mapOf(
+            FIELD_THUMB_MSG to thumbMsg,
+            FIELD_NEW_MSG_NUM to FieldValue.increment(1)
+        )
+        userDocument(messageInfoProvider.message.receiverUserId)
+            .collection(COLLECTION_CHATS)
+            .document(messageInfoProvider.chatId)
+            .update(metaChatUpdate)
+            .addOnFailureListener {
+                CommonUtil.log("send() metaChatUpdate error ${it.message}")
             }
     }
 
@@ -242,8 +259,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     override fun removeCurEventMessageListener() {
-        chatListenerRemover.let {
+        if (chatListenerRemover != null) {
             chatListenerRemover!!.remove()
+            chatListenerRemover = null
         }
     }
 
@@ -268,11 +286,11 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                         onGetChatResult.onSuccess(refreshChats)
                     }
                     .addOnFailureListener {
-                        CommonUtil.log("getChats refresh error: ${it.message}" )
+                        CommonUtil.log("getChats refresh error: ${it.message}")
                     }
             }
             .addOnFailureListener {
-                CommonUtil.log("getChats error: ${it.message}" )
+                CommonUtil.log("getChats error: ${it.message}")
             }
     }
 
@@ -296,16 +314,56 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
         appUserListenerRemovers!!.add(
             userDocument(id)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        CommonUtil.log("listenAppUserChange error: ${error.message}")
+                        return@addSnapshotListener
+                    }
+
+                    if (value != null) {
+                        val appUser = value.toObject(AppUser::class.java)
+                        appUser!!.id = value.id
+                        onChange.onSuccess(appUser)
+                    }
+                })
+    }
+
+    // Listen (me User) user.chats changes
+    override fun listenChatMetaInUser(
+        chat: Chat,
+        meUserId: String,
+        onChatChange: CallBack<Chat, String>
+    ) {
+        CommonUtil.log("Listen chat ${chat.id}")
+        userDocument(meUserId)
+            .collection(COLLECTION_CHATS)
+            .document(chat.id)
             .addSnapshotListener { value, error ->
                 if (error != null) {
-                    CommonUtil.log("listenAppUserChange error: ${error.message}")
+                    CommonUtil.log("listenMetaChatInUserChange error: ${error.message}")
                     return@addSnapshotListener
                 }
 
                 if (value != null) {
-                    onChange.onSuccess(value.toObject(AppUser::class.java))
+
+                    val changedChat = value.toObject(Chat::class.java)
+
+                    // Just update these fields, not chat.chatUser
+                    // because chat.chatUser will be
+                    // listen change in UserRepo - FirebaseAuthService
+                    chat.newMsgNum = changedChat!!.newMsgNum
+                    chat.thumbMsg = changedChat.thumbMsg
+
+                    onChatChange.onSuccess(chat)
                 }
-            })
+            }
+    }
+
+    override fun resetNewMsg(meUserId: String, chatId: String) {
+        userDocument(meUserId)
+            .collection(COLLECTION_CHATS)
+            .document(chatId)
+            .update(FIELD_NEW_MSG_NUM, 0)
     }
 
     private fun chatDocument(id: String) = firestore

@@ -8,11 +8,12 @@ import com.bumptech.glide.Glide
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
+import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewHolder
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
-import kotlinx.android.synthetic.main.item_chat.view.mImgAvatar
-import kotlinx.android.synthetic.main.item_chat.view.mTvNickname
+import com.example.firebasechatappkotlinmvvm.util.extension.format
+import kotlinx.android.synthetic.main.item_chat.view.*
 
 class ChatListAdapter(
     val onChatClickListener: OnItemClickListener<Chat>
@@ -41,10 +42,22 @@ class ChatListAdapter(
         holderList.bindView(position)
     }
 
-    fun updateChat(it: Chat?) {
+    fun updateChatMeta(it: Chat?) {
         for (i in chats.indices)
             if (chats[i].chatUser.id == it!!.chatUser.id) {
-                chats[i].chatUser = it.chatUser
+                // @Warning: do not assign chat[i] = it
+                // because it just contain updated chat meta (newMsgNum, thumbMsg)
+                chats[i].thumbMsg = it.thumbMsg
+                chats[i].newMsgNum = it.newMsgNum
+                notifyItemChanged(i)
+                break
+            }
+    }
+
+    fun updateChatUser(appUser: AppUser) {
+        for (i in chats.indices)
+            if (chats[i].chatUser.id == appUser.id) {
+                chats[i].chatUser = appUser.toChatUser()
                 notifyItemChanged(i)
                 break
             }
@@ -67,9 +80,39 @@ class ChatListAdapter(
 
             itemView.mTvNickname.text = chatUser.nickname
 
+            itemView.mTvThumbMsg.text =
+                CommonUtil.getShortString(chat.thumbMsg,30)
+
+            setNewMsgNum(chat)
+
+            setOfflineTime(chatUser)
+
             setUserStatus(chatUser)
 
             setAvatar(chatUser)
+        }
+
+        private fun setNewMsgNum(chat: Chat) {
+            if (chat.newMsgNum > 0) {
+                val newDisplayMsgNum =
+                    if (chat.newMsgNum <= 9) chat.newMsgNum.toString()
+                    else "${chat.newMsgNum}+"
+                itemView.mTvViewBadgeNewMsg.text = newDisplayMsgNum
+                itemView.mTvViewBadgeNewMsg.visibility = View.VISIBLE
+            } else itemView.mTvViewBadgeNewMsg.visibility = View.GONE
+        }
+
+        private fun setOfflineTime(chatUser: ChatUser) {
+            if (chatUser.online || chatUser.offlineAt == null)
+                itemView.mTvOfflineTime.visibility = View.GONE
+            else {
+                val offlineTime = chatUser
+                    .offlineAt?.format(
+                        CommonUtil.createDatePattern(chatUser.offlineAt!!)
+                    )
+                itemView.mTvOfflineTime.text = offlineTime
+                itemView.mTvOfflineTime.visibility = View.VISIBLE
+            }
         }
 
         private fun setUserStatus(chatUser: ChatUser) {

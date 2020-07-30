@@ -138,6 +138,13 @@ class UserRepoImpl @Inject constructor(
             mFireStoreService.updateUserOffline(getCurAuthUser())
     }
 
+    override fun listenAppUser(
+        userId: String,
+        onAppUserChange: CallBack<AppUser, String>
+    ) {
+        mFireStoreService.listenAppUser(userId, onAppUserChange)
+    }
+
     private fun createUpdateAvatarUrlFirestoreCallBack(
         uploadAvatarCallBack: CallBack<String, String>,
         url: String?

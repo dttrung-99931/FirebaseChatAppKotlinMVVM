@@ -18,10 +18,19 @@ import kotlin.collections.ArrayList
 // double 'e' for separating with other Message classes
 data class Messagee(
     val senderUserId: String,
+    @get: Exclude
+    val receiverUserId: String,
     val type: String,
     var content: String = "",
     @ServerTimestamp val createdAt: Date? = null
 ) {
+    fun getThumbMsg(): String {
+        return when (type) {
+            MSG_TYPE_IMG -> "[New image message]"
+            MSG_TYPE_VOICE -> "[New voice message]"
+            else -> content
+        }
+    }
 
     companion object {
         const val MSG_TYPE_TEXT = "text"
@@ -34,8 +43,10 @@ data class Messagee(
 
 data class Chat(
     var chatUser: ChatUser = ChatUser.DEFAULT_CHAT_USER,
-    val newMsgNum: Int = 0,
-    val thumbMsg: String = ""
+    var newMsgNum: Int = 0,
+    var thumbMsg: String = "",
+    @get: Exclude
+    var id: String = ""
 ) {
 
     constructor() : this(ChatUser.DEFAULT_CHAT_USER)
@@ -44,7 +55,9 @@ data class Chat(
         fun createList(chatDocuments: List<DocumentSnapshot>): List<Chat> {
             val chats = ArrayList<Chat>();
             chatDocuments.forEach {
-                chats.add(it.toObject(Chat::class.java)!!)
+                val chat = it.toObject(Chat::class.java)!!
+                chat.id = it.id
+                chats.add(chat)
             }
             return chats
         }

@@ -45,7 +45,9 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
 
     fun onBtnSendClicked() {
         if (!messageInput.value.isNullOrEmpty()) {
-            val msg = Messagee(meId, Messagee.MSG_TYPE_TEXT, messageInput.value!!)
+            val msg = Messagee(meId, chatUser.id,
+                Messagee.MSG_TYPE_TEXT, messageInput.value!!)
+
             val messageInfoProvider = MessageInfoProvider(msg, curChatId)
             chatRepo.send(messageInfoProvider, onSendMessageResult)
         }
@@ -55,7 +57,10 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
         object : CallBack<MessageEvent, String> {
             override fun onSuccess(event: MessageEvent?) {
                 when (event!!.eventType) {
-                    DocumentChange.Type.ADDED -> newMessage.postValue(event.message)
+                    DocumentChange.Type.ADDED -> {
+                        newMessage.postValue(event.message)
+                        chatRepo.resetNewMsg(meId, curChatId)
+                    }
                 }
             }
 
@@ -79,12 +84,13 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
             }
         }
 
-    private val onListenerSetupResult: CallBack<String, String> =
+    private val onSetupResult: CallBack<String, String> =
         object : CallBack<String, String> {
-            override fun onSuccess(data: String?) {
-                onGetCurChatIdSuccess.postValue(data)
-                curChatId = data!!
+            override fun onSuccess(chatId: String?) {
+                onGetCurChatIdSuccess.postValue(chatId)
+                curChatId = chatId!!
                 chatRepo.getLastMessages(curChatId, onGetLastMessagesResult)
+                chatRepo.resetNewMsg(meId, chatId)
             }
 
             override fun onError(errCode: String) {
@@ -96,7 +102,7 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
 
     fun setupChat(chatUser: ChatUser) {
         this.chatUser = chatUser
-        chatRepo.setupChat(chatUser, onMessageEvent, onListenerSetupResult)
+        chatRepo.setupChat(chatUser, onMessageEvent, onSetupResult)
     }
 
     class Factory(val provider: Provider<ChatViewModel>) : ViewModelProvider.Factory {
@@ -111,7 +117,7 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
     }
 
     fun sendImageMessage(imgStream: InputStream?) {
-        val msg = Messagee(meId, Messagee.MSG_TYPE_IMG)
+        val msg = Messagee(meId, chatUser.id, Messagee.MSG_TYPE_IMG)
         val messageInfoProvider = MessageInfoProvider(msg, curChatId)
         messageInfoProvider.imgStream = imgStream
         chatRepo.send(messageInfoProvider, onSendMessageResult)

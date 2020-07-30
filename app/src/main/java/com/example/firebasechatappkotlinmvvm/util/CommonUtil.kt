@@ -8,7 +8,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class CommonUtil {
-    companion object{
+    companion object {
         fun isEmailForm(email: String): Boolean {
             return email.matches(Regex("[\\w.-_]+@[\\w]+\\.[\\w]{0,4}"));
         }
@@ -22,7 +22,7 @@ class CommonUtil {
         }
 
         fun toStrings(stringResIds: List<Int>, context: Context): List<String> {
-            val strings =  ArrayList<String>()
+            val strings = ArrayList<String>()
             stringResIds.forEach {
                 strings.add(context.getString(it))
             }
@@ -34,7 +34,24 @@ class CommonUtil {
             documents.forEach {
                 messages.add(it.toObject(Messagee::class.java)!!)
             }
-            return  messages
+            return messages
+        }
+
+        fun createDatePattern(createdAt: Date): String {
+            val now = Calendar.getInstance().time
+            return if (createdAt.year == now.year)
+                if (createdAt.month == now.month)
+                    if (createdAt.day == now.day) "HH:mm"
+                    else "HH:mm EEE"
+                else "HH:mm MMM, dd"
+            else "HH:mm MMM, dd, yyyy"
+        }
+
+        // return a new str is made from str param
+        // with size <= shortLength
+        fun getShortString(str: String, shortLength: Int): String {
+            return if (str.length <= shortLength) str
+            else str.substring(0, shortLength-4) + "..."
         }
 
     }

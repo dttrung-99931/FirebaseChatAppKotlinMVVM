@@ -63,5 +63,14 @@ interface FireStoreService {
     fun updateUserOnline(user: FirebaseUser?)
 
     fun updateUserOffline(user: FirebaseUser?)
+
     fun listenAppUser(id: String, onChange: CallBack<AppUser, String>)
+
+    fun listenChatMetaInUser(
+        chat: Chat,
+        meUserId: String,
+        onChatChange: CallBack<Chat, String>
+    )
+
+    fun resetNewMsg(meUserId: String, chatId: String)
 }
