@@ -10,6 +10,7 @@ import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatListBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import kotlinx.android.synthetic.main.fragment_chat_list.*
 import javax.inject.Inject
 
@@ -61,6 +62,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
         })
 
         vm.changedAppUser.observe(this, Observer {
+            CommonUtil.log("Update chat user: ${it!!.toChatUser()}")
             chatListAdapter.updateChatUser(it)
             vm.onUpdateChatUserComplete()
         })

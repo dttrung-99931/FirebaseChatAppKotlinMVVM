@@ -9,7 +9,6 @@ import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepo
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -28,7 +27,7 @@ class ChatListViewModel @Inject constructor(
     // first load chats (containing avatar, nickname),
     // then load chatWithMoreInfo (containing isOnline, offlineAt) for each chat in chats
     val changedChatMeta = MutableLiveData<Chat>()
-    val changedChatMetaQueue = LinkedList<Chat>()
+    val changedChatMetaStack = LinkedList<Chat>()
 
     val onLoginFailure = MutableLiveData<String>()
     var loadCachedChats = false
@@ -69,7 +68,7 @@ class ChatListViewModel @Inject constructor(
     private val onChatChange: CallBack<Chat, String> =
         object : CallBack<Chat, String> {
             override fun onSuccess(data: Chat?) {
-                changedChatMetaQueue.push(data)
+                changedChatMetaStack.push(data)
                 changedChatMeta.postValue(data)
             }
 
@@ -81,13 +80,12 @@ class ChatListViewModel @Inject constructor(
         }
 
     val changedAppUser = MutableLiveData<AppUser>()
-    val changedAppUserQueue = LinkedList<AppUser>()
+    val changedAppUserStack = LinkedList<AppUser>()
 
     private val onAppUserChange: CallBack<AppUser, String> =
         object : CallBack<AppUser, String> {
             override fun onSuccess(data: AppUser?) {
-                CommonUtil.log("Update chat user: ${data!!.toChatUser()}")
-                changedAppUserQueue.push(data)
+                changedAppUserStack.push(data)
                 changedAppUser.postValue(data)
             }
 
@@ -110,19 +108,20 @@ class ChatListViewModel @Inject constructor(
         super.onCleared()
     }
 
-    // Check if changedChat is updated
-    // because changedChat.postValue() do not post all values to main thread
-    // if there is changedChat is not still updated then post it again
+    // Check to make sure all values updated to Main thread
+    // because changedChat.postValue() do not post all values to main thread,
+    // just the latest one of multiples value to be updated to main thread
+    // so use the stack to store missing values to update later
     fun onUpdateChangedChatComplete() {
-        changedChatMetaQueue.pollLast()
-        if (changedChatMetaQueue.size != 0)
-            changedChatMeta.value = changedChatMetaQueue.last
+        changedChatMetaStack.pop()
+        if (changedChatMetaStack.size != 0)
+            changedChatMeta.value = changedChatMetaStack.first
     }
 
     fun onUpdateChatUserComplete() {
-        changedAppUserQueue.pollLast()
-        if (changedAppUserQueue.size != 0)
-            changedAppUser.value = changedAppUserQueue.last
+        changedAppUserStack.pop()
+        if (changedAppUserStack.size != 0)
+            changedAppUser.value = changedAppUserStack.first
     }
 
     class Factory(val provider: Provider<ChatListViewModel>) : ViewModelProvider.Factory {
