@@ -28,4 +28,6 @@ interface UserRepo: FireBaseAuthService {
         userId: String,
         onAppUserChange: CallBack<AppUser, String>
     )
+
+    fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>)
 }

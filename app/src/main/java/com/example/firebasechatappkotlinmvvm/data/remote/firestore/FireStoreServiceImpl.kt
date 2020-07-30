@@ -8,6 +8,7 @@ import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
+import com.google.android.gms.common.internal.service.Common
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
@@ -364,6 +365,26 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .collection(COLLECTION_CHATS)
             .document(chatId)
             .update(FIELD_NEW_MSG_NUM, 0)
+    }
+
+    /**
+    * Get @param(num) of random users from COLLECTION_USER
+    * Need to exclude users who chatted with the user
+    * */
+    override fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>) {
+        firestore.collection(COLLECTION_USERS)
+            .orderBy(FIELD_IS_ONLINE, Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener {
+                val randomUserDocuments = CommonUtil
+                    .getRandomList<DocumentSnapshot>(it.documents, num)
+
+                val users = AppUser.listFromUserDocuments(randomUserDocuments)
+                onGetRandomUsersResult.onSuccess(users)
+            }
+            .addOnFailureListener {
+                CommonUtil.log("Get random users error ${it.message} ")
+            }
     }
 
     private fun chatDocument(id: String) = firestore

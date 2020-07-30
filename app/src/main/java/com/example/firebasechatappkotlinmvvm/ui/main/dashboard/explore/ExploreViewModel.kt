@@ -7,6 +7,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -22,9 +23,34 @@ class ExploreViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
 
     var latestStartSearchTimeInMilis = Calendar.getInstance().timeInMillis
 
-    private val mSearchUsersCallBack: CallBack<SearchUserResult, String> =
+    var randomUsers = mutableListOf<AppUser>()
+
+    val onGetRandomUsersResult: CallBack<List<AppUser>, String> =
+        object : CallBack<List<AppUser>, String> {
+            override fun onSuccess(data: List<AppUser>?) {
+                randomUsers = data!!.toMutableList()
+                searchUsers.postValue(data)
+            }
+
+            override fun onError(errCode: String) {
+            }
+
+            override fun onFailure(errCode: String) {
+            }
+        }
+
+    init{
+        userRepo.getRandomUsers(10, onGetRandomUsersResult)
+    }
+
+    private val onSearchUsersResult: CallBack<SearchUserResult, String> =
         object : CallBack<SearchUserResult, String> {
             override fun onSuccess(data: SearchUserResult?) {
+                // Show random user when search text is empty
+                if (searchText.value.isNullOrEmpty()){
+                    searchUsers.postValue(randomUsers)
+                }
+                else
                 // Update search results if the results are earlier
                 if (latestStartSearchTimeInMilis <
                     data!!.searchingStartTimeInMilis){
@@ -42,11 +68,17 @@ class ExploreViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
         }
 
     fun onSearchTextChanged() {
-        userRepo.findUsers(searchText.value!!, mSearchUsersCallBack)
+        if (!searchText.value.isNullOrEmpty())
+            userRepo.findUsers(searchText.value!!, onSearchUsersResult)
+    }
+
+    fun loadRandomUsers() {
+        searchUsers.value = randomUsers
     }
 
     // Use searchingStartTime, searchText to prepare async search results
     // that have unordered finish
+    // The latter search result show be updated
     data class SearchUserResult(
         val searchText: String,
         var users: List<AppUser>? = null,

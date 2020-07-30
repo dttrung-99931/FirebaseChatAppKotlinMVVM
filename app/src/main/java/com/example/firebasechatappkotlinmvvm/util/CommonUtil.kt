@@ -5,7 +5,9 @@ import android.util.Log
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.google.firebase.firestore.DocumentSnapshot
 import java.util.*
+import java.util.Collections.swap
 import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class CommonUtil {
     companion object {
@@ -41,7 +43,7 @@ class CommonUtil {
             val now = Calendar.getInstance().time
             return if (createdAt.year == now.year)
                 if (createdAt.month == now.month)
-                    if (createdAt.day == now.day) "HH:mm"
+                    if (createdAt.day == now.day) "HH:mm 'Today'"
                     else "HH:mm EEE"
                 else "HH:mm MMM, dd"
             else "HH:mm MMM, dd, yyyy"
@@ -52,6 +54,21 @@ class CommonUtil {
         fun getShortString(str: String, shortLength: Int): String {
             return if (str.length <= shortLength) str
             else str.substring(0, shortLength-4) + "..."
+        }
+
+        fun <T> getRandomList(list: List<T>, num: Int): List<T> {
+            if (list.size <= num) return list
+            val randomList = ArrayList<T>()
+            for (i in 0 until num) {
+                val ranBound = list.size - i // => 0 <= random value <= ranBound-1
+                val ranIndex = Random.nextInt(ranBound)
+                randomList.add(list[ranIndex])
+
+                // Swap the selected element with the cur bound element
+                // then in the next loop select a random element in [0->cur bound index-1]
+                swap(list, ranIndex, ranBound-1)
+            }
+            return randomList
         }
 
     }

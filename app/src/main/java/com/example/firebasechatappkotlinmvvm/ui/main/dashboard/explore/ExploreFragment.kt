@@ -47,7 +47,8 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>()
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                vm.onSearchTextChanged()
+                if (!s.isNullOrEmpty()) vm.onSearchTextChanged()
+                else vm.loadRandomUsers()
             }
         })
 
@@ -88,7 +89,6 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>()
         vm.searchUsers.observe(this, Observer {
             mSearchUserAdapter.searchUsers = it
             mSearchUserAdapter.notifyDataSetChanged()
-            CommonUtil.log("Search results: ${it.size}")
         })
     }
 }

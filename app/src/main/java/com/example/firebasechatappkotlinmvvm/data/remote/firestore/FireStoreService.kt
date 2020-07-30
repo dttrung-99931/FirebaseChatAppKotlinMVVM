@@ -73,4 +73,6 @@ interface FireStoreService {
     )
 
     fun resetNewMsg(meUserId: String, chatId: String)
+
+    fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>)
 }

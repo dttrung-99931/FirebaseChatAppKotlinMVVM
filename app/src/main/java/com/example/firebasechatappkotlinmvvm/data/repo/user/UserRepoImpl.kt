@@ -145,6 +145,10 @@ class UserRepoImpl @Inject constructor(
         mFireStoreService.listenAppUser(userId, onAppUserChange)
     }
 
+    override fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>) {
+        mFireStoreService.getRandomUsers(num, onGetRandomUsersResult)
+    }
+
     private fun createUpdateAvatarUrlFirestoreCallBack(
         uploadAvatarCallBack: CallBack<String, String>,
         url: String?
