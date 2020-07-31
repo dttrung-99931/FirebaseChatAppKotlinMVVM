@@ -28,11 +28,13 @@ interface ChatRepo {
         count: Int? = null
     )
 
-    fun listenMetaChatInUserChange(
+    fun listenChatMetaInUserChange(
         chat: Chat,
         meUserId: String,
         onChatChange: CallBack<Chat, String>
     )
 
     fun resetNewMsg(meUserId: String, chatId: String)
+
+    fun removeCurChatMetaListeners()
 }

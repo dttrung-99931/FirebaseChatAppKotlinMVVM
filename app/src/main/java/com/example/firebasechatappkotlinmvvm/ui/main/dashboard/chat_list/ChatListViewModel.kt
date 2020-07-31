@@ -100,11 +100,13 @@ class ChatListViewModel @Inject constructor(
         for (chat in chatList!!) {
             // listen off/online user status, offlineAt
             userRepo.listenAppUser(chat.chatUser.id, onAppUserChange)
-            chatRepo.listenMetaChatInUserChange(chat, meUserId, onChatChange)
+            chatRepo.listenChatMetaInUserChange(chat, meUserId, onChatChange)
         }
     }
 
     override fun onCleared() {
+        userRepo.removeCurAppUserListeners()
+        chatRepo.removeCurChatMetaListeners()
         super.onCleared()
     }
 

@@ -62,10 +62,8 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
         })
 
         vm.changedAppUser.observe(this, Observer {
-            CommonUtil.log("Update chat user: ${it!!.toChatUser()}")
             chatListAdapter.updateChatUser(it)
             vm.onUpdateChatUserComplete()
         })
     }
-
 }

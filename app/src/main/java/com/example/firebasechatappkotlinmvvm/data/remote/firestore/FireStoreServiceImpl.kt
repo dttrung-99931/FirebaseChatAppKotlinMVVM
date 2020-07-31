@@ -8,7 +8,6 @@ import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
-import com.google.android.gms.common.internal.service.Common
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
@@ -43,7 +42,12 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     private var chatListenerRemover: ListenerRegistration? = null
-    private var appUserListenerRemovers: MutableList<ListenerRegistration>? = null
+
+    private val appUserListenerRemovers
+            = mutableListOf<ListenerRegistration>()
+
+    private val chatMetaListenerRemovers
+            = mutableListOf<ListenerRegistration>()
 
     private var ignoredDocumentsChangedEventsAfterSetListener = false
 
@@ -191,7 +195,6 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         if (ignoredDocumentsChangedEventsAfterSetListener)
             for (documentChange in value.documentChanges) {
                 val message = documentChange.document.toObject(Messagee::class.java)
-                CommonUtil.log("Document change $message")
                 onMessageEvent.onSuccess(
                     MessageEvent(message, documentChange.type)
                 )
@@ -310,10 +313,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     override fun listenAppUser(id: String, onChange: CallBack<AppUser, String>) {
-        if (appUserListenerRemovers == null)
-            appUserListenerRemovers = ArrayList()
-
-        appUserListenerRemovers!!.add(
+        appUserListenerRemovers.add(
             userDocument(id)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
@@ -335,29 +335,30 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         meUserId: String,
         onChatChange: CallBack<Chat, String>
     ) {
-        CommonUtil.log("Listen chat ${chat.id}")
-        userDocument(meUserId)
-            .collection(COLLECTION_CHATS)
-            .document(chat.id)
-            .addSnapshotListener { value, error ->
-                if (error != null) {
-                    CommonUtil.log("listenMetaChatInUserChange error: ${error.message}")
-                    return@addSnapshotListener
+        chatMetaListenerRemovers.add(
+            userDocument(meUserId)
+                .collection(COLLECTION_CHATS)
+                .document(chat.id)
+                .addSnapshotListener { value, error ->
+                    if (error != null) {
+                        CommonUtil.log("listenMetaChatInUserChange error: ${error.message}")
+                        return@addSnapshotListener
+                    }
+
+                    if (value != null) {
+
+                        val changedChat = value.toObject(Chat::class.java)
+
+                        // Just update these fields, not chat.chatUser
+                        // because chat.chatUser will be
+                        // listen change in UserRepo - FirebaseAuthService
+                        chat.newMsgNum = changedChat!!.newMsgNum
+                        chat.thumbMsg = changedChat.thumbMsg
+
+                        onChatChange.onSuccess(chat)
+                    }
                 }
-
-                if (value != null) {
-
-                    val changedChat = value.toObject(Chat::class.java)
-
-                    // Just update these fields, not chat.chatUser
-                    // because chat.chatUser will be
-                    // listen change in UserRepo - FirebaseAuthService
-                    chat.newMsgNum = changedChat!!.newMsgNum
-                    chat.thumbMsg = changedChat.thumbMsg
-
-                    onChatChange.onSuccess(chat)
-                }
-            }
+        )
     }
 
     override fun resetNewMsg(meUserId: String, chatId: String) {
@@ -368,9 +369,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     /**
-    * Get @param(num) of random users from COLLECTION_USER
-    * Need to exclude users who chatted with the user
-    * */
+     * Get @param(num) of random users from COLLECTION_USER
+     * Need to exclude users who chatted with the user
+     * */
     override fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>) {
         firestore.collection(COLLECTION_USERS)
             .orderBy(FIELD_IS_ONLINE, Query.Direction.DESCENDING)
@@ -385,6 +386,20 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .addOnFailureListener {
                 CommonUtil.log("Get random users error ${it.message} ")
             }
+    }
+
+    override fun removeCurAppUserListeners() {
+        appUserListenerRemovers.forEach {
+            it.remove()
+        }
+        appUserListenerRemovers.clear()
+    }
+
+    override fun removeCurChatMetaListeners() {
+        chatMetaListenerRemovers.forEach {
+            it.remove()
+        }
+        chatMetaListenerRemovers.clear()
     }
 
     private fun chatDocument(id: String) = firestore

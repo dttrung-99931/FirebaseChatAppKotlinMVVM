@@ -30,4 +30,7 @@ interface UserRepo: FireBaseAuthService {
     )
 
     fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>)
+
+    fun removeCurAppUserListeners()
+
 }

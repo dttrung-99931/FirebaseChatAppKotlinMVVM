@@ -131,7 +131,7 @@ class ChatRepoImpl @Inject constructor(
         mFireStoreService.getChats(userId, onGetChatResult, count)
     }
 
-    override fun listenMetaChatInUserChange(
+    override fun listenChatMetaInUserChange(
         chat: Chat,
         meUserId: String,
         onChatChange: CallBack<Chat, String>
@@ -141,5 +141,9 @@ class ChatRepoImpl @Inject constructor(
 
     override fun resetNewMsg(meUserId: String, chatId: String) {
         mFireStoreService.resetNewMsg(meUserId, chatId)
+    }
+
+    override fun removeCurChatMetaListeners() {
+        mFireStoreService.removeCurChatMetaListeners()
     }
 }

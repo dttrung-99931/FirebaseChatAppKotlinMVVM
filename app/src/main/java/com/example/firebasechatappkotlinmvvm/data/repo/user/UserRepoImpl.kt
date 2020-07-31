@@ -166,5 +166,7 @@ class UserRepoImpl @Inject constructor(
         }
     }
 
-
+    override fun removeCurAppUserListeners() {
+        mFireStoreService.removeCurAppUserListeners()
+    }
 }
