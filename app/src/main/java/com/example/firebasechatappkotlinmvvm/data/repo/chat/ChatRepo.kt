@@ -14,10 +14,15 @@ interface ChatRepo {
         onSendMessageResult: CallBack<String, String>
     )
 
-    fun getLastMessages(
+    fun getFirstCachedMessagesThenRefresh(
         chatId: String,
-        onGetLastMessagesResult: CallBack<List<Messagee>, String>,
-        count: Int? = null
+        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        count: Long? = null
+    )
+
+    fun getNextMessages(
+        chatId: String,
+        onGetNextMessagesResult: CallBack<List<Messagee>, String>
     )
 
     fun removeCurEventMessageListener()

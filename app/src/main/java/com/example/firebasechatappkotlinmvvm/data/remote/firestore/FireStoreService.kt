@@ -48,10 +48,10 @@ interface FireStoreService {
         onSendMessageResult: CallBack<String, String>
     )
 
-    fun getLastMessages(
+    fun getFirstCachedMessagesThenRefresh(
         chatId: String,
-        onGetLastMessagesResult: CallBack<List<Messagee>, String>,
-        count: Int?
+        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        count: Long?
     )
 
     fun removeCurEventMessageListener()
@@ -77,5 +77,8 @@ interface FireStoreService {
     fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>)
 
     fun removeCurAppUserListeners()
+
     fun removeCurChatMetaListeners()
+
+    fun getNextMessages(chatId: String, onGetNextMessagesResult: CallBack<List<Messagee>, String>)
 }

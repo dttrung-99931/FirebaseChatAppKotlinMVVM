@@ -11,7 +11,6 @@ import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
-import java.util.ArrayList
 import javax.inject.Inject
 
 
@@ -43,11 +42,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     private var chatListenerRemover: ListenerRegistration? = null
 
-    private val appUserListenerRemovers
-            = mutableListOf<ListenerRegistration>()
+    private val appUserListenerRemovers = mutableListOf<ListenerRegistration>()
 
-    private val chatMetaListenerRemovers
-            = mutableListOf<ListenerRegistration>()
+    private val chatMetaListenerRemovers = mutableListOf<ListenerRegistration>()
 
     private var ignoredDocumentsChangedEventsAfterSetListener = false
 
@@ -232,33 +229,63 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
     }
 
-    override fun getLastMessages(
+    lateinit var preTopMessageDocument: DocumentSnapshot
+
+    override fun getFirstCachedMessagesThenRefresh(
         chatId: String,
-        onGetLastMessagesResult: CallBack<List<Messagee>, String>,
-        count: Int?
+        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        count: Long?
     ) {
+        val pageSize = count ?: AppConstants.PAGE_SIZE_MSG
+
         chatDocument(chatId)
             .collection(COLLECTION_MESSAGES)
             // Do not implement pagination wit count param
             .orderBy(FIELD_CREATED_AT)
+            .limitToLast(pageSize)
             .get(Source.CACHE)
             .addOnSuccessListener {
-                onGetLastMessagesResult.onSuccess(
+                onGetMessagesResult.onSuccess(
                     CommonUtil.toMessagesFromMessageDocuments(it.documents)
                 )
                 chatDocument(chatId)
                     .collection(COLLECTION_MESSAGES)
-                    // Do not implement pagination wit count param
                     .orderBy(FIELD_CREATED_AT)
+                    .limitToLast(pageSize.toLong())
                     .get()
                     .addOnSuccessListener { it1 ->
-                        onGetLastMessagesResult.onSuccess(
+                        preTopMessageDocument = it1.first()
+                        onGetMessagesResult.onSuccess(
                             CommonUtil.toMessagesFromMessageDocuments(it1.documents)
                         )
                     }
             }
             .addOnFailureListener {
                 CommonUtil.log("getLastMessages err: ${it.message}")
+            }
+    }
+
+    override fun getNextMessages(
+        chatId: String,
+        onGetNextMessagesResult: CallBack<List<Messagee>, String>
+    ) {
+
+        chatDocument(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .orderBy(FIELD_CREATED_AT)
+            .endBefore(preTopMessageDocument)
+            .limitToLast(AppConstants.PAGE_SIZE_MSG)
+            .get()
+            .addOnSuccessListener { it1 ->
+                if (!it1.isEmpty) {
+                    preTopMessageDocument = it1.first()
+                    onGetNextMessagesResult.onSuccess(
+                        CommonUtil.toMessagesFromMessageDocuments(it1.documents)
+                    )
+                } else onGetNextMessagesResult.onSuccess(listOf())
+            }
+            .addOnFailureListener {
+                CommonUtil.log("getNextMessages err: ${it.message}")
             }
     }
 

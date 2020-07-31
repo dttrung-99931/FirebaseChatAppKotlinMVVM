@@ -27,6 +27,8 @@ class AppConstants {
         val STR_IDS_CLICK_SEARCH_USER_OPTION = listOf (
             R.string.chat
         )
+
+        val PAGE_SIZE_MSG : Long = 15
     }
 
     object View {

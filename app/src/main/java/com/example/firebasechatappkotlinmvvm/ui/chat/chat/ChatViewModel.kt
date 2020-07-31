@@ -25,11 +25,13 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
     // bind with mEdtChat
     val messageInput = MutableLiveData<String>()
 
-    val messages = MutableLiveData<List<Messagee>>()
+    val firstMessages = MutableLiveData<List<Messagee>>()
+    val nextMessages = MutableLiveData<List<Messagee>>()
     val newMessage = MutableLiveData<Messagee>()
     val meId: String = userRepo.getCurAuthUserId()
 
     val onGetCurChatIdSuccess = MutableLiveData<String>()
+    val isLoadingMoreMsg = MutableLiveData<Boolean>()
 
     private val onSendMessageResult: CallBack<String, String> =
         object : CallBack<String, String> {
@@ -45,8 +47,10 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
 
     fun onBtnSendClicked() {
         if (!messageInput.value.isNullOrEmpty()) {
-            val msg = Messagee(meId, chatUser.id,
-                Messagee.MSG_TYPE_TEXT, messageInput.value!!)
+            val msg = Messagee(
+                meId, chatUser.id,
+                Messagee.MSG_TYPE_TEXT, messageInput.value!!
+            )
 
             val messageInfoProvider = MessageInfoProvider(msg, curChatId)
             chatRepo.send(messageInfoProvider, onSendMessageResult)
@@ -71,10 +75,10 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
             }
         }
 
-    private val onGetLastMessagesResult: CallBack<List<Messagee>, String> =
+    private val onGetFirstMessagesResult: CallBack<List<Messagee>, String> =
         object : CallBack<List<Messagee>, String> {
             override fun onSuccess(data: List<Messagee>?) {
-                messages.postValue(data)
+                firstMessages.postValue(data)
             }
 
             override fun onError(errCode: String) {
@@ -89,7 +93,10 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
             override fun onSuccess(chatId: String?) {
                 onGetCurChatIdSuccess.postValue(chatId)
                 curChatId = chatId!!
-                chatRepo.getLastMessages(curChatId, onGetLastMessagesResult)
+                chatRepo.getFirstCachedMessagesThenRefresh(
+                    curChatId,
+                    onGetFirstMessagesResult
+                )
                 chatRepo.resetNewMsg(meId, chatId)
             }
 
@@ -121,5 +128,32 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
         val messageInfoProvider = MessageInfoProvider(msg, curChatId)
         messageInfoProvider.imgStream = imgStream
         chatRepo.send(messageInfoProvider, onSendMessageResult)
+    }
+
+    var reachedLastMessage = false
+
+    val onGetNextMessagesResult: CallBack<List<Messagee>, String> =
+        object : CallBack<List<Messagee>, String> {
+            override fun onSuccess(data: List<Messagee>?) {
+                if (data.isNullOrEmpty()) reachedLastMessage = true
+                nextMessages.postValue(data)
+                isLoadingMoreMsg.postValue(false)
+            }
+
+            override fun onError(errCode: String) {
+            }
+
+            override fun onFailure(errCode: String) {
+            }
+        }
+
+    fun loadMoreMessages() {
+        isLoadingMoreMsg.value = true
+        chatRepo.getNextMessages(curChatId, onGetNextMessagesResult)
+    }
+
+    fun canLoadMoreMsg(): Boolean {
+        return (isLoadingMoreMsg.value == null || !isLoadingMoreMsg.value!!)
+                && !reachedLastMessage
     }
 }

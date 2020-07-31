@@ -36,6 +36,9 @@ data class Messagee(
         const val MSG_TYPE_TEXT = "text"
         const val MSG_TYPE_IMG = "img"
         const val MSG_TYPE_VOICE = "voice"
+        const val MSG_TYPE_LOAD_MORE = "loadMore"
+
+        val MSG_LOAD_MORE = Messagee("", "", MSG_TYPE_LOAD_MORE)
     }
 
     constructor() : this("", MSG_TYPE_TEXT, "")

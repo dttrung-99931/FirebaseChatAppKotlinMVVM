@@ -9,6 +9,7 @@ import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
@@ -17,6 +18,7 @@ import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.android.synthetic.main.fragment_chat.*
 import javax.inject.Inject
@@ -130,9 +132,23 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
                     mRecyclerView.scrollToPosition(chatAdapter.itemCount - 1)
                 }, 50)
         }
-
         chatAdapter.meId = vm.meId
+        mRecyclerView.setOnScrollListener(onMessageScrollListener)
         mRecyclerView.adapter = chatAdapter
+    }
+
+    private val onMessageScrollListener: RecyclerView.OnScrollListener
+        = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            val layoutManager = recyclerView.layoutManager!! as LinearLayoutManager
+            val totalItemCount = layoutManager.itemCount
+            val firstVisibleItemPos = layoutManager.findFirstVisibleItemPosition()
+
+            if (firstVisibleItemPos == 0 &&
+                // && it to ignore event when chatAdapter is assigned to mRecyclerView
+                totalItemCount >= AppConstants.PAGE_SIZE_MSG &&
+                vm.canLoadMoreMsg()) vm.loadMoreMessages()
+        }
     }
 
     override fun observe() {
@@ -141,7 +157,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
             mBtnSend.visibility = View.VISIBLE
         })
 
-        vm.messages.observe(this, Observer {
+        vm.firstMessages.observe(this, Observer {
             chatAdapter.messages = it.toMutableList()
             chatAdapter.notifyDataSetChanged()
             mRecyclerView.scrollToPosition(chatAdapter.messages.size - 1)
@@ -150,6 +166,15 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         vm.newMessage.observe(this, Observer {
             chatAdapter.addMessage(it)
             mRecyclerView.scrollToPosition(chatAdapter.messages.size - 1)
+        })
+
+        vm.isLoadingMoreMsg.observe(this, Observer {
+            if (it) chatAdapter.addLoadMoreProgress()
+            else chatAdapter.removeLoadMoreProgress()
+        })
+
+        vm.nextMessages.observe(this, Observer {
+            chatAdapter.addNextMessages(it)
         })
     }
 

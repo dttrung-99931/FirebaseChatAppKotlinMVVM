@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,11 @@ import kotlin.collections.ArrayList
 class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
     lateinit var meId: String
-    var messages: MutableList<Messagee> = ArrayList()
+
+    // Init (messages) with Messagee.MSG_LOAD_MORE to show loading progress item
+    // When load first messages done (messages) will reassigned
+    // so the loading progress item is hide
+    var messages: MutableList<Messagee> = mutableListOf(Messagee.MSG_LOAD_MORE)
 
     companion object {
         const val VIEW_TYPE_TEXT_MSG_ME = 0
@@ -29,9 +34,13 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
         const val VIEW_TYPE_IMG_MSG_OTHER = 3
         const val VIEW_TYPE_VOICE_MSG_ME = 4
         const val VIEW_TYPE_VOICE_MSG_OTHER = 5
+        const val VIEW_TYPE_LOAD_MORE = 6
     }
 
     override fun getItemViewType(position: Int): Int {
+        if (messages[position].type == Messagee.MSG_TYPE_LOAD_MORE)
+            return VIEW_TYPE_LOAD_MORE
+
         return if (messages[position].senderUserId == meId) {
             when (messages[position].type) {
                 Messagee.MSG_TYPE_TEXT -> VIEW_TYPE_TEXT_MSG_ME
@@ -56,6 +65,8 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
                 VIEW_TYPE_TEXT_MSG_OTHER -> R.layout.item_text_msg_other
                 VIEW_TYPE_IMG_MSG_OTHER -> R.layout.item_img_msg_other
                 VIEW_TYPE_VOICE_MSG_OTHER -> R.layout.item_text_msg_other
+
+                VIEW_TYPE_LOAD_MORE -> R.layout.item_load_more_msg
                 else -> R.layout.item_text_msg_me
             }
 
@@ -78,18 +89,51 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
         notifyItemInserted(messages.size - 1)
     }
 
+    fun addLoadMoreProgress() {
+        messages.add(0, Messagee.MSG_LOAD_MORE)
+        notifyItemInserted(0)
+    }
+
+    fun addNextMessages(it: List<Messagee>?) {
+        messages.addAll(0, it!!)
+        notifyItemRangeInserted(0, it.size)
+    }
+
+    fun removeLoadMoreProgress() {
+        if (!messages.isNullOrEmpty()) {
+            /*
+            *  messages[0].type not always == Messagee.MSG_TYPE_LOAD_MORE/
+            *  for ex in case of calling addNextMessages() before calling removeLoadMoreProgress()
+            *  so use while loop to find and remove message with type MSG_TYPE_LOAD_MOR
+            * */
+            var i = 0
+            // @Warning use for loop will get out of bound exception
+            // when an element removed
+            while (i < messages.size) {
+                if (messages[i].type == Messagee.MSG_TYPE_LOAD_MORE){
+                    messages.removeAt(i)
+                    notifyItemRemoved(i)
+                    break
+                }
+                i++
+            }
+        }
+    }
+
     inner class ChatViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bindView(position: Int) {
-            setData(position)
-            itemView.setOnClickListener {
-                onMsgClickListener.onItemClicked(
-                    position,
-                    messages[position]
-                )
-                if (itemView.mTvTime.visibility == View.GONE)
-                    itemView.mTvTime.visibility = View.VISIBLE
-                else itemView.mTvTime.visibility = View.GONE
-            }
+            if (messages[position].type != Messagee.MSG_TYPE_LOAD_MORE) {
+                setData(position)
+                itemView.setOnClickListener {
+                    onMsgClickListener.onItemClicked(
+                        position,
+                        messages[position]
+                    )
+                    if (itemView.mTvTime.visibility == View.GONE)
+                        itemView.mTvTime.visibility = View.VISIBLE
+                    else itemView.mTvTime.visibility = View.GONE
+                }
+            } else CommonUtil.log("Item load more")
         }
 
         private fun setData(position: Int) {

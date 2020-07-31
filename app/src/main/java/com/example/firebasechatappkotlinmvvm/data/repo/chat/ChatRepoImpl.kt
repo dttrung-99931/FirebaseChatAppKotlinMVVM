@@ -101,14 +101,14 @@ class ChatRepoImpl @Inject constructor(
             })
     }
 
-    override fun getLastMessages(
+    override fun getFirstCachedMessagesThenRefresh(
         chatId: String,
-        onGetLastMessagesResult: CallBack<List<Messagee>, String>,
-        count: Int?
+        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        count: Long?
     ) {
-        mFireStoreService.getLastMessages(chatId, object : CallBack<List<Messagee>, String> {
+        mFireStoreService.getFirstCachedMessagesThenRefresh(chatId, object : CallBack<List<Messagee>, String> {
             override fun onSuccess(data: List<Messagee>?) {
-                onGetLastMessagesResult.onSuccess(data)
+                onGetMessagesResult.onSuccess(data)
             }
 
             override fun onError(errCode: String) {
@@ -117,6 +117,13 @@ class ChatRepoImpl @Inject constructor(
             override fun onFailure(errCode: String) {
             }
         }, count)
+    }
+
+    override fun getNextMessages(
+        chatId: String,
+        onGetNextMessagesResult: CallBack<List<Messagee>, String>
+    ) {
+        mFireStoreService.getNextMessages(chatId, onGetNextMessagesResult)
     }
 
     override fun removeCurEventMessageListener() {
