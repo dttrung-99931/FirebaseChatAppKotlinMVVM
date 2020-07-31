@@ -32,6 +32,8 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
 
     val onGetCurChatIdSuccess = MutableLiveData<String>()
     val isLoadingMoreMsg = MutableLiveData<Boolean>()
+    var isLoadingRefreshMsgsComplete = true
+    var hasRequestLoadingMoreMsgsWhileRefresh = false
 
     private val onSendMessageResult: CallBack<String, String> =
         object : CallBack<String, String> {
@@ -78,7 +80,18 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
     private val onGetFirstMessagesResult: CallBack<List<Messagee>, String> =
         object : CallBack<List<Messagee>, String> {
             override fun onSuccess(data: List<Messagee>?) {
+                /*
+                *  The first time this callback is fired when messages loaded from cache
+                *  => isLoadingRefreshMsgsComplete = false
+                *  The second time this callback is fired when messages loaded from backend (refresh)
+                *  => isLoadingRefreshMsgsComplete = true
+                * */
                 firstMessages.postValue(data)
+                isLoadingRefreshMsgsComplete = !isLoadingRefreshMsgsComplete
+                if (isLoadingRefreshMsgsComplete && hasRequestLoadingMoreMsgsWhileRefresh){
+                    loadMoreMessages()
+                    hasRequestLoadingMoreMsgsWhileRefresh = false
+                }
             }
 
             override fun onError(errCode: String) {
@@ -149,7 +162,9 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
 
     fun loadMoreMessages() {
         isLoadingMoreMsg.value = true
-        chatRepo.getNextMessages(curChatId, onGetNextMessagesResult)
+        if (isLoadingRefreshMsgsComplete) {
+            chatRepo.getNextMessages(curChatId, onGetNextMessagesResult)
+        } else hasRequestLoadingMoreMsgsWhileRefresh = true
     }
 
     fun canLoadMoreMsg(): Boolean {
