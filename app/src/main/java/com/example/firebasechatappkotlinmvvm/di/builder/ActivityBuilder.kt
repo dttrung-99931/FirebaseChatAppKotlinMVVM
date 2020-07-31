@@ -11,6 +11,7 @@ import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragment
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list.ChatListFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.ProfileFragmentProvider
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.change_password.ChangePasswordFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.start.StartActivity
 import com.example.firebasechatappkotlinmvvm.ui.start.StartActivityModule
 import dagger.Module
@@ -27,6 +28,7 @@ abstract class ActivityBuilder {
         DashboardFragmentProvider::class,
         ChatListFragmentProvider::class,
         ProfileFragmentProvider::class,
+        ChangePasswordFragmentProvider::class,
         ExploreFragmentProvider::class
     ])
     abstract fun bindMainActivity(): MainActivity

@@ -20,7 +20,7 @@ class ProfileOptionAdapter(val onItemClickListener: OnItemWithPositionClickListe
     }
 
     override fun getItemCount(): Int {
-        return 5
+        return 2
     }
 
     override fun onBindViewHolder(holder: ProfileOptionViewHolder, position: Int) {
@@ -42,6 +42,10 @@ class ProfileOptionAdapter(val onItemClickListener: OnItemWithPositionClickListe
             val context = itemView.context
             when (position) {
                 0 -> {
+                    optionText = context.getString(R.string.chane_password)
+                    imgProfileOptionResId = R.drawable.ic_change_password_50px
+                }
+                1 -> {
                     optionText = context.getString(R.string.sign_out)
                     imgProfileOptionResId = R.drawable.ic_sign_out_50px
                 }

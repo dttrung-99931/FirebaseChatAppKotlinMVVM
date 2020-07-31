@@ -33,4 +33,10 @@
     <string name="enter_message">Enter message</string>
     <string name="upload_image">Upload image</string>
     <string name="sound_msg">Sound message</string>
+    <string name="chane_password">Change password</string>
+    <string name="ok">Ok</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="successfully">Successfully</string>
+    <string name="incorrect_old_password">Incorrect old password</string>
 </resources>

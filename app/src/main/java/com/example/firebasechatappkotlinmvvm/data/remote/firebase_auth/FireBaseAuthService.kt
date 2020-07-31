@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth
 
+import androidx.lifecycle.MutableLiveData
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
@@ -18,4 +19,10 @@ interface FireBaseAuthService {
     fun signOut()
     fun getCurAuthUser(): FirebaseUser?
     fun getCurAuthUserId(): String
+    fun changePassword(
+        oldPassword: String,
+        newPassword: String,
+        onChangePasswordResult: CallBack<String, String>
+    )
+
 }

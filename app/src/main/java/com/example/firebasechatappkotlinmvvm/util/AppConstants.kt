@@ -15,6 +15,8 @@ class AppConstants {
         const val WEAK_PASSWORD = "ERROR_WEAK_PASSWORD"
         const val LOGIN_FAILED = "LOGIN_FAILED"
         const val NOT_LOGGED_IN = "NOT_LOGGED_IN"
+        const val INCORRECT_OLD_PASSWORD = "INCORRECT_OLD_PASSWORD"
+        const val MISSING_INFORMATION = "MISSING_INFORMATION"
     }
 
     companion object{
@@ -29,6 +31,8 @@ class AppConstants {
         )
 
         val PAGE_SIZE_MSG : Long = 15
+
+        val OK = "OK"
     }
 
     object View {

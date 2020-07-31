@@ -1,7 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile
 
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +16,7 @@ import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemWithPositionClickListener
 import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFragment
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.change_password.ChangePasswordDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import kotlinx.android.synthetic.main.fragment_profile.*
 import javax.inject.Inject
@@ -72,10 +72,6 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         selectMediaImage(selectMediaImgUriCallBack)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_avatar_profile, menu)
@@ -84,7 +80,10 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
     private val mOnItemProfileOptionClick: OnItemWithPositionClickListener =
         object : OnItemWithPositionClickListener {
             override fun onItemWithPositionClicked(position: Int) {
-                showExitConfirmDialog()
+                when (position) {
+                    0 -> ChangePasswordDialog().show(childFragmentManager, "")
+                    1 -> showExitConfirmDialog ()
+                }
             }
         }
 

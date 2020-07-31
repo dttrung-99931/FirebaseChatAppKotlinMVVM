@@ -8,9 +8,6 @@ import android.widget.EditText
 /**
  * Created by Trung on 7/21/2020
  */
-class ExtentionUI {
-}
-
 fun EditText.showKeyBoard() {
     val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE)
             as InputMethodManager

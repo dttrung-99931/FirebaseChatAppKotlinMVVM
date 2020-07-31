@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.user
 
+import androidx.lifecycle.MutableLiveData
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
@@ -58,6 +59,14 @@ class UserRepoImpl @Inject constructor(
 
     override fun getCurAuthUserId(): String {
         return mFireBaseAuthService.getCurAuthUserId()
+    }
+
+    override fun changePassword(
+        oldPassword: String,
+        newPassword: String,
+        onChangePasswordResult: CallBack<String, String>
+    ) {
+        mFireBaseAuthService.changePassword(oldPassword, newPassword, onChangePasswordResult)
     }
 
     // @return AppUser(nickname, avatarUrl, ...)

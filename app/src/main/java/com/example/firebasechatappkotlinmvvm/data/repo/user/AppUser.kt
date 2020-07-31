@@ -45,5 +45,7 @@ data class AppUser(var nickname: String  = "",
             }
             return appUsers
         }
+
+
     }
 }

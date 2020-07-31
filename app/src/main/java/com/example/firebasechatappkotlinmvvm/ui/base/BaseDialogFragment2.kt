@@ -1,7 +1,9 @@
 package com.example.firebasechatappkotlinmvvm.ui.base
 
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -27,7 +30,7 @@ import java.io.InputStream
 import java.io.Serializable
 import java.lang.Exception
 
-abstract class BaseFragment<TViewBinding : ViewDataBinding, TVModel : BaseViewModel> : Fragment() {
+abstract class BaseDialogFragment2<TViewBinding : ViewDataBinding, TVModel : BaseViewModel> : DialogFragment() {
     lateinit var vm: TVModel
     lateinit var viewBinding: TViewBinding
     lateinit var mBaseActivity: BaseActivity
@@ -37,6 +40,13 @@ abstract class BaseFragment<TViewBinding : ViewDataBinding, TVModel : BaseViewMo
         if (context is BaseActivity)
             mBaseActivity = context
         else throw Exception("All Activities must be children of BaseActivity")
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = Dialog(requireContext())
+        // Make the dialog background transparent
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        return dialog
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
