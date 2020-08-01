@@ -10,7 +10,7 @@ import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatListBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragment
 import kotlinx.android.synthetic.main.fragment_chat_list.*
 import javax.inject.Inject
 
@@ -52,8 +52,15 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
 
     override fun observe() {
         vm.chats.observe(this, Observer {
-            chatListAdapter.chats = it.toMutableList()
-            chatListAdapter.notifyDataSetChanged()
+            if (it.isEmpty() && vm.loadCachedChats){
+                if (parentFragment is DashboardFragment) {
+                    (parentFragment as DashboardFragment).suggestExploreFriendWithDelay()
+                }
+            }
+            else {
+                chatListAdapter.chats = it.toMutableList()
+                chatListAdapter.notifyDataSetChanged()
+            }
         })
 
         vm.changedChatMeta.observe(this, Observer {

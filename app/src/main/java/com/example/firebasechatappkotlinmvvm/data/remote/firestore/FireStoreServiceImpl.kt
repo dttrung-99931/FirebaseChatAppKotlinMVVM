@@ -254,10 +254,12 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     .limitToLast(pageSize.toLong())
                     .get()
                     .addOnSuccessListener { it1 ->
-                        preTopMessageDocument = it1.first()
-                        onGetMessagesResult.onSuccess(
-                            CommonUtil.toMessagesFromMessageDocuments(it1.documents)
-                        )
+                        if (!it1.isEmpty) {
+                            preTopMessageDocument = it1.first()
+                            onGetMessagesResult.onSuccess(
+                                CommonUtil.toMessagesFromMessageDocuments(it1.documents)
+                            )
+                        } else onGetMessagesResult.onSuccess(listOf())
                     }
             }
             .addOnFailureListener {

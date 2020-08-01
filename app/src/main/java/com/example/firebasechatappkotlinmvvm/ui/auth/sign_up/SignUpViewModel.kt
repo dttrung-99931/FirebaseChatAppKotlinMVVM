@@ -26,6 +26,8 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
     val onSignUpSuccess = MutableLiveData<Any>()
     val onSignUpFailureWithCode = MutableLiveData<String>()
 
+    val loginResult = MutableLiveData<Boolean>()
+
     fun onBtnSignUpClicked() {
         if (isValidUsername && checkValidPassword()) {
             userRepo.singUp(bundleUser(), signUpCallBack)
@@ -110,6 +112,30 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
             checkValidPassword()
     }
 
+    private val mLoginCallBack: CallBack<Unit, String> =
+        object : CallBack<Unit, String> {
+            override fun onSuccess(data: Unit?) {
+                loginResult.postValue(true)
+                isLoading.postValue(false)
+                userRepo.updateUserOnline()
+            }
+
+            override fun onError(errCode: String) {
+                isLoading.postValue(false)
+                onError.postValue(errCode)
+            }
+
+            override fun onFailure(errCode: String) {
+                isLoading.postValue(false)
+                onError.postValue(AppConstants.CommonErr.UNKNOWN)
+            }
+        }
+
+    fun loginAfterSignUpSuccessfully() {
+        isLoading.value = true
+        val appUser = AppUser("", email.value!!, password.value!!)
+        userRepo.login(appUser, mLoginCallBack)
+    }
 
     class Factory(val provider: Provider<SignUpViewModel>) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
