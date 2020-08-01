@@ -35,16 +35,7 @@ open class BaseActivity : AppCompatActivity() {
         setupViews()
     }
 
-    public fun checkNetwork() {
-        if (!isNetworkAvailable())
-            openNoInternetFragment()
-    }
-
-    public fun openNoInternetFragment() {
-        NoInternetConnectionDialog().show(supportFragmentManager, "")
-    }
-
-    public fun isNetworkAvailable(): Boolean {
+    fun isNetworkAvailable(): Boolean {
         val service = getSystemService(Context.CONNECTIVITY_SERVICE)
         if (service is ConnectivityManager)
             return service.activeNetwork != null

@@ -1,22 +1,28 @@
 package com.example.firebasechatappkotlinmvvm.ui.base
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.Handler
+import androidx.lifecycle.Observer
 import com.example.firebasechatappkotlinmvvm.R
+import com.example.firebasechatappkotlinmvvm.ui.start.StartViewModel
+import kotlinx.android.synthetic.main.dialog_no_internet.*
 
 
 /**
  * Created by Trung on 7/19/2020
  */
-class NoInternetConnectionDialog: BaseDialogFragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_no_internet, container, false)
+class NoInternetConnectionDialog(val startVM: StartViewModel) : BaseDialogFragmentWithoutVM() {
+    override fun getLayoutResId(): Int {
+        return R.layout.dialog_no_internet
+    }
+
+    override fun setupViews() {
+        mRefreshLayout.setOnRefreshListener {
+            if (mBaseActivity.isNetworkAvailable())
+                Handler().post {
+                    startVM.processNavToAuthOrMainActivity()
+                }
+            else mRefreshLayout.isRefreshing = false
+        }
     }
 
     override fun onDestroyView() {

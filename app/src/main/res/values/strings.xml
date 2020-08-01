@@ -19,7 +19,7 @@
     <string name="weak_password">Password must be at least 6 characters</string>
     <string name="login_failed">Login failed</string>
     <string name="login_successfully">Login successfully</string>
-    <string name="no_internet">Opps! No internet connection.</string>
+    <string name="no_internet">Opps! No internet connection</string>
     <string name="search">Nickname or email</string>
     <string name="chat">Chat</string>
     <string name="explore">Explore</string>
@@ -39,4 +39,5 @@
     <string name="new_password">New password</string>
     <string name="successfully">Successfully</string>
     <string name="incorrect_old_password">Incorrect old password</string>
+    <string name="pull_to_refresh">Pull to refresh</string>
 </resources>

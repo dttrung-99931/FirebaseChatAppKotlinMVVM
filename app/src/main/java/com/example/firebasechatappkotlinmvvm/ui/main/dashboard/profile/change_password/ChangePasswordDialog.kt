@@ -5,13 +5,13 @@ import androidx.lifecycle.ViewModelProviders
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.DialogChangePasswordBinding
-import com.example.firebasechatappkotlinmvvm.ui.base.BaseDialogFragment2
+import com.example.firebasechatappkotlinmvvm.ui.base.BaseDialogFragment
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.extension.showKeyBoard
 import kotlinx.android.synthetic.main.dialog_change_password.*
 import javax.inject.Inject
 
-class ChangePasswordDialog : BaseDialogFragment2<
+class ChangePasswordDialog : BaseDialogFragment<
         DialogChangePasswordBinding, ChangePasswordViewModel>() {
 
     @Inject

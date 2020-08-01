@@ -1,10 +1,11 @@
 package com.example.firebasechatappkotlinmvvm.ui.start
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.lifecycle.Observer
 import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseActivity
-import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
+import com.example.firebasechatappkotlinmvvm.ui.base.NoInternetConnectionDialog
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -24,7 +25,10 @@ class StartActivity : BaseActivity() {
         if (isNetworkAvailable()){
             vm.processNavToAuthOrMainActivity()
         } else openNoInternetFragment()
+    }
 
+    private fun openNoInternetFragment() {
+        NoInternetConnectionDialog(vm).show(supportFragmentManager, "")
     }
 
     private fun observe() {
