@@ -38,4 +38,15 @@
     <style name="bottomSheetStyleWrapper" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
     </style>
+
+    <style name="TitleToolBar">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">#E9000000</item>
+    </style>
+
+    <style name="ToolBar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextAppearance">@style/TitleToolBar</item>
+    </style>
+
 </resources>

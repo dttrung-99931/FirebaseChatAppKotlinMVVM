@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
@@ -21,6 +22,7 @@ import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.android.synthetic.main.item_chat.view.*
 import javax.inject.Inject
 
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
@@ -59,6 +61,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     private val chatAdapter = ChatAdapter(onMsgClickListener)
 
     override fun setupViews() {
+        setupToolbar()
         setupChatRecyclerView()
         mBtnSend.setOnClickListener {
             vm.onBtnSendClicked()
@@ -66,6 +69,20 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         }
         setupEdtChat()
         setupBtnMediaMsgMenu()
+    }
+
+    private fun setupToolbar() {
+        mToolbar.setNavigationOnClickListener {
+            finishActivity()
+        }
+
+        mTvNickname.text = vm.chatUser.nickname
+
+        Glide.with(requireContext())
+            .load(vm.chatUser.avatarUrl)
+            .placeholder(R.drawable.ic_no_avatar_50px)
+            .centerCrop()
+            .into(mImgAvatar)
     }
 
     private fun setupBtnMediaMsgMenu() {

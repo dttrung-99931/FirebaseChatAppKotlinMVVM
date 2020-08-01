@@ -1,28 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="viewModel"
             type="com.example.firebasechatappkotlinmvvm.ui.chat.chat.ChatViewModel" />
     </data>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/mToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            style="@style/ToolBar"
+            android:clickable="true"
+            android:focusable="true"
+            app:contentInsetStartWithNavigation="0dp"
+            android:elevation="1dp"
+            android:outlineProvider="bounds">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/mImgAvatar"
+                android:layout_width="@dimen/size_avatar_chat"
+                android:layout_height="@dimen/size_avatar_chat"
+                android:padding="5dp"
+                android:src="@drawable/ic_no_avatar_50px"
+                app:civ_border_color="#CFC8CF"
+                app:civ_border_width="1dp" />
+
+            <TextView
+                android:id="@+id/mTvNickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trung dep trai"
+                android:textAppearance="@style/TitleToolBar"
+                android:layout_marginStart="5dp"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/llEnterMsg"
-            android:paddingTop="0dp" />
+            android:paddingTop="0dp"
+            android:layout_below="@id/mToolbar"/>
 
         <LinearLayout
             android:id="@+id/llEnterMsg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:elevation="1dp"
+            android:outlineProvider="bounds">
 
             <LinearLayout
                 android:layout_width="0dp"

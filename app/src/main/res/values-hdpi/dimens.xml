@@ -5,4 +5,5 @@
     <dimen name="size_avatar_search">55dp</dimen>
     <dimen name="width_msg_img">180dp</dimen>
     <dimen name="height_msg_img">250dp</dimen>
+    <dimen name="size_avatar_chat">50dp</dimen>
 </resources>
