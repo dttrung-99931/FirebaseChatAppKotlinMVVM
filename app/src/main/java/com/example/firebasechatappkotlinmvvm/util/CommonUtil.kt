@@ -60,13 +60,13 @@ class CommonUtil {
             if (list.size <= num) return list
             val randomList = ArrayList<T>()
             for (i in 0 until num) {
-                val ranBound = list.size - i // => 0 <= random value <= ranBound-1
-                val ranIndex = Random.nextInt(ranBound)
+                val bound = list.size - i // => 0 <= random value <= ranBound-1
+                val ranIndex = Random.nextInt(bound)
                 randomList.add(list[ranIndex])
 
                 // Swap the selected element with the cur bound element
                 // then in the next loop select a random element in [0->cur bound index-1]
-                swap(list, ranIndex, ranBound-1)
+                swap(list, ranIndex, bound-1)
             }
             return randomList
         }

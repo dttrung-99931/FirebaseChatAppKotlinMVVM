@@ -399,7 +399,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     /**
      * Get @param(num) of random users from COLLECTION_USER
-     * Need to exclude users who chatted with the user
+     * Need to exclude users who are in chat list of the user
      * */
     override fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>) {
         firestore.collection(COLLECTION_USERS)

@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:paddingStart="15dp">
 
         <TextView
             android:id="@+id/mTvNickname"
@@ -28,7 +29,6 @@
             android:layout_gravity="center_vertical"
             android:drawableEnd="@drawable/ic_status_offline"
             android:gravity="center_vertical"
-            android:paddingStart="30dp"
             android:paddingEnd="5dp"
             android:text="Panda"
             android:textColor="#000"
@@ -39,7 +39,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start"
-            android:paddingStart="30dp"
             android:paddingEnd="5dp"
             android:text="3:09 sun"
             android:textSize="11sp" />
