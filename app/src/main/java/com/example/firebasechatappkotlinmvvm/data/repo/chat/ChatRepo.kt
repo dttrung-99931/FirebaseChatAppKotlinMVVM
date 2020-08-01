@@ -27,9 +27,9 @@ interface ChatRepo {
 
     fun removeCurEventMessageListener()
 
-    fun getChats(
+    fun getCachedChats(
         userId: String,
-        onGetChatResult: CallBack<List<Chat>, String>,
+        onGetCachedChatsResult: CallBack<List<Chat>, String>,
         count: Int? = null
     )
 
@@ -42,4 +42,9 @@ interface ChatRepo {
     fun resetNewMsg(meUserId: String, chatId: String)
 
     fun removeCurChatMetaListeners()
+
+    fun getRefreshChatsAndListenChanges(
+        meUserId: String,
+        onChatEvents: CallBack<List<ChatEvent>, String>
+    )
 }

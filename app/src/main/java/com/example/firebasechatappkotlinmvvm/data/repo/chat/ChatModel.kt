@@ -121,8 +121,33 @@ data class MessageInfoProvider(
     val message: Messagee,
     val chatId: String,
     var imgStream: InputStream? = null
-) {
-}
+)
 
-data class MessageEvent(val message: Messagee, val eventType: DocumentChange.Type) {
+data class MessageEvent(val message: Messagee, val eventType: DocumentChange.Type)
+
+data class ChatEvent(val chat: Chat, val eventType: DocumentChange.Type) {
+    companion object {
+        fun listFromChangedChatDocuments(changedChatDocuments: List<DocumentChange>):
+        List<ChatEvent>{
+            val changedChatEvents = mutableListOf<ChatEvent>()
+            changedChatDocuments.forEach {
+                changedChatEvents.add(ChatEvent(
+                    it.document.toObject(Chat::class.java), it.type)
+                )
+            }
+            return changedChatEvents.toList()
+        }
+    }
+
+    fun isAdded(): Boolean {
+        return eventType == DocumentChange.Type.ADDED
+    }
+
+    fun isChanged(): Boolean {
+        return eventType == DocumentChange.Type.MODIFIED
+    }
+
+    fun isRemoved(): Boolean {
+        return eventType == DocumentChange.Type.REMOVED
+    }
 }

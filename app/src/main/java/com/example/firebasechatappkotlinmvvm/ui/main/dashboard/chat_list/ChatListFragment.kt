@@ -51,8 +51,8 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
     }
 
     override fun observe() {
-        vm.chats.observe(this, Observer {
-            if (it.isEmpty() && vm.loadCachedChats){
+        vm.cachedChats.observe(this, Observer {
+            if (it.isEmpty() && vm.loadRefreshLinkChats){
                 if (parentFragment is DashboardFragment) {
                     (parentFragment as DashboardFragment).suggestExploreFriendWithDelay()
                 }
@@ -63,13 +63,13 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
             }
         })
 
-        vm.changedChatMeta.observe(this, Observer {
-            chatListAdapter.updateChatMeta(it)
-            vm.onUpdateChangedChatComplete()
+        vm.changedOrAddedChat.observe(this, Observer {
+            chatListAdapter.updateOrAddChat(it)
+            vm.onUpdateChatMetaComplete()
         })
 
         vm.changedAppUser.observe(this, Observer {
-            chatListAdapter.updateChatUser(it)
+            chatListAdapter.updateUserStatusOrAddChat(it)
             vm.onUpdateChatUserComplete()
         })
     }

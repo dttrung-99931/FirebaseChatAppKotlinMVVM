@@ -106,7 +106,7 @@ class ChatRepoImpl @Inject constructor(
         onGetMessagesResult: CallBack<List<Messagee>, String>,
         count: Long?
     ) {
-        mFireStoreService.getFirstCachedMessagesThenRefresh(chatId, object : CallBack<List<Messagee>, String> {
+        mFireStoreService.getFirstCachedMessagesThenGetRefresh(chatId, object : CallBack<List<Messagee>, String> {
             override fun onSuccess(data: List<Messagee>?) {
                 onGetMessagesResult.onSuccess(data)
             }
@@ -130,12 +130,12 @@ class ChatRepoImpl @Inject constructor(
         mFireStoreService.removeCurEventMessageListener()
     }
 
-    override fun getChats(
+    override fun getCachedChats(
         userId: String,
-        onGetChatResult: CallBack<List<Chat>, String>,
+        onGetCachedChatsResult: CallBack<List<Chat>, String>,
         count: Int?
     ) {
-        mFireStoreService.getChats(userId, onGetChatResult, count)
+        mFireStoreService.getCachedChats(userId, onGetCachedChatsResult, count)
     }
 
     override fun listenChatMetaInUserChange(
@@ -152,5 +152,14 @@ class ChatRepoImpl @Inject constructor(
 
     override fun removeCurChatMetaListeners() {
         mFireStoreService.removeCurChatMetaListeners()
+    }
+
+    override fun getRefreshChatsAndListenChanges(
+        meUserId: String,
+        onChatEvents: CallBack<List<ChatEvent>, String>
+    ) {
+        mFireStoreService.getRefreshChatsAndListenChanges(
+            meUserId, onChatEvents
+        )
     }
 }

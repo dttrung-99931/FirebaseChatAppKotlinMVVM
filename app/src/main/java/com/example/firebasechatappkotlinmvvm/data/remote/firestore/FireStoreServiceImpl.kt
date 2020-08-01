@@ -231,7 +231,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     lateinit var preTopMessageDocument: DocumentSnapshot
 
-    override fun getFirstCachedMessagesThenRefresh(
+    override fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
         onGetMessagesResult: CallBack<List<Messagee>, String>,
         count: Long?
@@ -291,6 +291,33 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
     }
 
+    /*
+    * Listen chat collection changes
+    * after addSnapshotListener ->
+    * all chat events corresponding to chats will be fired although no changes
+    * -> That can used as load chats
+    * */
+    override fun getRefreshChatsAndListenChanges(
+        meUserId: String,
+        onChatEvents: CallBack<List<ChatEvent>, String>
+    ) {
+        userDocument(meUserId)
+            .collection(COLLECTION_CHATS)
+            .addSnapshotListener { value, error ->
+                if (error != null) {
+                    CommonUtil.log("getRefreshChatsAndListenChanges error: ${error.message}")
+                    return@addSnapshotListener
+                }
+
+                // if change is saved in the backend
+                if (value != null) {
+                    onChatEvents.onSuccess(
+                        ChatEvent.listFromChangedChatDocuments(value.documentChanges)
+                    )
+                }
+            }
+    }
+
     override fun removeCurEventMessageListener() {
         if (chatListenerRemover != null) {
             chatListenerRemover!!.remove()
@@ -298,9 +325,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         }
     }
 
-    override fun getChats(
+    override fun getCachedChats(
         userId: String,
-        onGetChatResult: CallBack<List<Chat>, String>,
+        onGetCachedChatsResult: CallBack<List<Chat>, String>,
         count: Int?
     ) {
         userDocument(userId)
@@ -309,21 +336,11 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .addOnSuccessListener {
                 // Display cached chats first
                 val cachedChats = Chat.createList(it.documents)
-                onGetChatResult.onSuccess(cachedChats)
+                onGetCachedChatsResult.onSuccess(cachedChats)
 
-                userDocument(userId)
-                    .collection(COLLECTION_CHATS)
-                    .get()
-                    .addOnSuccessListener {
-                        val refreshChats = Chat.createList(it.documents)
-                        onGetChatResult.onSuccess(refreshChats)
-                    }
-                    .addOnFailureListener {
-                        CommonUtil.log("getChats refresh error: ${it.message}")
-                    }
             }
             .addOnFailureListener {
-                CommonUtil.log("getChats error: ${it.message}")
+                CommonUtil.log("getCachedChats error: ${it.message}")
             }
     }
 

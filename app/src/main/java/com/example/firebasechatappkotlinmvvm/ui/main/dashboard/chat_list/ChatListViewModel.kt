@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatEvent
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatRepo
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
@@ -18,34 +19,24 @@ import javax.inject.Provider
  * Created by Trung on 7/10/2020
  */
 class ChatListViewModel @Inject constructor(
-    val chatRepo: ChatRepo, val userRepo: UserRepo
+    private val chatRepo: ChatRepo, val userRepo: UserRepo
 ) : BaseViewModel() {
 
     val meUserId: String
-    val chats = MutableLiveData<List<Chat>>()
+    val cachedChats = MutableLiveData<List<Chat>>()
 
-    // first load chats (containing avatar, nickname),
-    // then load chatWithMoreInfo (containing isOnline, offlineAt) for each chat in chats
-    val changedChatMeta = MutableLiveData<Chat>()
-    val changedChatMetaStack = LinkedList<Chat>()
+    val changedOrAddedChat = MutableLiveData<Chat>()
+    val changedOrAddedChatStack = LinkedList<Chat>()
 
-    val onLoginFailure = MutableLiveData<String>()
-    var loadCachedChats = false
+    var loadRefreshLinkChats = false
 
-    private val onGetChatResult: CallBack<List<Chat>, String> =
+    private val onGetCachedChatsResult: CallBack<List<Chat>, String> =
         object : CallBack<List<Chat>, String> {
             override fun onSuccess(chatList: List<Chat>?) {
-                this@ChatListViewModel.chats.postValue(chatList)
-                if (loadCachedChats) {
-
-                    // @Warning do not listen this.chats.value (live data)
-                    // although chats.postValue(chatList) called, because
-                    // listenChatChange run before chats.postValue done
-                    listenChatChange(chatList)
-                } else {
-                    isLoading.postValue(false)
-                    loadCachedChats = true
-                }
+                this@ChatListViewModel.cachedChats.postValue(chatList)
+                isLoading.postValue(false)
+                cachedChats.postValue(chatList)
+                getRefreshChatsAndListenChanges()
             }
 
             override fun onError(errCode: String) {
@@ -54,30 +45,16 @@ class ChatListViewModel @Inject constructor(
             }
 
             override fun onFailure(errCode: String) {
-                onLoginFailure.postValue(errCode)
+                onError.postValue(errCode)
                 isLoading.postValue(false)
             }
         }
 
     init {
         isLoading.value = true
-        chatRepo.getChats(userRepo.getCurAuthUserId(), onGetChatResult)
+        chatRepo.getCachedChats(userRepo.getCurAuthUserId(), onGetCachedChatsResult)
         meUserId = userRepo.getCurAuthUserId()
     }
-
-    private val onChatChange: CallBack<Chat, String> =
-        object : CallBack<Chat, String> {
-            override fun onSuccess(data: Chat?) {
-                changedChatMetaStack.push(data)
-                changedChatMeta.postValue(data)
-            }
-
-            override fun onError(errCode: String) {
-            }
-
-            override fun onFailure(errCode: String) {
-            }
-        }
 
     val changedAppUser = MutableLiveData<AppUser>()
     val changedAppUserStack = LinkedList<AppUser>()
@@ -96,12 +73,45 @@ class ChatListViewModel @Inject constructor(
             }
         }
 
-    private fun listenChatChange(chatList: List<Chat>?) {
-        for (chat in chatList!!) {
-            // listen off/online user status, offlineAt
-            userRepo.listenAppUser(chat.chatUser.id, onAppUserChange)
-            chatRepo.listenChatMetaInUserChange(chat, meUserId, onChatChange)
+    private var idOfUserNeedToListenStatus: String? = null
+
+    private val onChatEvents: CallBack<List<ChatEvent>, String> =
+        object : CallBack<List<ChatEvent>, String> {
+            override fun onSuccess(data: List<ChatEvent>?) {
+                for (chatEvent in data!!) {
+                    changedOrAddedChatStack.push(chatEvent.chat)
+                    changedOrAddedChat.postValue(chatEvent.chat)
+
+                    // if new chat added
+                    if (loadRefreshLinkChats && chatEvent.isAdded()) {
+                        // store user id to listen after update chat ui
+                        // in onUpdateChatMetaComplete
+                        idOfUserNeedToListenStatus = chatEvent.chat.chatUser.id
+                    }
+                }
+
+                if (!loadRefreshLinkChats) {
+                    loadRefreshLinkChats = true
+                    getRefreshUserStatusAndListen(data)
+                }
+            }
+
+            override fun onError(errCode: String) {
+                onError.postValue(errCode)
+            }
+
+            override fun onFailure(errCode: String) {
+            }
         }
+
+    private fun getRefreshUserStatusAndListen(chatEvents: List<ChatEvent>) {
+        chatEvents.forEach {
+            userRepo.listenAppUser(it.chat.chatUser.id, onAppUserChange)
+        }
+    }
+
+    private fun getRefreshChatsAndListenChanges() {
+        chatRepo.getRefreshChatsAndListenChanges(meUserId, onChatEvents)
     }
 
     override fun onCleared() {
@@ -113,11 +123,18 @@ class ChatListViewModel @Inject constructor(
     // Check to make sure all values updated to Main thread
     // because changedChat.postValue() do not post all values to main thread,
     // just the latest one of multiples value to be updated to main thread
-    // so use the stack to store missing values to update later
-    fun onUpdateChangedChatComplete() {
-        changedChatMetaStack.pop()
-        if (changedChatMetaStack.size != 0)
-            changedChatMeta.value = changedChatMetaStack.first
+    // so use the stack to store missing values and update later
+    fun onUpdateChatMetaComplete() {
+        val updatedChat = changedOrAddedChatStack.pop()
+        if (changedOrAddedChatStack.size != 0)
+            changedOrAddedChat.value = changedOrAddedChatStack.first
+
+        // Listen new user status of new added chat
+        if (idOfUserNeedToListenStatus != null &&
+            updatedChat.chatUser.id == idOfUserNeedToListenStatus){
+            userRepo.listenAppUser(idOfUserNeedToListenStatus!!, onAppUserChange)
+            idOfUserNeedToListenStatus = null
+        }
     }
 
     fun onUpdateChatUserComplete() {

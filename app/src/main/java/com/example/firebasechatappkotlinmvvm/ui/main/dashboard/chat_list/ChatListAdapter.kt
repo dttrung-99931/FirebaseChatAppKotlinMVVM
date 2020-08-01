@@ -42,7 +42,8 @@ class ChatListAdapter(
         holderList.bindView(position)
     }
 
-    fun updateChatMeta(it: Chat?) {
+    fun updateOrAddChat(it: Chat?) {
+        var isChatUpdated = false
         for (i in chats.indices)
             if (chats[i].chatUser.id == it!!.chatUser.id) {
                 // @Warning: do not assign chat[i] = it
@@ -50,17 +51,32 @@ class ChatListAdapter(
                 chats[i].thumbMsg = it.thumbMsg
                 chats[i].newMsgNum = it.newMsgNum
                 notifyItemChanged(i)
+                isChatUpdated = true
                 break
             }
+        if (!isChatUpdated) {
+            addTopAndNotify(it!!)
+        }
     }
 
-    fun updateChatUser(appUser: AppUser) {
+    private fun addTopAndNotify(chat: Chat) {
+        chats.add(0, chat)
+        notifyItemInserted(0)
+    }
+
+    fun updateUserStatusOrAddChat(appUser: AppUser) {
+        var isUserStatusUpdated = false
         for (i in chats.indices)
             if (chats[i].chatUser.id == appUser.id) {
                 chats[i].chatUser = appUser.toChatUser()
                 notifyItemChanged(i)
+                isUserStatusUpdated = true
                 break
             }
+        if (!isUserStatusUpdated) {
+            val chat = Chat(appUser.toChatUser())
+            addTopAndNotify(chat)
+        }
     }
 
     inner class ChatListViewHolder(itemView: View) : BaseViewHolder(itemView) {

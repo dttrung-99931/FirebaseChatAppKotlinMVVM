@@ -48,7 +48,7 @@ interface FireStoreService {
         onSendMessageResult: CallBack<String, String>
     )
 
-    fun getFirstCachedMessagesThenRefresh(
+    fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
         onGetMessagesResult: CallBack<List<Messagee>, String>,
         count: Long?
@@ -56,8 +56,8 @@ interface FireStoreService {
 
     fun removeCurEventMessageListener()
 
-    fun getChats(userId: String,
-        onGetChatResult: CallBack<List<Chat>, String>, count: Int?
+    fun getCachedChats(userId: String,
+                       onGetCachedChatsResult: CallBack<List<Chat>, String>, count: Int?
     )
 
     fun updateUserOnline(user: FirebaseUser?)
@@ -81,4 +81,9 @@ interface FireStoreService {
     fun removeCurChatMetaListeners()
 
     fun getNextMessages(chatId: String, onGetNextMessagesResult: CallBack<List<Messagee>, String>)
+
+    fun getRefreshChatsAndListenChanges(
+        meUserId: String,
+        onChatEvents: CallBack<List<ChatEvent>, String>
+    )
 }
