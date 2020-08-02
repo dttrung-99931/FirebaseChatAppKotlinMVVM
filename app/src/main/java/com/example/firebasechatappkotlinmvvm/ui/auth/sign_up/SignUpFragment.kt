@@ -38,9 +38,9 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
                 vm.onTypeEmailComplete()
         }
         mEdtNickname.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus && mEdtNickname.error.isNullOrEmpty())
+            if (!hasFocus && mEdtNickname.error.isNullOrEmpty()) {
                 vm.onTypeNicknameComplete()
-            else vm.isValidUsername = false
+            } else vm.isValidNickname = false
         }
         mEdtPassword.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
             if (!hasFocus && mEdtPassword.error.isNullOrEmpty())
@@ -69,8 +69,11 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
                 AppConstants.AuthErr.UNAVAILABLE_EMAIL ->
                     mEdtEmail.error = getString(R.string.unavailable_email)
 
-                AppConstants.AuthErr.INVALID_EMAIL_FORMAT ->
+                AppConstants.AuthErr.INVALID_EMAIL_FORMAT_OR_LENGTH ->
                     mEdtEmail.error = getString(R.string.invalid_email_format)
+
+                AppConstants.AuthErr.INVALID_NICKNAME_FORMAT_OR_LENGTH ->
+                    mEdtNickname.error = getString(R.string.invalid_nickname_format_or_length)
 
                 AppConstants.AuthErr.UNAVAILABLE_NICKNAME ->
                     mEdtNickname.error = getString(R.string.unavailable_nickname)

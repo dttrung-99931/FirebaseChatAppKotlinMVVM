@@ -5,6 +5,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.android.gms.tasks.OnFailureListener
@@ -23,6 +24,14 @@ class FireBaseAuthServiceImpl @Inject constructor(
 ) : FireBaseAuthService {
 
     override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
+        if (CommonUtil.isEmailForm(appUser.email)) {
+            loginWithEmail(appUser, callBack)
+        } else {
+            loginWithNickname(appUser, callBack)
+        }
+    }
+
+    private fun loginWithEmail(appUser: AppUser, callBack: CallBack<Unit, String>) {
         auth.signInWithEmailAndPassword(appUser.email, appUser.password)
             .addOnSuccessListener {
                 callBack.onSuccess()
@@ -30,6 +39,24 @@ class FireBaseAuthServiceImpl @Inject constructor(
             .addOnFailureListener {
                 callBack.onFailure(AppConstants.AuthErr.LOGIN_FAILED)
             }
+    }
+
+    private fun loginWithNickname(appUser: AppUser, callBack: CallBack<Unit, String>) {
+        fireStoreService.searchUsers(appUser.nickname,
+            object : CallBack<ExploreViewModel.SearchUserResult, String> {
+                override fun onSuccess(data: ExploreViewModel.SearchUserResult?) {
+                    if (!data!!.users.isNullOrEmpty()) {
+                        appUser.email = data.users!![0].email
+                        loginWithEmail(appUser, callBack)
+                    } else callBack.onFailure(AppConstants.AuthErr.LOGIN_FAILED)
+                }
+
+                override fun onError(errCode: String) {
+                }
+
+                override fun onFailure(errCode: String) {
+                }
+            })
     }
 
     /*
@@ -98,7 +125,7 @@ class FireBaseAuthServiceImpl @Inject constructor(
         newPassword: String,
         onChangePasswordResult: CallBack<String, String>
     ) {
-        if (CommonUtil.isWeekPassword(newPassword)){
+        if (CommonUtil.isWeekPassword(newPassword)) {
             onChangePasswordResult.onFailure(AppConstants.AuthErr.WEAK_PASSWORD)
             return
         }

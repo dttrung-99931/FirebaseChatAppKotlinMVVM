@@ -21,7 +21,9 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
     val password = MutableLiveData<String>()
     val nickname = MutableLiveData<String>()
     val email = MutableLiveData<String>()
-    var isValidUsername = false
+
+    // Used to ignore redundant nickname checking
+    var isValidNickname = false
 
     val onSignUpSuccess = MutableLiveData<Any>()
     val onSignUpFailureWithCode = MutableLiveData<String>()
@@ -29,19 +31,19 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
     val loginResult = MutableLiveData<Boolean>()
 
     fun onBtnSignUpClicked() {
-        if (isValidUsername && checkValidPassword()) {
+        if (isValidNickname && checkValidPassword()) {
             userRepo.singUp(bundleUser(), signUpCallBack)
         } else userRepo.checkAvailableNickname(nickname.value,
             object : SingleCallBack<Boolean> {
                 override fun onSuccess(data: Boolean) {
                     if (data) {
                         userRepo.singUp(bundleUser(), signUpCallBack)
-                        isValidUsername = true
+                        isValidNickname = true
                     } else {
                         onSignUpFailureWithCode.postValue(
                             AppConstants.AuthErr.UNAVAILABLE_NICKNAME
                         )
-                        isValidUsername = false
+                        isValidNickname = false
                     }
                 }
             })
@@ -77,8 +79,9 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
     }
 
     fun onTypeEmailComplete() {
-        if (!email.value.isNullOrEmpty()){
-            if (CommonUtil.isEmailForm(email.value!!)){
+        if (!email.value.isNullOrEmpty()) {
+            if (CommonUtil.isEmailForm(email.value!!)
+                && email.value!!.length in 7..40) {
                 userRepo.checkAvailableEmail(email.value,
                     object : SingleCallBack<Boolean> {
                         override fun onSuccess(data: Boolean) {
@@ -87,23 +90,32 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
                             )
                         }
                     })
-            } else onSignUpFailureWithCode.postValue(AppConstants.AuthErr.INVALID_EMAIL_FORMAT)
+            } else {
+                onSignUpFailureWithCode.value = AppConstants.AuthErr.INVALID_EMAIL_FORMAT_OR_LENGTH
+            }
         }
     }
 
     fun onTypeNicknameComplete() {
         if (!nickname.value.isNullOrEmpty()) {
-            userRepo.checkAvailableNickname(nickname.value,
-                object : SingleCallBack<Boolean> {
-                    override fun onSuccess(data: Boolean) {
-                        if (!data) {
-                            onSignUpFailureWithCode.postValue(
-                                AppConstants.AuthErr.UNAVAILABLE_NICKNAME
-                            )
-                            isValidUsername = false
-                        } else isValidUsername = true
-                    }
-                })
+            if (CommonUtil.isEmailForm(nickname.value!!)
+                || !(nickname.value!!.length in 2..20)
+            ) {
+                onSignUpFailureWithCode.value = AppConstants.AuthErr.INVALID_NICKNAME_FORMAT_OR_LENGTH
+                isValidNickname = false
+            } else {
+                userRepo.checkAvailableNickname(nickname.value,
+                    object : SingleCallBack<Boolean> {
+                        override fun onSuccess(data: Boolean) {
+                            if (!data) {
+                                onSignUpFailureWithCode.postValue(
+                                    AppConstants.AuthErr.UNAVAILABLE_NICKNAME
+                                )
+                                isValidNickname = false
+                            } else isValidNickname = true
+                        }
+                    })
+            }
         }
     }
 

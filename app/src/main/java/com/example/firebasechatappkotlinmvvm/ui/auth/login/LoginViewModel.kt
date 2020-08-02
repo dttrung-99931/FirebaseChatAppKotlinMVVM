@@ -53,7 +53,8 @@ class LoginViewModel @Inject constructor(
             onLoginFailure.value = AppConstants.AuthErr.LOGIN_FAILED
             isLoading.value = false
         } else {
-            val appUser = AppUser("", usernameOrEmail.value!!, password.value!!)
+            val appUser = AppUser(usernameOrEmail.value!!,
+                usernameOrEmail.value!!, password.value!!)
             userRepo.login(appUser, mLoginCallBack)
         }
     }

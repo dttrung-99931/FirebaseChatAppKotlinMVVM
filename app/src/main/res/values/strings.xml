@@ -8,7 +8,7 @@
     <string name="nickname">Nickname</string>
     <string name="email">Email</string>
     <string name="sign_up_successfully">Sign up successfully</string>
-    <string name="invalid_email_format">Invalid email format</string>
+    <string name="invalid_email_format">Invalid email format or length</string>
     <string name="invalid_nickname">Invalid nickname</string>
     <string name="invalid_password">Invalid password</string>
     <string name="sign_up_unsuccessfully">Sign up failed</string>
@@ -42,4 +42,5 @@
     <string name="pull_to_refresh">Pull to refresh</string>
     <string name="confirm_login">Successfully. Do you want to login, now?</string>
     <string name="search_your_frineds_and_chat">Search your friends and chat with them</string>
+    <string name="invalid_nickname_format_or_length">Invalid nickname format or length</string>
 </resources>
