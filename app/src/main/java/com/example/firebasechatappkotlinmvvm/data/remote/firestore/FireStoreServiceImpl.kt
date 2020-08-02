@@ -44,7 +44,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     private val appUserListenerRemovers = mutableListOf<ListenerRegistration>()
 
-    private val chatMetaListenerRemovers = mutableListOf<ListenerRegistration>()
+    private val userChatListenerRemovers = mutableListOf<ListenerRegistration>()
 
     private var ignoredDocumentsChangedEventsAfterSetListener = false
 
@@ -67,7 +67,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     }
 
-    override fun checkUnavailableNickname(
+    override fun checkAavailableNickname(
         nickname: String?,
         availableNicknameCallBack: SingleCallBack<Boolean>
     ) {
@@ -98,7 +98,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun searchUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
+        onSearchUsersResult: CallBack<ExploreViewModel.SearchUserResult, String>
     ) {
         val searchUserResult = ExploreViewModel.SearchUserResult(userOrEmail)
         firestore.collection(COLLECTION_USERS)
@@ -109,10 +109,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                 if (!it.isEmpty) {
                     searchUserResult.users = AppUser.listFromUserDocuments(it.documents)
 
-                    mSearchUsersCallBack.onSuccess(searchUserResult)
+                    onSearchUsersResult.onSuccess(searchUserResult)
                 }
                 // Keep start time in searchUserResult
-                else searchUsersByEmail(userOrEmail, mSearchUsersCallBack, searchUserResult)
+                else searchUsersByEmail(userOrEmail, onSearchUsersResult, searchUserResult)
             }
     }
 
@@ -135,6 +135,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         .collection(COLLECTION_USERS)
         .document(uid)
 
+    /*
+    * Get chat id of @Param(chatUser) and @Param(me)
+    * If there's no chat then create a new chat and return id
+    * */
     override fun getChatId(
         chatUser: ChatUser,
         me: ChatUser,
@@ -199,6 +203,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         else ignoredDocumentsChangedEventsAfterSetListener = true
     }
 
+    /**
+    * Add msg document to collection(chat).document(chatId).collection(messages)
+     * update corresponding userChat (newMsgNum, thumbMsg) of receiverUser
+    * */
     override fun send(
         messageInfoProvider: MessageInfoProvider,
         onSendMessageResult: CallBack<String, String>
@@ -229,7 +237,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
     }
 
-    lateinit var preTopMessageDocument: DocumentSnapshot
+    private lateinit var prevTopMessageDocument: DocumentSnapshot
 
     override fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
@@ -255,7 +263,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     .get()
                     .addOnSuccessListener { it1 ->
                         if (!it1.isEmpty) {
-                            preTopMessageDocument = it1.first()
+                            prevTopMessageDocument = it1.first()
                             onGetMessagesResult.onSuccess(
                                 CommonUtil.toMessagesFromMessageDocuments(it1.documents)
                             )
@@ -275,12 +283,12 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         chatDocument(chatId)
             .collection(COLLECTION_MESSAGES)
             .orderBy(FIELD_CREATED_AT)
-            .endBefore(preTopMessageDocument)
+            .endBefore(prevTopMessageDocument)
             .limitToLast(AppConstants.PAGE_SIZE_MSG)
             .get()
             .addOnSuccessListener { it1 ->
                 if (!it1.isEmpty) {
-                    preTopMessageDocument = it1.first()
+                    prevTopMessageDocument = it1.first()
                     onGetNextMessagesResult.onSuccess(
                         CommonUtil.toMessagesFromMessageDocuments(it1.documents)
                     )
@@ -297,7 +305,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     * all chat events corresponding to chats will be fired although no changes
     * -> That can used as load chats
     * */
-    override fun getRefreshChatsAndListenChanges(
+    override fun getRefreshUserChatsAndListen(
         meUserId: String,
         onChatEvents: CallBack<List<ChatEvent>, String>
     ) {
@@ -325,9 +333,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         }
     }
 
-    override fun getCachedChats(
+    override fun getCachedUserChats(
         userId: String,
-        onGetCachedChatsResult: CallBack<List<Chat>, String>,
+        onGetCachedUserChatsResult: CallBack<List<UserChat>, String>,
         count: Int?
     ) {
         userDocument(userId)
@@ -335,8 +343,8 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .get(Source.CACHE)
             .addOnSuccessListener {
                 // Display cached chats first
-                val cachedChats = Chat.createList(it.documents)
-                onGetCachedChatsResult.onSuccess(cachedChats)
+                val cachedChats = UserChat.createList(it.documents)
+                onGetCachedUserChatsResult.onSuccess(cachedChats)
 
             }
             .addOnFailureListener {
@@ -376,15 +384,15 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     // Listen (me User) user.chats changes
-    override fun listenChatMetaInUser(
-        chat: Chat,
+    override fun listenUserChat(
+        userChat: UserChat,
         meUserId: String,
-        onChatChange: CallBack<Chat, String>
+        onUserChatChange: CallBack<UserChat, String>
     ) {
-        chatMetaListenerRemovers.add(
+        userChatListenerRemovers.add(
             userDocument(meUserId)
                 .collection(COLLECTION_CHATS)
-                .document(chat.id)
+                .document(userChat.id)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
                         CommonUtil.log("listenMetaChatInUserChange error: ${error.message}")
@@ -393,15 +401,15 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
                     if (value != null) {
 
-                        val changedChat = value.toObject(Chat::class.java)
+                        val changedChat = value.toObject(UserChat::class.java)
 
                         // Just update these fields, not chat.chatUser
                         // because chat.chatUser will be
                         // listen change in UserRepo - FirebaseAuthService
-                        chat.newMsgNum = changedChat!!.newMsgNum
-                        chat.thumbMsg = changedChat.thumbMsg
+                        userChat.newMsgNum = changedChat!!.newMsgNum
+                        userChat.thumbMsg = changedChat.thumbMsg
 
-                        onChatChange.onSuccess(chat)
+                        onUserChatChange.onSuccess(userChat)
                     }
                 }
         )
@@ -441,11 +449,11 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         appUserListenerRemovers.clear()
     }
 
-    override fun removeCurChatMetaListeners() {
-        chatMetaListenerRemovers.forEach {
+    override fun removeCurUserChatListeners() {
+        userChatListenerRemovers.forEach {
             it.remove()
         }
-        chatMetaListenerRemovers.clear()
+        userChatListenerRemovers.clear()
     }
 
     private fun chatDocument(id: String) = firestore
@@ -464,10 +472,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .addOnSuccessListener {
                 val chatId = it.id
                 onGetChatIdResult.onSuccess(chatId)
-                createChatForUser(me, chatUser, chatId)
+                createUserChatForUser(me, chatUser, chatId)
                     .addOnSuccessListener {
                         if (chatUser.id!! != me.id!!)
-                            createChatForUser(chatUser, me, chatId)
+                            createUserChatForUser(chatUser, me, chatId)
                                 .addOnSuccessListener {
                                 }
                                 .addOnFailureListener {
@@ -484,7 +492,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
     }
 
-    private fun createChatForUser(
+    private fun createUserChatForUser(
         meUser: ChatUser,
         otherUser: ChatUser,
         chatId: String
@@ -492,7 +500,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         return userDocument(meUser.id)
             .collection(COLLECTION_CHATS)
             .document(chatId)
-            .set(Chat(otherUser))
+            .set(UserChat(otherUser))
     }
 
 }

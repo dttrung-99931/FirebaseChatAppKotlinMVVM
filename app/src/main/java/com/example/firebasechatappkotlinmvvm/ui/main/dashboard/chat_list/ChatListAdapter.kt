@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.firebasechatappkotlinmvvm.R
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.UserChat
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewHolder
@@ -16,7 +16,7 @@ import com.example.firebasechatappkotlinmvvm.util.extension.format
 import kotlinx.android.synthetic.main.item_chat.view.*
 
 class ChatListAdapter(
-    val onChatClickListener: OnItemClickListener<Chat>
+    val onUserChatClickListener: OnItemClickListener<UserChat>
 ) :
     RecyclerView.Adapter<ChatListAdapter.ChatListViewHolder>() {
 
@@ -25,7 +25,7 @@ class ChatListAdapter(
 
     val areCachedChats = true
 
-    var chats: MutableList<Chat> = ArrayList()
+    var userChats: MutableList<UserChat> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListViewHolder {
         return ChatListViewHolder(
@@ -35,21 +35,21 @@ class ChatListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return chats.size
+        return userChats.size
     }
 
     override fun onBindViewHolder(holderList: ChatListViewHolder, position: Int) {
         holderList.bindView(position)
     }
 
-    fun updateOrAddChat(it: Chat?) {
+    fun updateOrAddChat(it: UserChat?) {
         var isChatUpdated = false
-        for (i in chats.indices)
-            if (chats[i].chatUser.id == it!!.chatUser.id) {
+        for (i in userChats.indices)
+            if (userChats[i].chatUser.id == it!!.chatUser.id) {
                 // @Warning: do not assign chat[i] = it
                 // because it just contain updated chat meta (newMsgNum, thumbMsg)
-                chats[i].thumbMsg = it.thumbMsg
-                chats[i].newMsgNum = it.newMsgNum
+                userChats[i].thumbMsg = it.thumbMsg
+                userChats[i].newMsgNum = it.newMsgNum
                 notifyItemChanged(i)
                 isChatUpdated = true
                 break
@@ -59,22 +59,22 @@ class ChatListAdapter(
         }
     }
 
-    private fun addTopAndNotify(chat: Chat) {
-        chats.add(0, chat)
+    private fun addTopAndNotify(userChat: UserChat) {
+        userChats.add(0, userChat)
         notifyItemInserted(0)
     }
 
     fun updateUserStatusOrAddChat(appUser: AppUser) {
         var isUserStatusUpdated = false
-        for (i in chats.indices)
-            if (chats[i].chatUser.id == appUser.id) {
-                chats[i].chatUser = appUser.toChatUser()
+        for (i in userChats.indices)
+            if (userChats[i].chatUser.id == appUser.id) {
+                userChats[i].chatUser = appUser.toChatUser()
                 notifyItemChanged(i)
                 isUserStatusUpdated = true
                 break
             }
         if (!isUserStatusUpdated) {
-            val chat = Chat(appUser.toChatUser())
+            val chat = UserChat(appUser.toChatUser())
             addTopAndNotify(chat)
         }
     }
@@ -83,15 +83,15 @@ class ChatListAdapter(
         override fun bindView(position: Int) {
             setData(position)
             itemView.setOnClickListener {
-                onChatClickListener.onItemClicked(
+                onUserChatClickListener.onItemClicked(
                     position,
-                    chats[position]
+                    userChats[position]
                 )
             }
         }
 
         private fun setData(position: Int) {
-            val chat = chats[position]
+            val chat = userChats[position]
             val chatUser = chat.chatUser
 
             itemView.mTvNickname.text = chatUser.nickname
@@ -108,11 +108,11 @@ class ChatListAdapter(
             setAvatar(chatUser)
         }
 
-        private fun setNewMsgNum(chat: Chat) {
-            if (chat.newMsgNum > 0) {
+        private fun setNewMsgNum(userChat: UserChat) {
+            if (userChat.newMsgNum > 0) {
                 val newDisplayMsgNum =
-                    if (chat.newMsgNum <= 9) chat.newMsgNum.toString()
-                    else "${chat.newMsgNum}+"
+                    if (userChat.newMsgNum <= 9) userChat.newMsgNum.toString()
+                    else "${userChat.newMsgNum}+"
                 itemView.mTvViewBadgeNewMsg.text = newDisplayMsgNum
                 itemView.mTvViewBadgeNewMsg.visibility = View.VISIBLE
             } else itemView.mTvViewBadgeNewMsg.visibility = View.GONE

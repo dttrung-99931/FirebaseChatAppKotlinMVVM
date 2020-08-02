@@ -33,8 +33,8 @@ class FireBaseAuthServiceImpl @Inject constructor(
     }
 
     /*
-    * Create user (email, password, nickname(displayname)
-    * in firebase auth, then create users/uid in firestore
+    * Create user (email, password)
+    * in firebase auth, then create users/uid{nickname} in firestore
     * */
     override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {
         auth.createUserWithEmailAndPassword(user.email, user.password)
@@ -55,7 +55,7 @@ class FireBaseAuthServiceImpl @Inject constructor(
 
     override fun checkAvailableEmail(
         email: String?,
-        availableEmailCallBack: SingleCallBack<Boolean>
+        onCheckAvailableEmailResult: SingleCallBack<Boolean>
     ) {
         if (email != null) {
             auth.fetchSignInMethodsForEmail(email)
@@ -63,18 +63,18 @@ class FireBaseAuthServiceImpl @Inject constructor(
                     if (it.isSuccessful) {
                         val isAvailable = it.result?.signInMethods?.isEmpty()
                         if (isAvailable == null || isAvailable == true)
-                            availableEmailCallBack.onSuccess(true)
-                        else availableEmailCallBack.onSuccess(false)
+                            onCheckAvailableEmailResult.onSuccess(true)
+                        else onCheckAvailableEmailResult.onSuccess(false)
                     } // Error here
                 }
         }
     }
 
-    override fun checkAavailableNickname(
+    override fun checkAvailableNickname(
         nickname: String?,
-        availableEmailCallBack: SingleCallBack<Boolean>
+        onCheckAvailableNicknameResult: SingleCallBack<Boolean>
     ) {
-        fireStoreService.checkUnavailableNickname(nickname, availableEmailCallBack)
+        fireStoreService.checkAavailableNickname(nickname, onCheckAvailableNicknameResult)
     }
 
     override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {

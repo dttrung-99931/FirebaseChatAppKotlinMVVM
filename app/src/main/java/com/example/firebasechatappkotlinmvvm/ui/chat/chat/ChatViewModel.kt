@@ -106,7 +106,7 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
             override fun onSuccess(chatId: String?) {
                 onGetCurChatIdSuccess.postValue(chatId)
                 curChatId = chatId!!
-                chatRepo.getFirstCachedMessagesThenRefresh(
+                chatRepo.getFirstCachedMessagesThenGetRefresh(
                     curChatId,
                     onGetFirstMessagesResult
                 )

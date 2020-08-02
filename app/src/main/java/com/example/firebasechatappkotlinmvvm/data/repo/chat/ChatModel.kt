@@ -1,12 +1,10 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.chat
 
-import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.google.firebase.firestore.*
 import java.io.InputStream
-import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -14,7 +12,6 @@ import kotlin.collections.ArrayList
 /**
  * Created by Trung on 7/22/2020
  */
-
 // double 'e' for separating with other Message classes
 data class Messagee(
     val senderUserId: String,
@@ -44,7 +41,8 @@ data class Messagee(
     constructor() : this("", MSG_TYPE_TEXT, "")
 }
 
-data class Chat(
+
+data class UserChat(
     var chatUser: ChatUser = ChatUser.DEFAULT_CHAT_USER,
     var newMsgNum: Int = 0,
     var thumbMsg: String = "",
@@ -55,10 +53,10 @@ data class Chat(
     constructor() : this(ChatUser.DEFAULT_CHAT_USER)
 
     companion object {
-        fun createList(chatDocuments: List<DocumentSnapshot>): List<Chat> {
-            val chats = ArrayList<Chat>();
+        fun createList(chatDocuments: List<DocumentSnapshot>): List<UserChat> {
+            val chats = ArrayList<UserChat>();
             chatDocuments.forEach {
-                val chat = it.toObject(Chat::class.java)!!
+                val chat = it.toObject(UserChat::class.java)!!
                 chat.id = it.id
                 chats.add(chat)
             }
@@ -125,14 +123,14 @@ data class MessageInfoProvider(
 
 data class MessageEvent(val message: Messagee, val eventType: DocumentChange.Type)
 
-data class ChatEvent(val chat: Chat, val eventType: DocumentChange.Type) {
+data class ChatEvent(val userChat: UserChat, val eventType: DocumentChange.Type) {
     companion object {
         fun listFromChangedChatDocuments(changedChatDocuments: List<DocumentChange>):
         List<ChatEvent>{
             val changedChatEvents = mutableListOf<ChatEvent>()
             changedChatDocuments.forEach {
                 changedChatEvents.add(ChatEvent(
-                    it.document.toObject(Chat::class.java), it.type)
+                    it.document.toObject(UserChat::class.java), it.type)
                 )
             }
             return changedChatEvents.toList()

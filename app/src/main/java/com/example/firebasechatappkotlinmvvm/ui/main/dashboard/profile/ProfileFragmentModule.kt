@@ -12,7 +12,7 @@ import javax.inject.Provider
 @Module
 class ProfileFragmentModule {
     @Provides
-    fun provideDashboardViewModel(userRepo: UserRepo) = ProfileViewModel(userRepo)
+    fun provideProfileViewModel(userRepo: UserRepo) = ProfileViewModel(userRepo)
 
     @Provides
     fun provideFactory(provider: Provider<ProfileViewModel>)

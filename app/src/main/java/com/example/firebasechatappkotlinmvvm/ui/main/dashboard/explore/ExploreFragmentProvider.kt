@@ -10,5 +10,5 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ExploreFragmentProvider {
     @ContributesAndroidInjector(modules = [ExploreFragmentModule::class])
-    abstract fun provideDashboardFragmentFactory() : ExploreFragment
+    abstract fun provideExploreFragmentFactory() : ExploreFragment
 }

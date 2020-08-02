@@ -10,5 +10,5 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ChangePasswordFragmentProvider {
     @ContributesAndroidInjector(modules = [ChangePasswordFragmentModule::class])
-    abstract fun provideDashboardFragmentFactory() : ChangePasswordDialog
+    abstract fun provideChangePasswordFragmentFactory() : ChangePasswordDialog
 }

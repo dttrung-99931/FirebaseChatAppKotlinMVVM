@@ -10,5 +10,5 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class SignUpFragmentProvider {
     @ContributesAndroidInjector(modules = [SignUpFragmentModule::class])
-    abstract fun provideLoginFragmentFactory() : SignUpFragment
+    abstract fun provideSignUpFragmentFactory() : SignUpFragment
 }

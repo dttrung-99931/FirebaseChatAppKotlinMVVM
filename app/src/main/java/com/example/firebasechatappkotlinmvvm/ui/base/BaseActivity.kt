@@ -23,8 +23,7 @@ open class BaseActivity : AppCompatActivity() {
         const val REQUEST_CODE_PICK_IMG = 1234
     }
 
-    // when a fragment or self call select SelectMediaImg
-    // then keep the call back here, release call back after calling it
+    // Called in OnActivityResult
     private var mSelectMediaImgUriCallBack: SingleCallBack<Uri>? = null
 
     lateinit var loadingView: CatLoadingView

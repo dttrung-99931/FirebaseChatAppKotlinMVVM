@@ -10,5 +10,5 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ChatFragmentProvider {
     @ContributesAndroidInjector(modules = [ChatFragmentModule::class])
-    abstract fun provideDashboardFragmentFactory() : ChatFragment
+    abstract fun provideChatFragmentFactory() : ChatFragment
 }

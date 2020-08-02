@@ -12,7 +12,7 @@ import javax.inject.Provider
 @Module
 class ExploreFragmentModule {
     @Provides
-    fun provideDashboardViewModel(userRepo: UserRepo) = ExploreViewModel(userRepo)
+    fun provideExploreViewModel(userRepo: UserRepo) = ExploreViewModel(userRepo)
 
     @Provides
     fun provideFactory(provider: Provider<ExploreViewModel>)

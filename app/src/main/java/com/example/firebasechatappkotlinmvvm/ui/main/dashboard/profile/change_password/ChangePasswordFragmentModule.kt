@@ -12,7 +12,7 @@ import javax.inject.Provider
 @Module
 class ChangePasswordFragmentModule {
     @Provides
-    fun provideDashboardViewModel(userRepo: UserRepo) = ChangePasswordViewModel(userRepo)
+    fun provideChangePasswordViewModel(userRepo: UserRepo) = ChangePasswordViewModel(userRepo)
 
     @Provides
     fun provideFactory(provider: Provider<ChangePasswordViewModel>)

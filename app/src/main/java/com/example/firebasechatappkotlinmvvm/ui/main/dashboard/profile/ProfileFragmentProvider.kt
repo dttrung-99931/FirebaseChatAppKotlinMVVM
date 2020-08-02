@@ -10,5 +10,5 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ProfileFragmentProvider {
     @ContributesAndroidInjector(modules = [ProfileFragmentModule::class])
-    abstract fun provideDashboardFragmentFactory() : ProfileFragment
+    abstract fun provideProfileFragmentFactory() : ProfileFragment
 }

@@ -13,7 +13,7 @@ import javax.inject.Provider
 @Module
 class ChatFragmentModule {
     @Provides
-    fun provideDashboardViewModel(chatRepo: ChatRepo, userRepo: UserRepo)
+    fun provideChatViewModel(chatRepo: ChatRepo, userRepo: UserRepo)
             = ChatViewModel(chatRepo, userRepo)
 
     @Provides

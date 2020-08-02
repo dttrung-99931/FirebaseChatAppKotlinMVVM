@@ -74,11 +74,11 @@ class ChatRepoImpl @Inject constructor(
                 messageInfoProvider,
                 onSendMessageResult
             )
-            Messagee.MSG_TYPE_IMG -> sendSoundMsg(messageInfoProvider, onSendMessageResult)
+            Messagee.MSG_TYPE_IMG -> sendImgMsg(messageInfoProvider, onSendMessageResult)
         }
     }
 
-    private fun sendSoundMsg(
+    private fun sendImgMsg(
         messageInfoProvider: MessageInfoProvider,
         onSendMessageResult: CallBack<String, String>
     ) {
@@ -101,7 +101,7 @@ class ChatRepoImpl @Inject constructor(
             })
     }
 
-    override fun getFirstCachedMessagesThenRefresh(
+    override fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
         onGetMessagesResult: CallBack<List<Messagee>, String>,
         count: Long?
@@ -130,35 +130,35 @@ class ChatRepoImpl @Inject constructor(
         mFireStoreService.removeCurEventMessageListener()
     }
 
-    override fun getCachedChats(
+    override fun getCachedUserChats(
         userId: String,
-        onGetCachedChatsResult: CallBack<List<Chat>, String>,
+        onGetCachedUserChatsResult: CallBack<List<UserChat>, String>,
         count: Int?
     ) {
-        mFireStoreService.getCachedChats(userId, onGetCachedChatsResult, count)
+        mFireStoreService.getCachedUserChats(userId, onGetCachedUserChatsResult, count)
     }
 
-    override fun listenChatMetaInUserChange(
-        chat: Chat,
+    override fun listenUserChat(
+        userChat: UserChat,
         meUserId: String,
-        onChatChange: CallBack<Chat, String>
+        onUserChatChange: CallBack<UserChat, String>
     ) {
-        mFireStoreService.listenChatMetaInUser(chat, meUserId, onChatChange)
+        mFireStoreService.listenUserChat(userChat, meUserId, onUserChatChange)
     }
 
     override fun resetNewMsg(meUserId: String, chatId: String) {
         mFireStoreService.resetNewMsg(meUserId, chatId)
     }
 
-    override fun removeCurChatMetaListeners() {
-        mFireStoreService.removeCurChatMetaListeners()
+    override fun removeCurUserChatListeners() {
+        mFireStoreService.removeCurUserChatListeners()
     }
 
-    override fun getRefreshChatsAndListenChanges(
+    override fun getRefreshUserChatsAndListen(
         meUserId: String,
         onChatEvents: CallBack<List<ChatEvent>, String>
     ) {
-        mFireStoreService.getRefreshChatsAndListenChanges(
+        mFireStoreService.getRefreshUserChatsAndListen(
             meUserId, onChatEvents
         )
     }

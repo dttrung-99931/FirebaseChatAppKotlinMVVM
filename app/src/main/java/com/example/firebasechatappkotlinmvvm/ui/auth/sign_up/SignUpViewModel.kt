@@ -31,7 +31,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
     fun onBtnSignUpClicked() {
         if (isValidUsername && checkValidPassword()) {
             userRepo.singUp(bundleUser(), signUpCallBack)
-        } else userRepo.checkAavailableNickname(nickname.value,
+        } else userRepo.checkAvailableNickname(nickname.value,
             object : SingleCallBack<Boolean> {
                 override fun onSuccess(data: Boolean) {
                     if (data) {
@@ -93,7 +93,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
 
     fun onTypeNicknameComplete() {
         if (!nickname.value.isNullOrEmpty()) {
-            userRepo.checkAavailableNickname(nickname.value,
+            userRepo.checkAvailableNickname(nickname.value,
                 object : SingleCallBack<Boolean> {
                     override fun onSuccess(data: Boolean) {
                         if (!data) {

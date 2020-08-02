@@ -1,12 +1,11 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.user
 
-import androidx.lifecycle.MutableLiveData
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.UserChat
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.google.firebase.auth.FirebaseUser
@@ -33,15 +32,15 @@ class UserRepoImpl @Inject constructor(
 
     override fun checkAvailableEmail(
         email: String?,
-        availableEmailCallBack: SingleCallBack<Boolean>
+        onCheckAvailableEmailResult: SingleCallBack<Boolean>
     ) {
-        mFireBaseAuthService.checkAvailableEmail(email, availableEmailCallBack)
+        mFireBaseAuthService.checkAvailableEmail(email, onCheckAvailableEmailResult)
     }
 
-    override fun checkAavailableNickname(
+    override fun checkAvailableNickname(
         nickname: String?,
-        availableEmailCallBack: SingleCallBack<Boolean>) {
-        mFireBaseAuthService.checkAavailableNickname(nickname, availableEmailCallBack)
+        onCheckAvailableNicknameResult: SingleCallBack<Boolean>) {
+        mFireBaseAuthService.checkAvailableNickname(nickname, onCheckAvailableNicknameResult)
     }
 
     override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
@@ -118,15 +117,15 @@ class UserRepoImpl @Inject constructor(
     }
 
     override fun listenUserStatus(
-        chat: Chat,
-        onUserStatusInChatChange: CallBack<Chat, String>
+        userChat: UserChat,
+        onUserStatusInUserChatChange: CallBack<UserChat, String>
     ) {
-        mFireStoreService.listenAppUser(chat.chatUser.id,
+        mFireStoreService.listenAppUser(userChat.chatUser.id,
             object : CallBack<AppUser, String> {
                 override fun onSuccess(data: AppUser?) {
-                    chat.chatUser.online = data!!.online
-                    chat.chatUser.offlineAt = data.offlineAt
-                    onUserStatusInChatChange.onSuccess(chat)
+                    userChat.chatUser.online = data!!.online
+                    userChat.chatUser.offlineAt = data.offlineAt
+                    onUserStatusInUserChatChange.onSuccess(userChat)
                 }
 
                 override fun onError(errCode: String) {

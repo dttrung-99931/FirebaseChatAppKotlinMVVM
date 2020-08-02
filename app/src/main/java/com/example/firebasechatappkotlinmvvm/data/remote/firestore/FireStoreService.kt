@@ -13,7 +13,8 @@ import com.google.firebase.auth.FirebaseUser
  */
 interface FireStoreService {
     fun addUser(user: AppUser, callBack: CallBack<Unit, String>)
-    fun checkUnavailableNickname(
+
+    fun checkAavailableNickname(
         nickname: String?,
         availableNicknameCallBack: SingleCallBack<Boolean>
     )
@@ -26,7 +27,7 @@ interface FireStoreService {
 
     fun searchUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
+        onSearchUsersResult: CallBack<ExploreViewModel.SearchUserResult, String>
     )
 
     fun getChatId(
@@ -56,8 +57,9 @@ interface FireStoreService {
 
     fun removeCurEventMessageListener()
 
-    fun getCachedChats(userId: String,
-                       onGetCachedChatsResult: CallBack<List<Chat>, String>, count: Int?
+    fun getCachedUserChats(
+        userId: String,
+        onGetCachedUserChatsResult: CallBack<List<UserChat>, String>, count: Int?
     )
 
     fun updateUserOnline(user: FirebaseUser?)
@@ -66,10 +68,10 @@ interface FireStoreService {
 
     fun listenAppUser(id: String, onChange: CallBack<AppUser, String>)
 
-    fun listenChatMetaInUser(
-        chat: Chat,
+    fun listenUserChat(
+        userChat: UserChat,
         meUserId: String,
-        onChatChange: CallBack<Chat, String>
+        onUserChatChange: CallBack<UserChat, String>
     )
 
     fun resetNewMsg(meUserId: String, chatId: String)
@@ -78,11 +80,11 @@ interface FireStoreService {
 
     fun removeCurAppUserListeners()
 
-    fun removeCurChatMetaListeners()
+    fun removeCurUserChatListeners()
 
     fun getNextMessages(chatId: String, onGetNextMessagesResult: CallBack<List<Messagee>, String>)
 
-    fun getRefreshChatsAndListenChanges(
+    fun getRefreshUserChatsAndListen(
         meUserId: String,
         onChatEvents: CallBack<List<ChatEvent>, String>
     )

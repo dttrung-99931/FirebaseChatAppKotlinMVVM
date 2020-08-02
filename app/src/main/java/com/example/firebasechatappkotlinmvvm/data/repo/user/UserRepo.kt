@@ -1,9 +1,8 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.user
 
-import androidx.lifecycle.MutableLiveData
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.Chat
+import com.example.firebasechatappkotlinmvvm.data.repo.chat.UserChat
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import java.io.InputStream
 
@@ -19,7 +18,7 @@ interface UserRepo: FireBaseAuthService {
         mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     )
 
-    fun listenUserStatus(chat: Chat, onUserStatusInChatChange: CallBack<Chat, String>)
+    fun listenUserStatus(userChat: UserChat, onUserStatusInUserChatChange: CallBack<UserChat, String>)
 
     fun updateUserOnline()
 
