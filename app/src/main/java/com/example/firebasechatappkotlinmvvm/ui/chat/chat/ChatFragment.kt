@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupMenu
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,8 +43,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     }
 
     override fun getVM(): ChatViewModel {
-        return ViewModelProviders
-            .of(this, mFactory)[ChatViewModel::class.java]
+        return ViewModelProvider(this, mFactory).get(ChatViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

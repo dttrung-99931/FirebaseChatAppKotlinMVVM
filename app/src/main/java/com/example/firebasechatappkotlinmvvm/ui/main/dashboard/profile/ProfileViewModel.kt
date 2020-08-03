@@ -1,6 +1,5 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +18,7 @@ import javax.inject.Provider
  */
 class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewModel() {
 
-    val onGetAppUserResult = MutableLiveData<AppUser>()
+    val curAppUser = MutableLiveData<AppUser>()
     val usernameOrEmail = MutableLiveData<String>()
     val password = MutableLiveData<String>()
     val onLoginFailure = MutableLiveData<String>()
@@ -64,7 +63,7 @@ class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
     private val getCurrentUserCallBack: CallBack<AppUser, String> =
         object : CallBack<AppUser, String> {
             override fun onSuccess(data: AppUser?) {
-                onGetAppUserResult.postValue(data)
+                curAppUser.postValue(data)
             }
 
             override fun onError(errCode: String) {
@@ -77,7 +76,7 @@ class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
         }
 
     fun loadUserProfile() {
-        userRepo.getCurrentAppUser(getCurrentUserCallBack)
+        userRepo.getCurAppUser(getCurrentUserCallBack)
     }
 
     val uploadAvatarCallBack: CallBack<String, String> =

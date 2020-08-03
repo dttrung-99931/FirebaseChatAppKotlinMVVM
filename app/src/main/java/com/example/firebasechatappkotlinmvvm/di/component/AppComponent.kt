@@ -3,6 +3,7 @@ package com.example.firebasechatappkotlinmvvm.di.component
 import android.app.Application
 import com.example.firebasechatappkotlinmvvm.di.App
 import com.example.firebasechatappkotlinmvvm.di.builder.ActivityBuilder
+import com.example.firebasechatappkotlinmvvm.di.builder.ServiceBuilder
 import com.example.firebasechatappkotlinmvvm.di.module.AppModule
 import dagger.BindsInstance
 import dagger.Component
@@ -16,7 +17,8 @@ import javax.inject.Singleton
  */
 @Singleton
 @Component(modules = [AndroidInjectionModule::class, AppModule::class,
-    ActivityBuilder::class, AndroidSupportInjectionModule::class])
+    ActivityBuilder::class, AndroidSupportInjectionModule::class,
+    ServiceBuilder::class])
 interface AppComponent {
     @Component.Builder
     interface Builder {

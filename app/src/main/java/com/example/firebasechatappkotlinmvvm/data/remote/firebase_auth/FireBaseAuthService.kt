@@ -32,4 +32,7 @@ interface FireBaseAuthService {
         onChangePasswordResult: CallBack<String, String>
     )
 
+    fun updateTokenForUser(userId: String)
+
+    fun getCurAppUser(curAppUserCallBack: CallBack<AppUser, String>)
 }

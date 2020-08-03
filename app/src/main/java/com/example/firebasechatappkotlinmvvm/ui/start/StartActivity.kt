@@ -7,6 +7,7 @@ import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.NoInternetConnectionDialog
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
+import com.example.firebasechatappkotlinmvvm.util.extension.isAppRunning
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 

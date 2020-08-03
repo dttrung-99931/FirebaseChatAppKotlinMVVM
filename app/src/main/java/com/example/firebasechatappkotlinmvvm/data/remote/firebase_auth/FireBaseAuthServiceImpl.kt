@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
+import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreServiceImpl
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
@@ -12,6 +13,7 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.iid.FirebaseInstanceId
 import javax.inject.Inject
 
 
@@ -20,7 +22,7 @@ import javax.inject.Inject
  */
 class FireBaseAuthServiceImpl @Inject constructor(
     val auth: FirebaseAuth,
-    val fireStoreService: FireStoreService
+    val mFireStoreService: FireStoreService
 ) : FireBaseAuthService {
 
     override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
@@ -35,14 +37,60 @@ class FireBaseAuthServiceImpl @Inject constructor(
         auth.signInWithEmailAndPassword(appUser.email, appUser.password)
             .addOnSuccessListener {
                 callBack.onSuccess()
+                updateTokenForUser(it.user!!.uid)
             }
             .addOnFailureListener {
                 callBack.onFailure(AppConstants.AuthErr.LOGIN_FAILED)
             }
     }
 
+    override fun updateTokenForUser(userId: String) {
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnSuccessListener {
+                val tokenUpdate = mapOf(FireStoreServiceImpl.FIELD_TOKEN to it.token)
+                mFireStoreService.updateAppUser(userId, tokenUpdate)
+            }
+            .addOnFailureListener {
+                CommonUtil.log("updateAccessTokenForUser error ${it.message}")
+            }
+    }
+
+    private var cachedCurAppUser: AppUser? = null
+
+    override fun getCurAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
+        val curAuthUser = getCurAuthUser()
+        if (curAuthUser == null) {
+            curAppUserCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
+            return
+        }
+
+        if (cachedCurAppUser != null) {
+            curAppUserCallBack.onSuccess(cachedCurAppUser)
+
+        } else {
+            mFireStoreService.getAppUser(
+                curAuthUser.uid,
+                object : CallBack<AppUser, String> {
+                    override fun onSuccess(data: AppUser?) {
+                        curAppUserCallBack.onSuccess(data)
+                        cachedCurAppUser = data
+                    }
+
+                    override fun onError(errCode: String) {
+                        curAppUserCallBack.onError(errCode)
+                    }
+
+                    override fun onFailure(errCode: String) {
+                        curAppUserCallBack.onFailure(errCode)
+                    }
+                }
+            )
+        }
+    }
+
     private fun loginWithNickname(appUser: AppUser, callBack: CallBack<Unit, String>) {
-        fireStoreService.searchUsers(appUser.nickname,
+        mFireStoreService.searchUsers(appUser.nickname,
+
             object : CallBack<ExploreViewModel.SearchUserResult, String> {
                 override fun onSuccess(data: ExploreViewModel.SearchUserResult?) {
                     if (!data!!.users.isNullOrEmpty()) {
@@ -69,7 +117,7 @@ class FireBaseAuthServiceImpl @Inject constructor(
                 if (it.isSuccessful) {
                     val createdUser = it.result?.user
                     user.id = createdUser?.uid
-                    fireStoreService.addUser(user, callBack)
+                    mFireStoreService.addUser(user, callBack)
                 }
             }
             .addOnFailureListener(OnFailureListener {
@@ -101,7 +149,7 @@ class FireBaseAuthServiceImpl @Inject constructor(
         nickname: String?,
         onCheckAvailableNicknameResult: SingleCallBack<Boolean>
     ) {
-        fireStoreService.checkAavailableNickname(nickname, onCheckAvailableNicknameResult)
+        mFireStoreService.checkAavailableNickname(nickname, onCheckAvailableNicknameResult)
     }
 
     override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {

@@ -26,14 +26,12 @@ class AppConstants {
             R.string.upload,
             R.string.take_a_photo
         )
-
         val STR_IDS_CLICK_SEARCH_USER_OPTION = listOf (
             R.string.chat
         )
-
-        val PAGE_SIZE_MSG : Long = 15
-
-        val OK = "OK"
+        const val PAGE_SIZE_MSG : Long = 15
+        const val OK = "OK"
+        const val KEY_MSG_SERVER = "AAAAoSDCYxM:APA91bHHGMhrTFvju-PkzybO3jNgh6TmDR3Z88_2FeT98GtzeJFxdVAw_Mnq1SUeOLdPERHtKU9CcjT7tMVsLUjwG7YdVpGUXJ_fw0BlxgK6QXmEDKeaZOExlTSkf0NfvhsousaExfQe"
     }
 
     object View {

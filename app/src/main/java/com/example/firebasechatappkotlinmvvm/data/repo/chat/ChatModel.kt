@@ -19,8 +19,23 @@ data class Messagee(
     val receiverUserId: String,
     val type: String,
     var content: String = "",
-    @ServerTimestamp val createdAt: Date? = null
+    @ServerTimestamp
+    val createdAt: Date? = null,
+    @get: Exclude
+    var senderNickname: String = "" // Use for notification
 ) {
+    companion object {
+        const val MSG_TYPE_TEXT = "text"
+        const val MSG_TYPE_IMG = "img"
+        const val MSG_TYPE_VOICE = "voice"
+        const val MSG_TYPE_LOAD_MORE = "loadMore"
+
+        const val FIELD_SENDER_NICKNAME = "senderNickname"
+        const val FIELD_CONTENT = "content"
+
+        val MSG_LOAD_MORE = Messagee("", "", MSG_TYPE_LOAD_MORE)
+    }
+
     fun getThumbMsg(): String {
         return when (type) {
             MSG_TYPE_IMG -> "[New image message]"
@@ -28,16 +43,6 @@ data class Messagee(
             else -> content
         }
     }
-
-    companion object {
-        const val MSG_TYPE_TEXT = "text"
-        const val MSG_TYPE_IMG = "img"
-        const val MSG_TYPE_VOICE = "voice"
-        const val MSG_TYPE_LOAD_MORE = "loadMore"
-
-        val MSG_LOAD_MORE = Messagee("", "", MSG_TYPE_LOAD_MORE)
-    }
-
     constructor() : this("", MSG_TYPE_TEXT, "")
 }
 

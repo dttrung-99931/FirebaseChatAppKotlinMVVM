@@ -7,7 +7,6 @@ import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreVi
 import java.io.InputStream
 
 interface UserRepo: FireBaseAuthService {
-    fun getCurrentAppUser(curAppUserCallBack: CallBack<AppUser, String>)
     fun uploadAvatar(
         avatarInputStream: InputStream?,
         uploadAvatarCallBack: CallBack<String, String>

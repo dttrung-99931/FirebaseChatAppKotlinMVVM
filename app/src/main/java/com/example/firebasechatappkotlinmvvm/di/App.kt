@@ -2,6 +2,7 @@ package com.example.firebasechatappkotlinmvvm.di
 
 import android.app.Activity
 import android.app.Application
+import android.app.Service
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -17,15 +18,28 @@ import com.vanniktech.emoji.ios.IosEmojiProvider
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
+import dagger.android.HasServiceInjector
 import dagger.android.support.HasSupportFragmentInjector
 import javax.inject.Inject
 
-class App: Application(), HasActivityInjector, LifecycleObserver{
+class App: Application(), HasActivityInjector, HasServiceInjector,
+    LifecycleObserver, Application.ActivityLifecycleCallbacks{
+
     @Inject
     lateinit var mActivityInjector: DispatchingAndroidInjector<Activity>
 
     @Inject
+    lateinit var mServiceInjector: DispatchingAndroidInjector<Service>
+
+    @Inject
     lateinit var mUserRepo: UserRepo
+
+    var activityCount = 0
+        private set
+
+    fun isAppNotRunning(): Boolean{
+        return activityCount == 0
+    }
 
     override fun activityInjector(): AndroidInjector<Activity> {
         return mActivityInjector
@@ -41,6 +55,8 @@ class App: Application(), HasActivityInjector, LifecycleObserver{
         EmojiManager.install(IosEmojiProvider())
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+
+        registerActivityLifecycleCallbacks(this)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -51,5 +67,32 @@ class App: Application(), HasActivityInjector, LifecycleObserver{
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onApplicationStop(){
         mUserRepo.updateUserOffline()
+    }
+
+    override fun serviceInjector(): AndroidInjector<Service> {
+        return mServiceInjector
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        activityCount++
+    }
+
+    override fun onActivityDestroyed(activity: Activity) {
+        activityCount--
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+    }
+
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+    }
+
+    override fun onActivityResumed(activity: Activity) {
     }
 }

@@ -43,4 +43,5 @@
     <string name="confirm_login">Successfully. Do you want to login, now?</string>
     <string name="search_your_frineds_and_chat">Search your friends and chat with them</string>
     <string name="invalid_nickname_format_or_length">Invalid nickname format or length</string>
+    <string name="new_msg">New message</string>
 </resources>

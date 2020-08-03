@@ -88,4 +88,6 @@ interface FireStoreService {
         meUserId: String,
         onChatEvents: CallBack<List<ChatEvent>, String>
     )
+
+    fun updateAppUser(id: String, updateMap: Map<String, String>)
 }

@@ -103,7 +103,7 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
     }
 
     override fun observe() {
-        vm.onGetAppUserResult.observe(this, Observer {
+        vm.curAppUser.observe(this, Observer {
             mTvNickname.text = it.nickname
             if (it.avatarUrl.isNotEmpty())
                 Glide.with(requireContext())

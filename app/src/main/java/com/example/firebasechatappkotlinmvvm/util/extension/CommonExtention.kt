@@ -1,6 +1,10 @@
 package com.example.firebasechatappkotlinmvvm.util.extension
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
+import com.example.firebasechatappkotlinmvvm.di.App
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
@@ -42,4 +46,18 @@ inline fun <reified T> Map<String, Any>.toDataClass(): T {
 inline fun <I, reified O> I.convert(): O {
     val json = gson.toJson(this)
     return gson.fromJson(json, object : TypeToken<O>() {}.type)
+}
+
+fun Context.isAppRunning(): Boolean{
+    val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val procInfos = activityManager.runningAppProcesses
+    if (procInfos != null) {
+        for (processInfo in procInfos) {
+            CommonUtil.log(processInfo.processName)
+            if (processInfo.processName == "com.example.firebasechatappkotlinmvvm") {
+                return true
+            }
+        }
+    }
+    return false
 }

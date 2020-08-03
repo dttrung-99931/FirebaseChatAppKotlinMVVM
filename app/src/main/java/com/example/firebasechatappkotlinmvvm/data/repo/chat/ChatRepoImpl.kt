@@ -4,7 +4,13 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
+import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.NotificationModel
+import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.NotificationSenderService
+import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.Response
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
+import com.example.firebasechatappkotlinmvvm.util.CommonUtil
+import retrofit2.Call
+import retrofit2.Callback
 import javax.inject.Inject
 
 
@@ -14,7 +20,8 @@ import javax.inject.Inject
 class ChatRepoImpl @Inject constructor(
     val mStorageService: FireBaseStorageService,
     val mFireStoreService: FireStoreService,
-    val mFireBaseAuthService: FireBaseAuthService
+    val mFireBaseAuthService: FireBaseAuthService,
+    val mNotiSenderService: NotificationSenderService
 ) :
     ChatRepo {
 
@@ -68,13 +75,78 @@ class ChatRepoImpl @Inject constructor(
         messageInfoProvider: MessageInfoProvider,
         onSendMessageResult: CallBack<String, String>
     ) {
-
         when (messageInfoProvider.message.type) {
             Messagee.MSG_TYPE_TEXT -> mFireStoreService.send(
                 messageInfoProvider,
                 onSendMessageResult
             )
             Messagee.MSG_TYPE_IMG -> sendImgMsg(messageInfoProvider, onSendMessageResult)
+        }
+
+        getInfoMsgAndSendNotification(messageInfoProvider)
+    }
+
+    private fun getInfoMsgAndSendNotification(messageInfoProvider: MessageInfoProvider) {
+        // get receiver token, then get me sender nickname, then send noti
+        mFireStoreService.getAppUser(
+            messageInfoProvider.message.receiverUserId,
+            object : CallBack<AppUser, String> {
+                override fun onSuccess(receiver: AppUser?) {
+                    if (receiver!!.token.isNotEmpty()) {
+                        messageInfoProvider.message.senderNickname = receiver.nickname
+                        getAdditionalSenderNicknameAndSendNoti(messageInfoProvider, receiver.token)
+                    } else CommonUtil.log("sendNotification getAppUser token is null")
+                }
+
+                override fun onError(errCode: String) {
+                }
+
+                override fun onFailure(errCode: String) {
+                }
+            })
+    }
+
+    private fun getAdditionalSenderNicknameAndSendNoti(
+        messageInfoProvider: MessageInfoProvider,
+        receiverToken: String
+    ) {
+        mFireBaseAuthService.getCurAppUser(object : CallBack<AppUser, String> {
+            override fun onSuccess(sender: AppUser?) {
+                messageInfoProvider.message.senderNickname = sender!!.nickname
+
+                mNotiSenderService.sendNotification(
+                    NotificationModel(receiverToken,
+                        messageInfoProvider.message)
+                ).enqueue(onSendNotiResult)
+            }
+
+            override fun onError(errCode: String) {
+                CommonUtil.log("getAdditionalSenderNicknameAndSendNoti getCurAppUser " +
+                        "onError")
+            }
+
+            override fun onFailure(errCode: String) {
+                CommonUtil.log("getAdditionalSenderNicknameAndSendNoti getCurAppUser " +
+                        "onFailure")
+            }
+        })
+    }
+
+    val onSendNotiResult = object : Callback<Response?> {
+        override fun onFailure(call: Call<Response?>, t: Throwable) {
+            CommonUtil.log("onSendNotiResult.onFailure ${t.message}")
+        }
+
+        override fun onResponse(
+            call: Call<Response?>,
+            response: retrofit2.Response<Response?>
+        ) {
+            if (response.isSuccessful) {
+                CommonUtil.log("Send noti success, body ${response.body().toString()}, " +
+                        "Code : ${response.code()}")
+            } else CommonUtil.log("Send noti error: code ${response.code()}, body " +
+                    response.body().toString()
+            )
         }
     }
 
@@ -83,7 +155,7 @@ class ChatRepoImpl @Inject constructor(
         onSendMessageResult: CallBack<String, String>
     ) {
         mStorageService.uploadMsgImg(messageInfoProvider,
-            object : CallBack<String, String>{
+            object : CallBack<String, String> {
                 override fun onSuccess(data: String?) {
                     messageInfoProvider.message.content = data!!
                     mFireStoreService.send(
@@ -106,17 +178,21 @@ class ChatRepoImpl @Inject constructor(
         onGetMessagesResult: CallBack<List<Messagee>, String>,
         count: Long?
     ) {
-        mFireStoreService.getFirstCachedMessagesThenGetRefresh(chatId, object : CallBack<List<Messagee>, String> {
-            override fun onSuccess(data: List<Messagee>?) {
-                onGetMessagesResult.onSuccess(data)
-            }
+        mFireStoreService.getFirstCachedMessagesThenGetRefresh(
+            chatId,
+            object : CallBack<List<Messagee>, String> {
+                override fun onSuccess(data: List<Messagee>?) {
+                    onGetMessagesResult.onSuccess(data)
+                }
 
-            override fun onError(errCode: String) {
-            }
+                override fun onError(errCode: String) {
+                }
 
-            override fun onFailure(errCode: String) {
-            }
-        }, count)
+                override fun onFailure(errCode: String) {
+                }
+            },
+            count
+        )
     }
 
     override fun getNextMessages(

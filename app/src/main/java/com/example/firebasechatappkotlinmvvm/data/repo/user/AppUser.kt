@@ -24,7 +24,8 @@ data class AppUser(var nickname: String  = "",
 
                 // @SupperWarning: Error on field's name = isOnline
                    var online: Boolean = false,
-                   @ServerTimestamp var offlineAt: Date? = null): Serializable {
+                   @ServerTimestamp var offlineAt: Date? = null,
+                   val token: String = ""): Serializable {
 
     fun toChatUser(): ChatUser {
         return ChatUser(id!!, nickname, avatarUrl, online, offlineAt)

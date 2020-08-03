@@ -36,6 +36,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         const val FIELD_OFFLINE_AT = "offlineAt"
         const val FIELD_THUMB_MSG = "thumbMsg"
         const val FIELD_NEW_MSG_NUM = "newMsgNum"
+        const val FIELD_TOKEN = "token"
 
         const val TAG = "FireStoreServiceImpl"
     }
@@ -47,6 +48,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     private val userChatListenerRemovers = mutableListOf<ListenerRegistration>()
 
     private var ignoredDocumentsChangedEventsAfterSetListener = false
+
 
     override fun addUser(user: AppUser, callBack: CallBack<Unit, String>) {
         if (!user.id.isNullOrEmpty())
@@ -224,10 +226,15 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
         // add thumb message, update new msg num to chat of receiver user
         val thumbMsg = messageInfoProvider.message.getThumbMsg()
-        val metaChatUpdate = mapOf(
-            FIELD_THUMB_MSG to thumbMsg,
-            FIELD_NEW_MSG_NUM to FieldValue.increment(1)
+        val metaChatUpdate = mutableMapOf<String, Any>(
+            FIELD_THUMB_MSG to thumbMsg
         )
+
+        // Update newMsg if msg not sent by self user
+        if (messageInfoProvider.message.receiverUserId !=
+            messageInfoProvider.message.senderUserId)
+            metaChatUpdate.put(FIELD_NEW_MSG_NUM, FieldValue.increment(1))
+
         userDocument(messageInfoProvider.message.receiverUserId)
             .collection(COLLECTION_CHATS)
             .document(messageInfoProvider.chatId)
@@ -326,6 +333,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             }
     }
 
+    override fun updateAppUser(id: String, updateMap: Map<String, String>) {
+        userDocument(id).update(updateMap)
+    }
+
     override fun removeCurEventMessageListener() {
         if (chatListenerRemover != null) {
             chatListenerRemover!!.remove()
@@ -393,7 +404,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             userDocument(meUserId)
                 .collection(COLLECTION_CHATS)
                 .document(userChat.id)
-                .addSnapshotListener { value, error ->
+                .addSnapshotListener{ value, error ->
                     if (error != null) {
                         CommonUtil.log("listenMetaChatInUserChange error: ${error.message}")
                         return@addSnapshotListener
@@ -405,7 +416,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
                         // Just update these fields, not chat.chatUser
                         // because chat.chatUser will be
-                        // listen change in UserRepo - FirebaseAuthService
+                        // listened changes and updated in UserRepo - FirebaseAuthService
                         userChat.newMsgNum = changedChat!!.newMsgNum
                         userChat.thumbMsg = changedChat.thumbMsg
 

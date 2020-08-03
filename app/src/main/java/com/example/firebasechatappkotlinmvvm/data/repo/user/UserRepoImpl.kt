@@ -20,7 +20,7 @@ class UserRepoImpl @Inject constructor(
     val mFireBaseAuthService: FireBaseAuthService,
     val mStorageService: FireBaseStorageService,
     val mFireStoreService: FireStoreService
-):
+) :
     UserRepo {
     override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
         mFireBaseAuthService.login(appUser, callBack)
@@ -39,7 +39,8 @@ class UserRepoImpl @Inject constructor(
 
     override fun checkAvailableNickname(
         nickname: String?,
-        onCheckAvailableNicknameResult: SingleCallBack<Boolean>) {
+        onCheckAvailableNicknameResult: SingleCallBack<Boolean>
+    ) {
         mFireBaseAuthService.checkAvailableNickname(nickname, onCheckAvailableNicknameResult)
     }
 
@@ -68,22 +69,24 @@ class UserRepoImpl @Inject constructor(
         mFireBaseAuthService.changePassword(oldPassword, newPassword, onChangePasswordResult)
     }
 
+    override fun updateTokenForUser(userId: String) {
+        mFireBaseAuthService.updateTokenForUser(userId)
+    }
+
     // @return AppUser(nickname, avatarUrl, ...)
     // get uid, dislayName (nickname) from firebase auth
     // get avatar link from firebase storage
-    override fun getCurrentAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
-        val curAuthUser = getCurAuthUser()
-        if (curAuthUser != null) {
-            mFireStoreService.getAppUser(curAuthUser.uid,
-                curAppUserCallBack)
-        }
-        else curAppUserCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
+    override fun getCurAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
+        mFireBaseAuthService.getCurAppUser(curAppUserCallBack)
     }
 
-    override fun uploadAvatar(avatarInputStream: InputStream?, uploadAvatarCallBack: CallBack<String, String>) {
+    override fun uploadAvatar(
+        avatarInputStream: InputStream?,
+        uploadAvatarCallBack: CallBack<String, String>
+    ) {
         val currentFirebaseUser = getCurAuthUser()
         val uid = currentFirebaseUser?.uid
-        if (uid != null){
+        if (uid != null) {
             mStorageService.uploadAvatar(uid, avatarInputStream,
                 object : CallBack<String, String> {
                     override fun onSuccess(avatarUrl: String?) {

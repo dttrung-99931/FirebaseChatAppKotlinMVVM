@@ -43,7 +43,7 @@ class CommonUtil {
             val now = Calendar.getInstance().time
             return if (createdAt.year == now.year)
                 if (createdAt.month == now.month)
-                    if (createdAt.day == now.day) "HH:mm 'Today'"
+                    if (createdAt.day == now.day) "HH:mm"
                     else "HH:mm EEE"
                 else "HH:mm MMM, dd"
             else "HH:mm MMM, dd, yyyy"

@@ -46,5 +46,4 @@ abstract class ActivityBuilder {
     ])
     abstract fun bindChatActivity(): ChatActivity
 
-
 }
