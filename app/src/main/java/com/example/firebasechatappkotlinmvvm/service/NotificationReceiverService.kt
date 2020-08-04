@@ -42,7 +42,7 @@ class NotificationReceiverService: FirebaseMessagingService() {
     override fun onMessageReceived(remoteMsg: RemoteMessage) {
         super.onMessageReceived(remoteMsg)
         if (authService.getCurAuthUser() != null
-            && (application as App).isAppNotRunning())
+            && (application as App).isAppInBackground())
             sendNotification(remoteMsg.data)
     }
 

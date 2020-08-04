@@ -12,10 +12,13 @@ interface FireBaseStorageService {
     fun uploadAvatar(
         uid: String,
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     )
 
-    fun getAvatarUrl(uid: String?, gatAvatarUrlCallBack: CallBack<String, String>)
+    fun getAvatarUrl(uid: String?, resultCallBack: CallBack<String, String>)
 
-    fun uploadMsgImg(messageInfoProvider: MessageInfoProvider, callBack: CallBack<String, String>)
+    fun uploadMsgImg(
+        messageInfoProvider: MessageInfoProvider,
+        resultCallBack: CallBack<String, String>
+    )
 }

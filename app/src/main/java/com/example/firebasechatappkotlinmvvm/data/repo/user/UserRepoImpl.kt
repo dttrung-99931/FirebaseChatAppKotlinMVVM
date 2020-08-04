@@ -7,7 +7,6 @@ import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBa
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.UserChat
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
-import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.google.firebase.auth.FirebaseUser
 import java.io.InputStream
 import javax.inject.Inject
@@ -22,30 +21,30 @@ class UserRepoImpl @Inject constructor(
     val mFireStoreService: FireStoreService
 ) :
     UserRepo {
-    override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
-        mFireBaseAuthService.login(appUser, callBack)
+    override fun login(appUser: AppUser, resultCallBack: CallBack<Unit, String>) {
+        mFireBaseAuthService.login(appUser, resultCallBack)
     }
 
-    override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {
-        mFireBaseAuthService.singUp(user, callBack)
+    override fun singUp(user: AppUser, resultCallBack: CallBack<Unit, String>) {
+        mFireBaseAuthService.singUp(user, resultCallBack)
     }
 
     override fun checkAvailableEmail(
         email: String?,
-        onCheckAvailableEmailResult: SingleCallBack<Boolean>
+        resultCallBack: SingleCallBack<Boolean>
     ) {
-        mFireBaseAuthService.checkAvailableEmail(email, onCheckAvailableEmailResult)
+        mFireBaseAuthService.checkAvailableEmail(email, resultCallBack)
     }
 
     override fun checkAvailableNickname(
         nickname: String?,
-        onCheckAvailableNicknameResult: SingleCallBack<Boolean>
+        resultCallBack: SingleCallBack<Boolean>
     ) {
-        mFireBaseAuthService.checkAvailableNickname(nickname, onCheckAvailableNicknameResult)
+        mFireBaseAuthService.checkAvailableNickname(nickname, resultCallBack)
     }
 
-    override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
-        mFireBaseAuthService.checkUserLoggedIn(checkLoggedInCallBack)
+    override fun checkUserLoggedIn(resultCallBack: CallBack<Boolean, String>) {
+        mFireBaseAuthService.checkUserLoggedIn(resultCallBack)
     }
 
     override fun signOut() {
@@ -64,9 +63,9 @@ class UserRepoImpl @Inject constructor(
     override fun changePassword(
         oldPassword: String,
         newPassword: String,
-        onChangePasswordResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
-        mFireBaseAuthService.changePassword(oldPassword, newPassword, onChangePasswordResult)
+        mFireBaseAuthService.changePassword(oldPassword, newPassword, resultCallBack)
     }
 
     override fun updateTokenForUser(userId: String) {
@@ -76,13 +75,13 @@ class UserRepoImpl @Inject constructor(
     // @return AppUser(nickname, avatarUrl, ...)
     // get uid, dislayName (nickname) from firebase auth
     // get avatar link from firebase storage
-    override fun getCurAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
-        mFireBaseAuthService.getCurAppUser(curAppUserCallBack)
+    override fun getCurAppUser(resultCallBack: CallBack<AppUser, String>) {
+        mFireBaseAuthService.getCurAppUser(resultCallBack)
     }
 
     override fun uploadAvatar(
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         val currentFirebaseUser = getCurAuthUser()
         val uid = currentFirebaseUser?.uid
@@ -94,17 +93,17 @@ class UserRepoImpl @Inject constructor(
                             uid,
                             avatarUrl!!,
                             createUpdateAvatarUrlFirestoreCallBack(
-                                uploadAvatarCallBack, avatarUrl
+                                resultCallBack, avatarUrl
                             )
                         )
                     }
 
                     override fun onError(errCode: String) {
-                        uploadAvatarCallBack.onError(errCode)
+                        resultCallBack.onError(errCode)
                     }
 
                     override fun onFailure(errCode: String) {
-                        uploadAvatarCallBack.onFailure(errCode)
+                        resultCallBack.onFailure(errCode)
                     }
                 })
         }
@@ -114,9 +113,9 @@ class UserRepoImpl @Inject constructor(
 
     override fun findUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
+        resultCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     ) {
-        mFireStoreService.searchUsers(userOrEmail, mSearchUsersCallBack)
+        mFireStoreService.searchUsers(userOrEmail, resultCallBack)
     }
 
     override fun listenUserStatus(
@@ -156,8 +155,8 @@ class UserRepoImpl @Inject constructor(
         mFireStoreService.listenAppUser(userId, onAppUserChange)
     }
 
-    override fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>) {
-        mFireStoreService.getRandomUsers(num, onGetRandomUsersResult)
+    override fun getRandomUsers(num: Int, resultCallBack: CallBack<List<AppUser>, String>) {
+        mFireStoreService.getRandomUsers(num, resultCallBack)
     }
 
     private fun createUpdateAvatarUrlFirestoreCallBack(

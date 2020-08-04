@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
-import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
@@ -22,14 +21,13 @@ class LoginViewModel @Inject constructor(
 
     val usernameOrEmail = MutableLiveData<String>()
     val password = MutableLiveData<String>()
-    val onLoginFailure = MutableLiveData<String>()
 
-    val onLoginSuccess = MutableLiveData<Unit>()
+    val loginResult = MutableLiveData<String>()
 
     private val mLoginCallBack: CallBack<Unit, String> =
         object : CallBack<Unit, String> {
             override fun onSuccess(data: Unit?) {
-                onLoginSuccess.postValue(Unit)
+                loginResult.postValue(AppConstants.OK)
                 isLoading.postValue(false)
                 userRepo.updateUserOnline()
             }
@@ -40,7 +38,7 @@ class LoginViewModel @Inject constructor(
             }
 
             override fun onFailure(errCode: String) {
-                onLoginFailure.postValue(errCode)
+                loginResult.postValue(errCode)
                 isLoading.postValue(false)
             }
         }
@@ -50,7 +48,7 @@ class LoginViewModel @Inject constructor(
         if (usernameOrEmail.value.isNullOrEmpty() ||
             password.value.isNullOrEmpty()
         ) {
-            onLoginFailure.value = AppConstants.AuthErr.LOGIN_FAILED
+            loginResult.value = AppConstants.AuthErr.LOGIN_FAILED
             isLoading.value = false
         } else {
             val appUser = AppUser(usernameOrEmail.value!!,

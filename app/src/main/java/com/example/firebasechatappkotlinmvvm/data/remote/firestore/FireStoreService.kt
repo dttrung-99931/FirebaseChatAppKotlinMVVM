@@ -16,42 +16,42 @@ interface FireStoreService {
 
     fun checkAavailableNickname(
         nickname: String?,
-        availableNicknameCallBack: SingleCallBack<Boolean>
+        resultCallBack: SingleCallBack<Boolean>
     )
 
     fun updateAvatarLink(
         uid: String,
         avatarUrl: String,
-        updateAvatarUrlFirestoreCallBack: CallBack<Any, String>
+        resultCallBack: CallBack<Any, String>
     )
 
     fun searchUsers(
         userOrEmail: String,
-        onSearchUsersResult: CallBack<ExploreViewModel.SearchUserResult, String>
+        resultCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     )
 
     fun getChatId(
         chatUser: ChatUser,
         me: ChatUser,
-        onGetChatIdResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     )
 
-    fun getAppUser(uid: String, callBack: CallBack<AppUser, String>)
+    fun getAppUser(uid: String, resultCallBack: CallBack<AppUser, String>)
 
     fun listenMessageEvent(
         chatId: String,
         onMessageEvent: CallBack<MessageEvent, String>,
-        onListeningSetupResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     )
 
     fun send(
         messageInfoProvider: MessageInfoProvider,
-        onSendMessageResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     )
 
     fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
-        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        resultCallBack: CallBack<List<Messagee>, String>,
         count: Long?
     )
 
@@ -59,7 +59,7 @@ interface FireStoreService {
 
     fun getCachedUserChats(
         userId: String,
-        onGetCachedUserChatsResult: CallBack<List<UserChat>, String>, count: Int?
+        resultCallBack: CallBack<List<UserChat>, String>, count: Int?
     )
 
     fun updateUserOnline(user: FirebaseUser?)
@@ -76,13 +76,13 @@ interface FireStoreService {
 
     fun resetNewMsg(meUserId: String, chatId: String)
 
-    fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>)
+    fun getRandomUsers(num: Int, resultCallBack: CallBack<List<AppUser>, String>)
 
     fun removeCurAppUserListeners()
 
     fun removeCurUserChatListeners()
 
-    fun getNextMessages(chatId: String, onGetNextMessagesResult: CallBack<List<Messagee>, String>)
+    fun getNextMessages(chatId: String, resultCallBack: CallBack<List<Messagee>, String>)
 
     fun getRefreshUserChatsAndListen(
         meUserId: String,

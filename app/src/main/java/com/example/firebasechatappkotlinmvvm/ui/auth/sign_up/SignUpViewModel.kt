@@ -25,8 +25,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
     // Used to ignore redundant nickname checking
     var isValidNickname = false
 
-    val onSignUpSuccess = MutableLiveData<Any>()
-    val onSignUpFailureWithCode = MutableLiveData<String>()
+    val signUpResult = MutableLiveData<String>()
 
     val loginResult = MutableLiveData<Boolean>()
 
@@ -40,7 +39,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
                         userRepo.singUp(bundleUser(), signUpCallBack)
                         isValidNickname = true
                     } else {
-                        onSignUpFailureWithCode.postValue(
+                        signUpResult.postValue(
                             AppConstants.AuthErr.UNAVAILABLE_NICKNAME
                         )
                         isValidNickname = false
@@ -52,7 +51,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
 
     private fun checkValidPassword(): Boolean {
         if (CommonUtil.isWeekPassword(password.value)) {
-            onSignUpFailureWithCode.value = AppConstants.AuthErr.WEAK_PASSWORD
+            signUpResult.value = AppConstants.AuthErr.WEAK_PASSWORD
             return false
         }
         return true
@@ -64,7 +63,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
 
     val signUpCallBack = object : CallBack<Unit, String> {
         override fun onSuccess(data: Unit?) {
-            onSignUpSuccess.postValue(Any())
+            signUpResult.postValue(AppConstants.OK)
             isLoading.postValue(false)
         }
 
@@ -73,7 +72,7 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
         }
 
         override fun onFailure(errCode: String) {
-            onSignUpFailureWithCode.postValue(errCode)
+            signUpResult.postValue(errCode)
             isLoading.postValue(false)
         }
     }
@@ -82,16 +81,17 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
         if (!email.value.isNullOrEmpty()) {
             if (CommonUtil.isEmailForm(email.value!!)
                 && email.value!!.length in 7..40) {
+
                 userRepo.checkAvailableEmail(email.value,
                     object : SingleCallBack<Boolean> {
                         override fun onSuccess(data: Boolean) {
-                            if (!data) onSignUpFailureWithCode.postValue(
+                            if (!data) signUpResult.postValue(
                                 AppConstants.AuthErr.UNAVAILABLE_EMAIL
                             )
                         }
                     })
             } else {
-                onSignUpFailureWithCode.value = AppConstants.AuthErr.INVALID_EMAIL_FORMAT_OR_LENGTH
+                signUpResult.value = AppConstants.AuthErr.INVALID_EMAIL_FORMAT_OR_LENGTH
             }
         }
     }
@@ -101,18 +101,18 @@ class SignUpViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMode
             if (CommonUtil.isEmailForm(nickname.value!!)
                 || !(nickname.value!!.length in 2..20)
             ) {
-                onSignUpFailureWithCode.value = AppConstants.AuthErr.INVALID_NICKNAME_FORMAT_OR_LENGTH
+                signUpResult.value = AppConstants.AuthErr.INVALID_NICKNAME_FORMAT_OR_LENGTH
                 isValidNickname = false
             } else {
                 userRepo.checkAvailableNickname(nickname.value,
                     object : SingleCallBack<Boolean> {
                         override fun onSuccess(data: Boolean) {
-                            if (!data) {
-                                onSignUpFailureWithCode.postValue(
+                            isValidNickname = if (!data) {
+                                signUpResult.postValue(
                                     AppConstants.AuthErr.UNAVAILABLE_NICKNAME
                                 )
-                                isValidNickname = false
-                            } else isValidNickname = true
+                                false
+                            } else true
                         }
                     })
             }

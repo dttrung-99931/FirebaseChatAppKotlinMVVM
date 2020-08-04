@@ -37,7 +37,11 @@ class App: Application(), HasActivityInjector, HasServiceInjector,
     var activityCount = 0
         private set
 
-    fun isAppNotRunning(): Boolean{
+    /*
+    * App in background means there is no activity running
+    * but there can be app's services running
+    * */
+    fun isAppInBackground(): Boolean{
         return activityCount == 0
     }
 

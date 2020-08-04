@@ -6,18 +6,21 @@ import com.example.firebasechatappkotlinmvvm.data.repo.chat.UserChat
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreViewModel
 import java.io.InputStream
 
-interface UserRepo: FireBaseAuthService {
+interface UserRepo : FireBaseAuthService {
     fun uploadAvatar(
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     )
 
     fun findUsers(
         userOrEmail: String,
-        mSearchUsersCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
+        resultCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     )
 
-    fun listenUserStatus(userChat: UserChat, onUserStatusInUserChatChange: CallBack<UserChat, String>)
+    fun listenUserStatus(
+        userChat: UserChat,
+        onUserStatusInUserChatChange: CallBack<UserChat, String>
+    )
 
     fun updateUserOnline()
 
@@ -28,7 +31,7 @@ interface UserRepo: FireBaseAuthService {
         onAppUserChange: CallBack<AppUser, String>
     )
 
-    fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>)
+    fun getRandomUsers(num: Int, resultCallBack: CallBack<List<AppUser>, String>)
 
     fun removeCurAppUserListeners()
 

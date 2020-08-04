@@ -28,9 +28,9 @@ class ChatListViewModel @Inject constructor(
     val changedOrAddedUserChat = MutableLiveData<UserChat>()
     val changedOrAddedUserChatStack = LinkedList<UserChat>()
 
-    var loadRefreshUserChats = false
+    var loadedRefreshUserChats = false
 
-    private val onGetCachedUserChatsResult: CallBack<List<UserChat>, String> =
+    private val getCachedUserChatsCallBack: CallBack<List<UserChat>, String> =
         object : CallBack<List<UserChat>, String> {
             override fun onSuccess(userChatList: List<UserChat>?) {
                 this@ChatListViewModel.cachedUserChats.postValue(userChatList)
@@ -52,7 +52,7 @@ class ChatListViewModel @Inject constructor(
 
     init {
         isLoading.value = true
-        chatRepo.getCachedUserChats(userRepo.getCurAuthUserId(), onGetCachedUserChatsResult)
+        chatRepo.getCachedUserChats(userRepo.getCurAuthUserId(), getCachedUserChatsCallBack)
         meUserId = userRepo.getCurAuthUserId()
     }
 
@@ -83,15 +83,15 @@ class ChatListViewModel @Inject constructor(
                     changedOrAddedUserChat.postValue(chatEvent.userChat)
 
                     // if new userChat added
-                    if (loadRefreshUserChats && chatEvent.isAdded()) {
+                    if (loadedRefreshUserChats && chatEvent.isAdded()) {
                         // store user id to listen after updating chat ui
                         // in onUpdateChatMetaComplete
                         idOfUserNeedToListenStatus = chatEvent.userChat.chatUser.id
                     }
                 }
 
-                if (!loadRefreshUserChats) {
-                    loadRefreshUserChats = true
+                if (!loadedRefreshUserChats) {
+                    loadedRefreshUserChats = true
                     getRefreshUserStatusAndListen(data)
                 }
             }

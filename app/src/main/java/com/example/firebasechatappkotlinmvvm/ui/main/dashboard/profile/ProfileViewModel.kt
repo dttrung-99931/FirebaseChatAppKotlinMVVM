@@ -19,42 +19,6 @@ import javax.inject.Provider
 class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewModel() {
 
     val curAppUser = MutableLiveData<AppUser>()
-    val usernameOrEmail = MutableLiveData<String>()
-    val password = MutableLiveData<String>()
-    val onLoginFailure = MutableLiveData<String>()
-
-    val onLoginSuccess = MutableLiveData<Unit>()
-
-    private val mLoginCallBack: CallBack<Unit, String> =
-        object : CallBack<Unit, String> {
-            override fun onSuccess(data: Unit?) {
-                onLoginSuccess.postValue(Unit)
-                isLoading.postValue(false)
-            }
-
-            override fun onError(errCode: String) {
-                onError.postValue(errCode)
-                isLoading.postValue(false)
-            }
-
-            override fun onFailure(errCode: String) {
-                onLoginFailure.postValue(errCode)
-                isLoading.postValue(false)
-            }
-        }
-
-    fun onBtnLoginClicked(){
-        isLoading.value = true
-        if (usernameOrEmail.value.isNullOrEmpty() ||
-            password.value.isNullOrEmpty()){
-            onLoginFailure.value = AppConstants.AuthErr.LOGIN_FAILED
-            isLoading.value = false
-        }
-        else {
-            val appUser = AppUser("", usernameOrEmail.value!!, password.value!!)
-            userRepo.login(appUser, mLoginCallBack)
-        }
-    }
 
     fun signOut() {
         userRepo.signOut()

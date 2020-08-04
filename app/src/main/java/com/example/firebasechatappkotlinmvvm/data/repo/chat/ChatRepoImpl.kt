@@ -29,14 +29,14 @@ class ChatRepoImpl @Inject constructor(
     override fun setupChat(
         otherChatUser: ChatUser,
         onMessageEvent: CallBack<MessageEvent, String>,
-        onListeningSetupResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         mFireStoreService.getAppUser(mFireBaseAuthService.getCurAuthUserId(),
             object : CallBack<AppUser, String> {
                 override fun onSuccess(data: AppUser?) {
                     getChatIdThenListenChat( // if chat is not exists then create chat
                         data!!.toChatUser(), otherChatUser,
-                        onMessageEvent, onListeningSetupResult
+                        onMessageEvent, resultCallBack
                     )
                 }
 
@@ -74,14 +74,14 @@ class ChatRepoImpl @Inject constructor(
 
     override fun send(
         messageInfoProvider: MessageInfoProvider,
-        onSendMessageResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         when (messageInfoProvider.message.type) {
             Messagee.MSG_TYPE_TEXT -> mFireStoreService.send(
                 messageInfoProvider,
-                onSendMessageResult
+                resultCallBack
             )
-            Messagee.MSG_TYPE_IMG -> sendImgMsg(messageInfoProvider, onSendMessageResult)
+            Messagee.MSG_TYPE_IMG -> sendImgMsg(messageInfoProvider, resultCallBack)
         }
 
         getNotiDataMsgAndSendNoti(messageInfoProvider)
@@ -179,14 +179,14 @@ class ChatRepoImpl @Inject constructor(
 
     override fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
-        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        resultCallBack: CallBack<List<Messagee>, String>,
         count: Long?
     ) {
         mFireStoreService.getFirstCachedMessagesThenGetRefresh(
             chatId,
             object : CallBack<List<Messagee>, String> {
                 override fun onSuccess(data: List<Messagee>?) {
-                    onGetMessagesResult.onSuccess(data)
+                    resultCallBack.onSuccess(data)
                 }
 
                 override fun onError(errCode: String) {
@@ -201,9 +201,9 @@ class ChatRepoImpl @Inject constructor(
 
     override fun getNextMessages(
         chatId: String,
-        onGetNextMessagesResult: CallBack<List<Messagee>, String>
+        resultCallBack: CallBack<List<Messagee>, String>
     ) {
-        mFireStoreService.getNextMessages(chatId, onGetNextMessagesResult)
+        mFireStoreService.getNextMessages(chatId, resultCallBack)
     }
 
     override fun removeCurEventMessageListener() {
@@ -212,10 +212,10 @@ class ChatRepoImpl @Inject constructor(
 
     override fun getCachedUserChats(
         userId: String,
-        onGetCachedUserChatsResult: CallBack<List<UserChat>, String>,
+        resultCallBack: CallBack<List<UserChat>, String>,
         count: Int?
     ) {
-        mFireStoreService.getCachedUserChats(userId, onGetCachedUserChatsResult, count)
+        mFireStoreService.getCachedUserChats(userId, resultCallBack, count)
     }
 
     override fun listenUserChat(

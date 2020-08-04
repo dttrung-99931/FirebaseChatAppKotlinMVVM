@@ -7,7 +7,6 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
@@ -25,7 +24,7 @@ class ExploreViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
 
     var randomUsers = mutableListOf<AppUser>()
 
-    val onGetRandomUsersResult: CallBack<List<AppUser>, String> =
+    val getRandomUsersCallBack: CallBack<List<AppUser>, String> =
         object : CallBack<List<AppUser>, String> {
             override fun onSuccess(data: List<AppUser>?) {
                 randomUsers = data!!.toMutableList()
@@ -40,10 +39,10 @@ class ExploreViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
         }
 
     init{
-        userRepo.getRandomUsers(10, onGetRandomUsersResult)
+        userRepo.getRandomUsers(10, getRandomUsersCallBack)
     }
 
-    private val onSearchUsersResult: CallBack<SearchUserResult, String> =
+    private val searchUsersCallBack: CallBack<SearchUserResult, String> =
         object : CallBack<SearchUserResult, String> {
             override fun onSuccess(data: SearchUserResult?) {
                 // Show random user when search text is empty
@@ -69,7 +68,7 @@ class ExploreViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
 
     fun onSearchTextChanged() {
         if (!searchText.value.isNullOrEmpty())
-            userRepo.findUsers(searchText.value!!, onSearchUsersResult)
+            userRepo.findUsers(searchText.value!!, searchUsersCallBack)
     }
 
     fun loadRandomUsers() {

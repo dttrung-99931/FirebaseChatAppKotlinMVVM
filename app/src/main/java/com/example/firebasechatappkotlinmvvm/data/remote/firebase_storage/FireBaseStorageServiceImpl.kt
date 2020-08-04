@@ -18,13 +18,13 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
     override fun uploadAvatar(
         uid: String,
         avatarInputStream: InputStream?,
-        uploadAvatarCallBack: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         val avatarRef = avatarRef(uid)
         avatarRef.putStream(avatarInputStream!!)
             .addOnSuccessListener {
                 avatarRef.downloadUrl.addOnSuccessListener {
-                    uploadAvatarCallBack.onSuccess(it.toString())
+                    resultCallBack.onSuccess(it.toString())
                 }
             }
     }
@@ -33,11 +33,11 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
         return storage.reference.child("users/$uid/avatar.jpg");
     }
 
-    override fun getAvatarUrl(uid: String?, gatAvatarUrlCallBack: CallBack<String, String>) {
+    override fun getAvatarUrl(uid: String?, resultCallBack: CallBack<String, String>) {
         avatarRef(uid!!).downloadUrl
             .addOnSuccessListener {
                 CommonUtil.log("FireBaseStorageServiceImpl.getAvatarUrl success: $it")
-                gatAvatarUrlCallBack.onSuccess(it.toString())
+                resultCallBack.onSuccess(it.toString())
             }
             .addOnFailureListener {
                 CommonUtil.log("FireBaseStorageServiceImpl.getAvatarUrl failed: " + it.message)
@@ -46,7 +46,7 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
 
     override fun uploadMsgImg(
         messageInfoProvider: MessageInfoProvider,
-        callBack: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         val msgImgRef = randomMsgImgRef(messageInfoProvider.chatId)
         msgImgRef
@@ -55,7 +55,7 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
                 messageInfoProvider.imgStream!!.close()
                 msgImgRef.downloadUrl
                     .addOnSuccessListener {
-                        callBack.onSuccess(it.toString())
+                        resultCallBack.onSuccess(it.toString())
                     }
                     .addOnFailureListener {
                         CommonUtil.log("uploadMsgImg get url error ${it.message}")

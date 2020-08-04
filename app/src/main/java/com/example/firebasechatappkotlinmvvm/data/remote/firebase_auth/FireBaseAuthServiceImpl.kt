@@ -25,11 +25,11 @@ class FireBaseAuthServiceImpl @Inject constructor(
     val mFireStoreService: FireStoreService
 ) : FireBaseAuthService {
 
-    override fun login(appUser: AppUser, callBack: CallBack<Unit, String>) {
+    override fun login(appUser: AppUser, resultCallBack: CallBack<Unit, String>) {
         if (CommonUtil.isEmailForm(appUser.email)) {
-            loginWithEmail(appUser, callBack)
+            loginWithEmail(appUser, resultCallBack)
         } else {
-            loginWithNickname(appUser, callBack)
+            loginWithNickname(appUser, resultCallBack)
         }
     }
 
@@ -57,31 +57,31 @@ class FireBaseAuthServiceImpl @Inject constructor(
 
     private var cachedCurAppUser: AppUser? = null
 
-    override fun getCurAppUser(curAppUserCallBack: CallBack<AppUser, String>) {
+    override fun getCurAppUser(resultCallBack: CallBack<AppUser, String>) {
         val curAuthUser = getCurAuthUser()
         if (curAuthUser == null) {
-            curAppUserCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
+            resultCallBack.onFailure(AppConstants.AuthErr.NOT_LOGGED_IN)
             return
         }
 
         if (cachedCurAppUser != null) {
-            curAppUserCallBack.onSuccess(cachedCurAppUser)
+            resultCallBack.onSuccess(cachedCurAppUser)
 
         } else {
             mFireStoreService.getAppUser(
                 curAuthUser.uid,
                 object : CallBack<AppUser, String> {
                     override fun onSuccess(data: AppUser?) {
-                        curAppUserCallBack.onSuccess(data)
+                        resultCallBack.onSuccess(data)
                         cachedCurAppUser = data
                     }
 
                     override fun onError(errCode: String) {
-                        curAppUserCallBack.onError(errCode)
+                        resultCallBack.onError(errCode)
                     }
 
                     override fun onFailure(errCode: String) {
-                        curAppUserCallBack.onFailure(errCode)
+                        resultCallBack.onFailure(errCode)
                     }
                 }
             )
@@ -111,26 +111,26 @@ class FireBaseAuthServiceImpl @Inject constructor(
     * Create user (email, password)
     * in firebase auth, then create users/uid{nickname} in firestore
     * */
-    override fun singUp(user: AppUser, callBack: CallBack<Unit, String>) {
+    override fun singUp(user: AppUser, resultCallBack: CallBack<Unit, String>) {
         auth.createUserWithEmailAndPassword(user.email, user.password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val createdUser = it.result?.user
                     user.id = createdUser?.uid
-                    mFireStoreService.addUser(user, callBack)
+                    mFireStoreService.addUser(user, resultCallBack)
                 }
             }
             .addOnFailureListener(OnFailureListener {
                 Log.d("FireBaseAuthServiceImpl", "signUp onError: ${it.message}")
                 if (it is FirebaseAuthException)
-                    callBack.onFailure(it.errorCode)
-                else callBack.onError(AppConstants.CommonErr.UNKNOWN)
+                    resultCallBack.onFailure(it.errorCode)
+                else resultCallBack.onError(AppConstants.CommonErr.UNKNOWN)
             })
     }
 
     override fun checkAvailableEmail(
         email: String?,
-        onCheckAvailableEmailResult: SingleCallBack<Boolean>
+        resultCallBack: SingleCallBack<Boolean>
     ) {
         if (email != null) {
             auth.fetchSignInMethodsForEmail(email)
@@ -138,8 +138,8 @@ class FireBaseAuthServiceImpl @Inject constructor(
                     if (it.isSuccessful) {
                         val isAvailable = it.result?.signInMethods?.isEmpty()
                         if (isAvailable == null || isAvailable == true)
-                            onCheckAvailableEmailResult.onSuccess(true)
-                        else onCheckAvailableEmailResult.onSuccess(false)
+                            resultCallBack.onSuccess(true)
+                        else resultCallBack.onSuccess(false)
                     } // Error here
                 }
         }
@@ -147,13 +147,13 @@ class FireBaseAuthServiceImpl @Inject constructor(
 
     override fun checkAvailableNickname(
         nickname: String?,
-        onCheckAvailableNicknameResult: SingleCallBack<Boolean>
+        resultCallBack: SingleCallBack<Boolean>
     ) {
-        mFireStoreService.checkAavailableNickname(nickname, onCheckAvailableNicknameResult)
+        mFireStoreService.checkAavailableNickname(nickname, resultCallBack)
     }
 
-    override fun checkUserLoggedIn(checkLoggedInCallBack: CallBack<Boolean, String>) {
-        checkLoggedInCallBack.onSuccess(auth.currentUser != null)
+    override fun checkUserLoggedIn(resultCallBack: CallBack<Boolean, String>) {
+        resultCallBack.onSuccess(auth.currentUser != null)
     }
 
     override fun signOut() {
@@ -171,10 +171,10 @@ class FireBaseAuthServiceImpl @Inject constructor(
     override fun changePassword(
         oldPassword: String,
         newPassword: String,
-        onChangePasswordResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         if (CommonUtil.isWeekPassword(newPassword)) {
-            onChangePasswordResult.onFailure(AppConstants.AuthErr.WEAK_PASSWORD)
+            resultCallBack.onFailure(AppConstants.AuthErr.WEAK_PASSWORD)
             return
         }
 
@@ -187,24 +187,24 @@ class FireBaseAuthServiceImpl @Inject constructor(
                 override fun onSuccess(data: Unit?) {
                     curFirebaseUser.updatePassword(newPassword)
                         .addOnSuccessListener {
-                            onChangePasswordResult.onSuccess(
+                            resultCallBack.onSuccess(
                                 AppConstants.OK
                             )
                         }
                         .addOnFailureListener {
                             if (it is FirebaseAuthException) {
-                                onChangePasswordResult.onFailure(it.errorCode)
+                                resultCallBack.onFailure(it.errorCode)
                             }
                             CommonUtil.log("changePassword login error ${it.message}")
                         }
                 }
 
                 override fun onError(errCode: String) {
-                    onChangePasswordResult.onError(errCode)
+                    resultCallBack.onError(errCode)
                 }
 
                 override fun onFailure(errCode: String) {
-                    onChangePasswordResult.onFailure(AppConstants.AuthErr.INCORRECT_OLD_PASSWORD)
+                    resultCallBack.onFailure(AppConstants.AuthErr.INCORRECT_OLD_PASSWORD)
                 }
             })
     }

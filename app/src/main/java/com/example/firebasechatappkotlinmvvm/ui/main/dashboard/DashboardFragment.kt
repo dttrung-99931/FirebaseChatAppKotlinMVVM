@@ -1,19 +1,16 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard
 
-import androidx.core.view.get
 import androidx.lifecycle.ViewModelProviders
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentDashboardBinding
-import com.example.firebasechatappkotlinmvvm.databinding.FragmentLoginBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dashboard.*
-import java.util.logging.Handler
 import javax.inject.Inject
 
 class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewModel>() {
     @Inject
-    lateinit var mFactory: DashboardViewModel.Factory
+    lateinit var mVMFactory: DashboardViewModel.Factory
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_dashboard
@@ -25,7 +22,7 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding, DashboardViewMo
 
     override fun getVM(): DashboardViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[DashboardViewModel::class.java]
+            .of(this, mVMFactory)[DashboardViewModel::class.java]
     }
 
     override fun setupViews() {

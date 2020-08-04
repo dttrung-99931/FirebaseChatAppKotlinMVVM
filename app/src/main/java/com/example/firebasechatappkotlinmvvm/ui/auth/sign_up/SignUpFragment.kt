@@ -3,6 +3,7 @@ package com.example.firebasechatappkotlinmvvm.ui.auth.sign_up
 import android.content.DialogInterface
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
@@ -28,8 +29,8 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
     }
 
     override fun getVM(): SignUpViewModel {
-        return ViewModelProviders
-            .of(this, mVmFactory)[SignUpViewModel::class.java]
+        return ViewModelProvider(this, mVmFactory)
+            .get(SignUpViewModel::class.java)
     }
 
     override fun setupViews() {
@@ -53,19 +54,18 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
                 && !mEdtPassword.text.isNullOrEmpty()
                 && mEdtNickname.error.isNullOrEmpty()
                 && mEdtEmail.error.isNullOrEmpty()
-                && mEdtPassword.error.isNullOrEmpty())
+                && mEdtPassword.error.isNullOrEmpty()
+            )
                 vm.onBtnSignUpClicked()
             else showToastMsg(R.string.please_fill_correct_info)
         }
     }
 
     override fun observe() {
-        vm.onSignUpSuccess.observe(this, Observer {
-            showLogInConfirmDialog()
-        })
-
-        vm.onSignUpFailureWithCode.observe(this, Observer {
+        vm.signUpResult.observe(this, Observer {
             when (it) {
+                AppConstants.OK -> showLogInConfirmDialog()
+
                 AppConstants.AuthErr.UNAVAILABLE_EMAIL ->
                     mEdtEmail.error = getString(R.string.unavailable_email)
 
@@ -83,6 +83,8 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
 
                 AppConstants.CommonErr.UNKNOWN ->
                     showToastMsg(R.string.sth_went_wrong)
+
+                else -> showToastMsg(R.string.sth_went_wrong)
             }
         })
 
@@ -94,13 +96,13 @@ class SignUpFragment : BaseFragment<FragmentSignUpBinding, SignUpViewModel>() {
     private fun showLogInConfirmDialog() {
         showConfirmDialog(R.string.confirm_login,
             DialogInterface.OnClickListener { dialog, which ->
-            vm.loginAfterSignUpSuccessfully()
-        },
+                vm.loginAfterSignUpSuccessfully()
+            },
             DialogInterface.OnClickListener { dialog, which ->
-            mEdtNickname.setText("")
-            mEdtEmail.setText("")
-            mEdtPassword.setText("")
-        })
+                mEdtNickname.setText("")
+                mEdtEmail.setText("")
+                mEdtPassword.setText("")
+            })
     }
 
 }

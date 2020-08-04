@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel>() {
     @Inject
-    lateinit var mFactory: ChatListViewModel.Factory
+    lateinit var mVMFactory: ChatListViewModel.Factory
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_chat_list
@@ -28,7 +28,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
 
     override fun getVM(): ChatListViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[ChatListViewModel::class.java]
+            .of(this, mVMFactory)[ChatListViewModel::class.java]
     }
 
     override fun setupViews() {
@@ -52,7 +52,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
 
     override fun observe() {
         vm.cachedUserChats.observe(this, Observer {
-            if (it.isEmpty() && vm.loadRefreshUserChats){
+            if (it.isEmpty() && vm.loadedRefreshUserChats){
                 if (parentFragment is DashboardFragment) {
                     (parentFragment as DashboardFragment).suggestExploreFriendWithDelay()
                 }

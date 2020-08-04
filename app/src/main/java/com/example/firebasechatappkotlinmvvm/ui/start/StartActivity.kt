@@ -1,13 +1,11 @@
 package com.example.firebasechatappkotlinmvvm.ui.start
 
 import android.os.Bundle
-import android.os.Handler
 import androidx.lifecycle.Observer
 import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.NoInternetConnectionDialog
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
-import com.example.firebasechatappkotlinmvvm.util.extension.isAppRunning
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
@@ -33,7 +31,7 @@ class StartActivity : BaseActivity() {
     }
 
     private fun observe() {
-        vm.onCheckUserLoggedInResult.observe(this, Observer {
+        vm.checkUserLoggedInCallBack.observe(this, Observer {
             if (it) MainActivity.open(this)
             else AuthActivity.open(this)
             finish()

@@ -24,7 +24,7 @@ import javax.inject.Inject
 class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>() {
 
     @Inject
-    lateinit var mFactory: ProfileViewModel.Factory
+    lateinit var mVMFactory: ProfileViewModel.Factory
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_profile
@@ -36,7 +36,7 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
 
     override fun getVM(): ProfileViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[ProfileViewModel::class.java]
+            .of(this, mVMFactory)[ProfileViewModel::class.java]
     }
 
     override fun setupViews() {

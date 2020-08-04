@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
-import com.example.firebasechatappkotlinmvvm.data.repo.chat.ChatUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentExploreBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
@@ -16,14 +15,13 @@ import com.example.firebasechatappkotlinmvvm.ui.base.OnItemWithPositionClickList
 import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFragment
 import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.search_bar.*
 import javax.inject.Inject
 
 class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>() {
     @Inject
-    lateinit var mFactory: ExploreViewModel.Factory
+    lateinit var mVMFactory: ExploreViewModel.Factory
 
     override fun getLayoutResId(): Int {
         return R.layout.fragment_explore
@@ -35,7 +33,7 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>()
 
     override fun getVM(): ExploreViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[ExploreViewModel::class.java]
+            .of(this, mVMFactory)[ExploreViewModel::class.java]
     }
 
     override fun setupViews() {

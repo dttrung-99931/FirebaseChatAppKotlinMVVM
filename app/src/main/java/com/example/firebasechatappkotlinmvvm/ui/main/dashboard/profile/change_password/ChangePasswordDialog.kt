@@ -15,7 +15,7 @@ class ChangePasswordDialog : BaseDialogFragment<
         DialogChangePasswordBinding, ChangePasswordViewModel>() {
 
     @Inject
-    lateinit var mFactory: ChangePasswordViewModel.Factory
+    lateinit var mVMFactory: ChangePasswordViewModel.Factory
 
     override fun getLayoutResId(): Int {
         return R.layout.dialog_change_password
@@ -27,7 +27,7 @@ class ChangePasswordDialog : BaseDialogFragment<
 
     override fun getVM(): ChangePasswordViewModel {
         return ViewModelProviders
-            .of(this, mFactory)[ChangePasswordViewModel::class.java]
+            .of(this, mVMFactory)[ChangePasswordViewModel::class.java]
     }
 
     override fun setupViews() {

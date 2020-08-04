@@ -4,11 +4,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
-import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
-import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -21,7 +19,7 @@ class ChangePasswordViewModel @Inject constructor(val userRepo: UserRepo): BaseV
     val oldPassword = MutableLiveData<String>()
     val changePasswordResult = MutableLiveData<String>()
 
-    val onChangePasswordResult: CallBack<String, String> =
+    private val changePasswordCallBack: CallBack<String, String> =
         object : CallBack<String, String> {
             override fun onSuccess(data: String?) {
                 isLoading.value = false
@@ -51,7 +49,7 @@ class ChangePasswordViewModel @Inject constructor(val userRepo: UserRepo): BaseV
             userRepo.changePassword(
                 oldPassword.value!!,
                 newPassword.value!!,
-                onChangePasswordResult)
+                changePasswordCallBack)
         }
     }
 

@@ -48,6 +48,10 @@ inline fun <I, reified O> I.convert(): O {
     return gson.fromJson(json, object : TypeToken<O>() {}.type)
 }
 
+/*
+* Used to check whether app running or not
+* Note that: when any app's services running -> app running
+* */
 fun Context.isAppRunning(): Boolean{
     val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val procInfos = activityManager.runningAppProcesses

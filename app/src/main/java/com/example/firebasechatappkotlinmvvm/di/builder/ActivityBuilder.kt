@@ -4,9 +4,8 @@ import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.auth.login.LoginFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
-import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivityModule
+import com.example.firebasechatappkotlinmvvm.ui.chat.chat.ChatFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.MainActivity
-import com.example.firebasechatappkotlinmvvm.ui.main.MainActivityModule
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.DashboardFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list.ChatListFragmentProvider
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore.ExploreFragmentProvider
@@ -24,7 +23,6 @@ import dagger.android.ContributesAndroidInjector
 @Module
 abstract class ActivityBuilder {
     @ContributesAndroidInjector(modules = [
-        MainActivityModule::class,
         DashboardFragmentProvider::class,
         ChatListFragmentProvider::class,
         ProfileFragmentProvider::class,
@@ -41,8 +39,7 @@ abstract class ActivityBuilder {
     abstract fun bindStartActivity(): StartActivity
 
     @ContributesAndroidInjector(modules = [
-        ChatActivityModule::class,
-        com.example.firebasechatappkotlinmvvm.ui.chat.chat.ChatFragmentProvider::class
+        ChatFragmentProvider::class
     ])
     abstract fun bindChatActivity(): ChatActivity
 

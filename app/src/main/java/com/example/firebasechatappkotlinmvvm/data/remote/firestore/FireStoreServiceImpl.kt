@@ -71,27 +71,27 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun checkAavailableNickname(
         nickname: String?,
-        availableNicknameCallBack: SingleCallBack<Boolean>
+        resultCallBack: SingleCallBack<Boolean>
     ) {
         firestore.collection(COLLECTION_USERS)
             .whereEqualTo(FIELD_NICKNAME, nickname)
             .get()
             .addOnSuccessListener {
                 if (it.size() == 0)
-                    availableNicknameCallBack.onSuccess(true)
-                else availableNicknameCallBack.onSuccess(false)
+                    resultCallBack.onSuccess(true)
+                else resultCallBack.onSuccess(false)
             }
     }
 
     override fun updateAvatarLink(
         uid: String,
         avatarUrl: String,
-        updateAvatarUrlFirestoreCallBack: CallBack<Any, String>
+        resultCallBack: CallBack<Any, String>
     ) {
         userDocument(uid)
             .update(FIELD_AVATAR_URL, avatarUrl)
             .addOnSuccessListener {
-                updateAvatarUrlFirestoreCallBack.onSuccess()
+                resultCallBack.onSuccess()
             }
             .addOnFailureListener {
                 CommonUtil.log("FireStoreServiceImpl.updateAvatarLink failed ${it.message}")
@@ -100,7 +100,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun searchUsers(
         userOrEmail: String,
-        onSearchUsersResult: CallBack<ExploreViewModel.SearchUserResult, String>
+        resultCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     ) {
         val searchUserResult = ExploreViewModel.SearchUserResult(userOrEmail)
         firestore.collection(COLLECTION_USERS)
@@ -111,10 +111,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                 if (!it.isEmpty) {
                     searchUserResult.users = AppUser.listFromUserDocuments(it.documents)
 
-                    onSearchUsersResult.onSuccess(searchUserResult)
+                    resultCallBack.onSuccess(searchUserResult)
                 }
                 // Keep start time in searchUserResult
-                else searchUsersByEmail(userOrEmail, onSearchUsersResult, searchUserResult)
+                else searchUsersByEmail(userOrEmail, resultCallBack, searchUserResult)
             }
     }
 
@@ -144,7 +144,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     override fun getChatId(
         chatUser: ChatUser,
         me: ChatUser,
-        onGetChatIdResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         userDocument(me.id)
             .collection(COLLECTION_CHATS)
@@ -152,17 +152,17 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .get()
             .addOnSuccessListener {
                 if (!it.isEmpty) {
-                    onGetChatIdResult.onSuccess(it.documents[0].id)
-                } else createChatAndGetChatId(chatUser, me, onGetChatIdResult)
+                    resultCallBack.onSuccess(it.documents[0].id)
+                } else createChatAndGetChatId(chatUser, me, resultCallBack)
             }
     }
 
-    override fun getAppUser(uid: String, callBack: CallBack<AppUser, String>) {
+    override fun getAppUser(uid: String, resultCallBack: CallBack<AppUser, String>) {
         userDocument(uid).get()
             .addOnSuccessListener {
                 val appUser = it.toObject(AppUser::class.java)
                 appUser?.id = it.id
-                callBack.onSuccess(appUser)
+                resultCallBack.onSuccess(appUser)
             }
             .addOnFailureListener {
                 CommonUtil.log("getAppUser failed ${it.message}")
@@ -172,9 +172,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     override fun listenMessageEvent(
         chatId: String,
         onMessageEvent: CallBack<MessageEvent, String>,
-        onListeningSetupResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
-        onListeningSetupResult.onSuccess(chatId)
+        resultCallBack.onSuccess(chatId)
         ignoredDocumentsChangedEventsAfterSetListener = false
         chatListenerRemover = chatDocument(chatId)
             .collection(COLLECTION_MESSAGES)
@@ -211,14 +211,14 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     * */
     override fun send(
         messageInfoProvider: MessageInfoProvider,
-        onSendMessageResult: CallBack<String, String>
+        resultCallBack: CallBack<String, String>
     ) {
         // add the message to chat with chatId
         chatDocument(messageInfoProvider.chatId)
             .collection(COLLECTION_MESSAGES)
             .add(messageInfoProvider.message)
             .addOnSuccessListener {
-                onSendMessageResult.onSuccess()
+                resultCallBack.onSuccess()
             }
             .addOnFailureListener {
                 CommonUtil.log("send error ${it.message}")
@@ -248,7 +248,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun getFirstCachedMessagesThenGetRefresh(
         chatId: String,
-        onGetMessagesResult: CallBack<List<Messagee>, String>,
+        resultCallBack: CallBack<List<Messagee>, String>,
         count: Long?
     ) {
         val pageSize = count ?: AppConstants.PAGE_SIZE_MSG
@@ -260,7 +260,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .limitToLast(pageSize)
             .get(Source.CACHE)
             .addOnSuccessListener {
-                onGetMessagesResult.onSuccess(
+                resultCallBack.onSuccess(
                     CommonUtil.toMessagesFromMessageDocuments(it.documents)
                 )
                 chatDocument(chatId)
@@ -271,10 +271,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     .addOnSuccessListener { it1 ->
                         if (!it1.isEmpty) {
                             prevTopMessageDocument = it1.first()
-                            onGetMessagesResult.onSuccess(
+                            resultCallBack.onSuccess(
                                 CommonUtil.toMessagesFromMessageDocuments(it1.documents)
                             )
-                        } else onGetMessagesResult.onSuccess(listOf())
+                        } else resultCallBack.onSuccess(listOf())
                     }
             }
             .addOnFailureListener {
@@ -284,7 +284,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun getNextMessages(
         chatId: String,
-        onGetNextMessagesResult: CallBack<List<Messagee>, String>
+        resultCallBack: CallBack<List<Messagee>, String>
     ) {
 
         chatDocument(chatId)
@@ -296,10 +296,10 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .addOnSuccessListener { it1 ->
                 if (!it1.isEmpty) {
                     prevTopMessageDocument = it1.first()
-                    onGetNextMessagesResult.onSuccess(
+                    resultCallBack.onSuccess(
                         CommonUtil.toMessagesFromMessageDocuments(it1.documents)
                     )
-                } else onGetNextMessagesResult.onSuccess(listOf())
+                } else resultCallBack.onSuccess(listOf())
             }
             .addOnFailureListener {
                 CommonUtil.log("getNextMessages err: ${it.message}")
@@ -346,7 +346,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
     override fun getCachedUserChats(
         userId: String,
-        onGetCachedUserChatsResult: CallBack<List<UserChat>, String>,
+        resultCallBack: CallBack<List<UserChat>, String>,
         count: Int?
     ) {
         userDocument(userId)
@@ -355,7 +355,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
             .addOnSuccessListener {
                 // Display cached chats first
                 val cachedChats = UserChat.createList(it.documents)
-                onGetCachedUserChatsResult.onSuccess(cachedChats)
+                resultCallBack.onSuccess(cachedChats)
 
             }
             .addOnFailureListener {
@@ -437,7 +437,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
      * Get @param(num) of random users from COLLECTION_USER
      * Need to exclude users who are in chat list of the user
      * */
-    override fun getRandomUsers(num: Int, onGetRandomUsersResult: CallBack<List<AppUser>, String>) {
+    override fun getRandomUsers(num: Int, resultCallBack: CallBack<List<AppUser>, String>) {
         firestore.collection(COLLECTION_USERS)
             .orderBy(FIELD_IS_ONLINE, Query.Direction.DESCENDING)
             .get()
@@ -446,7 +446,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     .getRandomList<DocumentSnapshot>(it.documents, num)
 
                 val users = AppUser.listFromUserDocuments(randomUserDocuments)
-                onGetRandomUsersResult.onSuccess(users)
+                resultCallBack.onSuccess(users)
             }
             .addOnFailureListener {
                 CommonUtil.log("Get random users error ${it.message} ")
