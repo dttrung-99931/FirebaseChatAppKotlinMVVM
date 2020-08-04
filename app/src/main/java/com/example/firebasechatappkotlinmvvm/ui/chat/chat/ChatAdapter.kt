@@ -1,26 +1,29 @@
 package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
-import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseViewHolder
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
+import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.example.firebasechatappkotlinmvvm.util.extension.format
 import com.example.firebasechatappkotlinmvvm.util.extension.subInMilis
 import kotlinx.android.synthetic.main.item_img_msg_me.view.*
 import kotlinx.android.synthetic.main.item_text_msg_me.view.*
 import kotlinx.android.synthetic.main.item_text_msg_me.view.mTvTime
-import kotlin.collections.ArrayList
 
-class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
+class ChatAdapter(
+    val onMsgClickListener: OnItemClickListener<Messagee>
+) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
     lateinit var meId: String
+    lateinit var childFragmentManager: FragmentManager
 
     // Init (messages) with Messagee.MSG_LOAD_MORE to show loading progress item
     // When load first messages done (messages) will reassigned
@@ -123,17 +126,30 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
     inner class ChatViewHolder(itemView: View) : BaseViewHolder(itemView) {
         override fun bindView(position: Int) {
             if (messages[position].type != Messagee.MSG_TYPE_LOAD_MORE) {
+                setEvent(position)
                 setData(position)
-                itemView.setOnClickListener {
-                    onMsgClickListener.onItemClicked(
-                        position,
-                        messages[position]
-                    )
-                    if (itemView.mTvTime.visibility == View.GONE)
-                        itemView.mTvTime.visibility = View.VISIBLE
-                    else itemView.mTvTime.visibility = View.GONE
-                }
             } else CommonUtil.log("Item load more")
+        }
+
+        private fun setEvent(position: Int) {
+            itemView.setOnClickListener {
+                onMsgClickListener.onItemClicked(
+                    position,
+                    messages[position]
+                )
+                if (itemView.mTvTime.visibility == View.GONE)
+                    itemView.mTvTime.visibility = View.VISIBLE
+                else itemView.mTvTime.visibility = View.GONE
+            }
+
+            if (messages[position].type == Messagee.MSG_TYPE_IMG){
+                itemView.mMsgImg.setOnClickListener {
+                    ImageViewerDialog.show(
+                        messages[position].content,
+                        childFragmentManager
+                    )
+                }
+            }
         }
 
         private fun setData(position: Int) {
@@ -151,7 +167,7 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
                     Glide.with(itemView.context)
                         .load(message.content)
                         .centerCrop()
-                        .into(itemView.mImgMsg)
+                        .into(itemView.mMsgImg)
 
                 Messagee.MSG_TYPE_VOICE -> itemView.mTvMsg.text = message.content
             }

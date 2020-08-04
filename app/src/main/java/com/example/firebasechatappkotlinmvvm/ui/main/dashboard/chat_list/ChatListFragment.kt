@@ -1,6 +1,7 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list
 
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebasechatappkotlinmvvm.BR
@@ -27,8 +28,8 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
     }
 
     override fun getVM(): ChatListViewModel {
-        return ViewModelProviders
-            .of(this, mVMFactory)[ChatListViewModel::class.java]
+        return ViewModelProvider(this, mVMFactory)
+            .get(ChatListViewModel::class.java)
     }
 
     override fun setupViews() {

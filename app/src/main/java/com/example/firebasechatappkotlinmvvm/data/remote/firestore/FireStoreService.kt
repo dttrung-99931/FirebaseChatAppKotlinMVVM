@@ -90,4 +90,5 @@ interface FireStoreService {
     )
 
     fun updateAppUser(id: String, updateMap: Map<String, String>)
+
 }

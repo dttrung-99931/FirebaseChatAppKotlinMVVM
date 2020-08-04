@@ -22,12 +22,13 @@ class AppConstants {
 
     companion object{
         val STR_IDS_AVATAR_OPTION = listOf(
-            R.string.see,
+            R.string.take_a_photo,
             R.string.upload,
-            R.string.take_a_photo
+            R.string.see
         )
         val STR_IDS_CLICK_SEARCH_USER_OPTION = listOf (
-            R.string.chat
+            R.string.chat,
+            R.string.see_avatar
         )
         const val PAGE_SIZE_MSG : Long = 15
         const val OK = "OK"

@@ -14,7 +14,7 @@
         android:textSize="12sp"/>
 
     <ImageView
-        android:id="@+id/mImgMsg"
+        android:id="@+id/mMsgImg"
         android:layout_width="@dimen/width_msg_img"
         android:layout_height="@dimen/height_msg_img"
         android:padding="7dp"

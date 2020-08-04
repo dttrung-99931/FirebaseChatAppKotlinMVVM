@@ -13,6 +13,8 @@ import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseA
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
 import com.example.firebasechatappkotlinmvvm.data.repo.user.UserRepo
 import com.example.firebasechatappkotlinmvvm.di.component.DaggerAppComponent
+import com.github.piasy.biv.BigImageViewer
+import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import dagger.android.AndroidInjector
@@ -57,6 +59,8 @@ class App: Application(), HasActivityInjector, HasServiceInjector,
             .inject(this)
 
         EmojiManager.install(IosEmojiProvider())
+
+        BigImageViewer.initialize(GlideImageLoader.with(this))
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 

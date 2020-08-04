@@ -16,7 +16,7 @@ import javax.inject.Provider
 /**
  * Created by Trung on 7/10/2020
  */
-class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewModel() {
+class ProfileViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewModel() {
 
     val curAppUser = MutableLiveData<AppUser>()
 
@@ -63,7 +63,15 @@ class ProfileViewModel @Inject constructor(val userRepo: UserRepo): BaseViewMode
         userRepo.uploadAvatar(avatarInputStream, uploadAvatarCallBack)
     }
 
-    class Factory(val provider: Provider<ProfileViewModel>): ViewModelProvider.Factory {
+    val onOpenAvatarImgViewer = MutableLiveData<String>()
+
+    fun onSeeAvatarOptionClicked() {
+        if (curAppUser.value != null) {
+            onOpenAvatarImgViewer.value = curAppUser.value!!.avatarUrl
+        } else onError.value = AppConstants.CommonErr.UNKNOWN
+    }
+
+    class Factory(val provider: Provider<ProfileViewModel>) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return provider.get() as T
         }

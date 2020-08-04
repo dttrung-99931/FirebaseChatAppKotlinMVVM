@@ -31,7 +31,8 @@
                 android:padding="5dp"
                 android:src="@drawable/ic_no_avatar_50px"
                 app:civ_border_color="#CFC8CF"
-                app:civ_border_width="1dp" />
+                app:civ_border_width="1dp"
+                style="@style/ClickAnimStyle"/>
 
             <TextView
                 android:id="@+id/mTvNickname"

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -16,6 +17,7 @@ import com.example.firebasechatappkotlinmvvm.ui.auth.AuthActivity
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemWithPositionClickListener
 import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFragment
+import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.change_password.ChangePasswordDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -35,8 +37,8 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
     }
 
     override fun getVM(): ProfileViewModel {
-        return ViewModelProviders
-            .of(this, mVMFactory)[ProfileViewModel::class.java]
+        return ViewModelProvider(this, mVMFactory)
+            .get(ProfileViewModel::class.java)
     }
 
     override fun setupViews() {
@@ -53,6 +55,7 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
                     override fun onItemWithPositionClicked(position: Int) {
                         when (position) {
                             1 -> uploadAvatar()
+                            2 -> vm.onSeeAvatarOptionClicked()
                         }
                     }
                 }
@@ -60,7 +63,7 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         }
     }
 
-    val selectMediaImgUriCallBack : SingleCallBack<Uri>
+    private val selectMediaImgUriCallBack : SingleCallBack<Uri>
         = object : SingleCallBack<Uri> {
         override fun onSuccess(avatarUri: Uri) {
             vm.uploadAvatar(openInputStream(avatarUri))
@@ -77,6 +80,15 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         inflater.inflate(R.menu.menu_avatar_profile, menu)
     }
 
+    private fun showExitConfirmDialog() {
+        showConfirmDialog(R.string.are_you_sure,
+            DialogInterface.OnClickListener { dialog, which ->
+                vm.signOut()
+                AuthActivity.open(requireContext())
+                finishActivity()
+            })
+    }
+
     private val mOnItemProfileOptionClick: OnItemWithPositionClickListener =
         object : OnItemWithPositionClickListener {
             override fun onItemWithPositionClicked(position: Int) {
@@ -86,15 +98,6 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
                 }
             }
         }
-
-    private fun showExitConfirmDialog() {
-        showConfirmDialog(R.string.are_you_sure,
-            DialogInterface.OnClickListener { dialog, which ->
-                vm.signOut()
-                AuthActivity.open(requireContext())
-                finishActivity()
-            })
-    }
 
     private fun setupProfileOptionRecyclerView() {
         mRecyclerView.adapter = ProfileOptionAdapter(mOnItemProfileOptionClick)
@@ -111,6 +114,12 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
                     .placeholder(R.drawable.ic_no_avatar_100px)
                     .centerCrop()
                     .into(mImgAvatar)
+        })
+
+        vm.onOpenAvatarImgViewer.observe(this, Observer {
+            if (it.isNotEmpty()) {
+                ImageViewerDialog.show(it, childFragmentManager)
+            } else showToastMsg(R.string.no_avatar)
         })
     }
 

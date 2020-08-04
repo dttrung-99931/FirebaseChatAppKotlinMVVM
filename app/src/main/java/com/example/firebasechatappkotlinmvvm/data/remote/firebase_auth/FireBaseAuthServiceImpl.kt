@@ -157,6 +157,7 @@ class FireBaseAuthServiceImpl @Inject constructor(
     }
 
     override fun signOut() {
+        cachedCurAppUser = null
         auth.signOut()
     }
 

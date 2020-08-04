@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,11 +18,11 @@ import com.example.firebasechatappkotlinmvvm.data.repo.chat.Messagee
 import com.example.firebasechatappkotlinmvvm.databinding.FragmentChatBinding
 import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
+import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.android.synthetic.main.item_chat.view.*
 import javax.inject.Inject
 
 class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
@@ -51,7 +50,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         vm.setupChat(arguments?.getParcelable(KEY_CHAT_USER)!!)
     }
 
-    val onMsgClickListener: OnItemClickListener<Messagee> =
+    private val onMsgClickListener: OnItemClickListener<Messagee> =
         object : OnItemClickListener<Messagee> {
             override fun onItemClicked(position: Int, itemData: Messagee) {
 
@@ -69,6 +68,9 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         }
         setupEdtChat()
         setupBtnMediaMsgMenu()
+        mImgAvatar.setOnClickListener{
+            ImageViewerDialog.show(vm.chatUser.avatarUrl, childFragmentManager)
+        }
     }
 
     private fun setupToolbar() {
@@ -150,6 +152,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
                 }, 50)
         }
         chatAdapter.meId = vm.meId
+        chatAdapter.childFragmentManager = childFragmentManager
         mRecyclerView.setOnScrollListener(onMessageScrollListener)
         mRecyclerView.adapter = chatAdapter
     }

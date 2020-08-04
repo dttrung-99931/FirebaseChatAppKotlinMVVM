@@ -3,6 +3,7 @@ package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.explore
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebasechatappkotlinmvvm.BR
@@ -14,6 +15,8 @@ import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemWithPositionClickListener
 import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFragment
 import com.example.firebasechatappkotlinmvvm.ui.chat.ChatActivity
+import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
+import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list.ChatListViewModel
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import kotlinx.android.synthetic.main.fragment_explore.*
 import kotlinx.android.synthetic.main.search_bar.*
@@ -32,8 +35,8 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>()
     }
 
     override fun getVM(): ExploreViewModel {
-        return ViewModelProviders
-            .of(this, mVMFactory)[ExploreViewModel::class.java]
+        return ViewModelProvider(this, mVMFactory)
+            .get(ExploreViewModel::class.java)
     }
 
     override fun setupViews() {
@@ -70,6 +73,11 @@ class ExploreFragment : BaseFragment<FragmentExploreBinding, ExploreViewModel>()
                 override fun onItemWithPositionClicked(position: Int) {
                     when (position) {
                         0 -> ChatActivity.open(requireContext(), user.toChatUser())
+                        1 -> {
+                            if (user.avatarUrl.isNotEmpty()){
+                                ImageViewerDialog.show(user.avatarUrl, childFragmentManager)
+                            } else showToastMsg(R.string.no_avatar)
+                        }
                     }
                 }
             }
