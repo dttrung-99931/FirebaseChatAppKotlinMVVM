@@ -177,7 +177,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         vm.firstMessages.observe(this, Observer {
             chatAdapter.messages = it.toMutableList()
             chatAdapter.notifyDataSetChanged()
-            mRecyclerView.scrollToPosition(chatAdapter.messages.size - 1)
+            vm.isLoadingRefreshMsgsComplete
+            // only scroll to bottom after loading cached msg
+            if (!vm.isLoadingRefreshMsgsComplete)
+                mRecyclerView.scrollToPosition(chatAdapter.messages.size - 1)
         })
 
         vm.newMessage.observe(this, Observer {

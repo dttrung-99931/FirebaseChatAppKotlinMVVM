@@ -19,6 +19,7 @@ import javax.inject.Inject
 class ChatActivity : BaseActivity(), HasSupportFragmentInjector {
     @Inject
     internal lateinit var mFragmentInjector: DispatchingAndroidInjector<Fragment>
+
     companion object{
         const val KEY_CHAT_USER_BUNDLE = "KEY_CHAT_USER_BUNDLE"
 

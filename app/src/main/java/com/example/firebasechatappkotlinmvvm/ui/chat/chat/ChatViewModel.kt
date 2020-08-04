@@ -86,8 +86,9 @@ class ChatViewModel @Inject constructor(val chatRepo: ChatRepo, val userRepo: Us
                 *  The second time this callback is fired when messages loaded from backend (refresh)
                 *  => isLoadingRefreshMsgsComplete = true
                 * */
-                firstMessages.postValue(data)
                 isLoadingRefreshMsgsComplete = !isLoadingRefreshMsgsComplete
+                // @Warning: postValue must be after updating isLoadingRefreshMsgsComplete
+                firstMessages.postValue(data)
                 if (isLoadingRefreshMsgsComplete && hasRequestLoadingMoreMsgsWhileRefresh){
                     loadMoreMessages()
                     hasRequestLoadingMoreMsgsWhileRefresh = false

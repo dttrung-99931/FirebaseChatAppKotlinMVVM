@@ -4,6 +4,7 @@ import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_storage.FireBaseStorageService
 import com.example.firebasechatappkotlinmvvm.data.remote.firestore.FireStoreService
+import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.NotificationData
 import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.NotificationModel
 import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.NotificationSenderService
 import com.example.firebasechatappkotlinmvvm.data.remote.send_notification.Response
@@ -83,18 +84,17 @@ class ChatRepoImpl @Inject constructor(
             Messagee.MSG_TYPE_IMG -> sendImgMsg(messageInfoProvider, onSendMessageResult)
         }
 
-        getInfoMsgAndSendNotification(messageInfoProvider)
+        getNotiDataMsgAndSendNoti(messageInfoProvider)
     }
 
-    private fun getInfoMsgAndSendNotification(messageInfoProvider: MessageInfoProvider) {
-        // get receiver token, then get me sender nickname, then send noti
+    private fun getNotiDataMsgAndSendNoti(messageInfoProvider: MessageInfoProvider) {
+        // get receiver token, then get sender info (id, nickname, avatarUrl) then send noti
         mFireStoreService.getAppUser(
             messageInfoProvider.message.receiverUserId,
             object : CallBack<AppUser, String> {
                 override fun onSuccess(receiver: AppUser?) {
                     if (receiver!!.token.isNotEmpty()) {
-                        messageInfoProvider.message.senderNickname = receiver.nickname
-                        getAdditionalSenderNicknameAndSendNoti(messageInfoProvider, receiver.token)
+                        getSenderInfoNicknameAndSendNoti(messageInfoProvider, receiver.token)
                     } else CommonUtil.log("sendNotification getAppUser token is null")
                 }
 
@@ -106,17 +106,21 @@ class ChatRepoImpl @Inject constructor(
             })
     }
 
-    private fun getAdditionalSenderNicknameAndSendNoti(
+    private fun getSenderInfoNicknameAndSendNoti(
         messageInfoProvider: MessageInfoProvider,
         receiverToken: String
     ) {
         mFireBaseAuthService.getCurAppUser(object : CallBack<AppUser, String> {
             override fun onSuccess(sender: AppUser?) {
-                messageInfoProvider.message.senderNickname = sender!!.nickname
-
+                val data = NotificationData(
+                    messageInfoProvider.message.senderUserId,
+                    sender!!.nickname,
+                    sender.avatarUrl,
+                    messageInfoProvider.message.type,
+                    messageInfoProvider.message.content
+                )
                 mNotiSenderService.sendNotification(
-                    NotificationModel(receiverToken,
-                        messageInfoProvider.message)
+                    NotificationModel(receiverToken, data)
                 ).enqueue(onSendNotiResult)
             }
 

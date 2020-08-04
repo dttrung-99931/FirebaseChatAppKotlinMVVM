@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="6:09"
         android:gravity="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:textSize="12sp"/>
 
     <ImageView

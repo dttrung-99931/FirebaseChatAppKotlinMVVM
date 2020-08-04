@@ -20,9 +20,7 @@ data class Messagee(
     val type: String,
     var content: String = "",
     @ServerTimestamp
-    val createdAt: Date? = null,
-    @get: Exclude
-    var senderNickname: String = "" // Use for notification
+    val createdAt: Date? = null
 ) {
     companion object {
         const val MSG_TYPE_TEXT = "text"

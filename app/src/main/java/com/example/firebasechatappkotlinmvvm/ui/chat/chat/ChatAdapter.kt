@@ -138,9 +138,9 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
 
         private fun setData(position: Int) {
             val message = messages[position]
-            setContentMessageByType(message)
             setTime(message, position)
             showTimeIfLongTimeSpacing(message, position)
+            setContentMessageByType(message)
         }
 
         private fun setContentMessageByType(message: Messagee) {
@@ -205,6 +205,7 @@ class ChatAdapter(val onMsgClickListener: OnItemClickListener<Messagee>) :
 
             if (timeSpacing > TIME_SPACING_ENOUGH_LONG) // timeSpacing > 2 minutes
                 itemView.mTvTime.visibility = View.VISIBLE
+            else itemView.mTvTime.visibility = View.GONE
         }
     }
 }
