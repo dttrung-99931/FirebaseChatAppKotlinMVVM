@@ -5,11 +5,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,10 +22,8 @@ import com.roger.catloadinglibrary.CatLoadingView
 open class BaseActivity : AppCompatActivity() {
     companion object{
         const val REQUEST_CODE_PICK_IMG = 1234
+        const val REQUEST_CODE_CAPTURE_IMG = 4321
     }
-
-    // Called in OnActivityResult
-    private var mSelectMediaImgUriCallBack: SingleCallBack<Uri>? = null
 
     lateinit var loadingView: CatLoadingView
 
@@ -98,17 +97,40 @@ open class BaseActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
+    // Called in OnActivityResult
+    private var mSelectMediaImgCallBack: SingleCallBack<Uri>? = null
+
     fun selectMediaImage(selectImgCallBack: SingleCallBack<Uri>) {
-        mSelectMediaImgUriCallBack = selectImgCallBack
+        mSelectMediaImgCallBack = selectImgCallBack
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_CODE_PICK_IMG)
     }
 
+    // Called in OnActivityResult
+    private var mCaptureImgCallBack: SingleCallBack<Bitmap>? = null
+
+    fun captureImage(captureImgCallBack: SingleCallBack<Bitmap>) {
+        mCaptureImgCallBack = captureImgCallBack
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMG)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_PICK_IMG){
-            data?.data?.let { mSelectMediaImgUriCallBack?.onSuccess(it) }
-            mSelectMediaImgUriCallBack = null
+        when (requestCode) {
+            REQUEST_CODE_PICK_IMG -> {
+                if (resultCode == Activity.RESULT_OK){
+                    data?.data?.let { mSelectMediaImgCallBack?.onSuccess(it) }
+                    mSelectMediaImgCallBack = null
+                }
+            }
+            REQUEST_CODE_CAPTURE_IMG -> {
+                if (resultCode == Activity.RESULT_OK && mCaptureImgCallBack != null){
+                    val bitmap = data?.extras?.get("data") as Bitmap
+                    mCaptureImgCallBack!!.onSuccess(bitmap)
+                    mCaptureImgCallBack = null
+                }
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

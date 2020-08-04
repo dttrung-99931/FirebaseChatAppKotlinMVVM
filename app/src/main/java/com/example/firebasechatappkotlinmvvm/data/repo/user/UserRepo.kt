@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.data.repo.user
 
+import android.graphics.Bitmap
 import com.example.firebasechatappkotlinmvvm.data.callback.CallBack
 import com.example.firebasechatappkotlinmvvm.data.remote.firebase_auth.FireBaseAuthService
 import com.example.firebasechatappkotlinmvvm.data.repo.chat.UserChat
@@ -34,6 +35,4 @@ interface UserRepo : FireBaseAuthService {
     fun getRandomUsers(num: Int, resultCallBack: CallBack<List<AppUser>, String>)
 
     fun removeCurAppUserListeners()
-
-
 }

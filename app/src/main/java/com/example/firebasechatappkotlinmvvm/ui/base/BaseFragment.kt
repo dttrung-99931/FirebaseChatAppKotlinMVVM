@@ -2,6 +2,7 @@ package com.example.firebasechatappkotlinmvvm.ui.base
 
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
@@ -129,6 +130,10 @@ abstract class BaseFragment<TViewBinding : ViewDataBinding, TVModel : BaseViewMo
 
     protected fun openInputStream(uri: Uri): InputStream? {
         return mBaseActivity.contentResolver.openInputStream(uri)
+    }
+
+    protected fun captureImage(captureImgCallBack: SingleCallBack<Bitmap>){
+        mBaseActivity.captureImage(captureImgCallBack)
     }
 
     abstract fun getLayoutResId(): Int

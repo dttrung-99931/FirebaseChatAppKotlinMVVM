@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
+import com.example.firebasechatappkotlinmvvm.util.extension.toInputStream
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.android.synthetic.main.fragment_chat.*
 import javax.inject.Inject
@@ -106,6 +108,14 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
                     selectMediaImage(mOnSelectImageResult)
                     return@OnMenuItemClickListener true
                 }
+                R.id.menu_item_camera ->{
+                    captureImage(mCaptureImageCallBack)
+                    return@OnMenuItemClickListener true
+                }
+                R.id.menu_item_mic ->{
+                    showToastMsg(R.string.developing_feature)
+                    return@OnMenuItemClickListener true
+                }
                 else -> false
             }
         }
@@ -114,6 +124,13 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         object : SingleCallBack<Uri> {
             override fun onSuccess(imgUri: Uri) {
                 vm.sendImageMessage(openInputStream(imgUri))
+            }
+        }
+
+    private val mCaptureImageCallBack: SingleCallBack<Bitmap> =
+        object : SingleCallBack<Bitmap> {
+            override fun onSuccess(data: Bitmap) {
+                vm.sendImageMessage(data.toInputStream())
             }
         }
 

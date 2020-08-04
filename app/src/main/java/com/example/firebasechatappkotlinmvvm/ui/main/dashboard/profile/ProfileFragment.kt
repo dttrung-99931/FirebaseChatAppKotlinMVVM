@@ -1,12 +1,12 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile
 
 import android.content.DialogInterface
+import android.graphics.Bitmap
 import android.net.Uri
 import android.view.Menu
 import android.view.MenuInflater
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.firebasechatappkotlinmvvm.BR
@@ -20,6 +20,7 @@ import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFrag
 import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.change_password.ChangePasswordDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
+import com.example.firebasechatappkotlinmvvm.util.extension.toInputStream
 import kotlinx.android.synthetic.main.fragment_profile.*
 import javax.inject.Inject
 
@@ -54,7 +55,8 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
                 object : OnItemWithPositionClickListener {
                     override fun onItemWithPositionClicked(position: Int) {
                         when (position) {
-                            1 -> uploadAvatar()
+                            0 -> uploadAvatarWithCapturedImage()
+                            1 -> uploadAvatarWithSelectedImage()
                             2 -> vm.onSeeAvatarOptionClicked()
                         }
                     }
@@ -63,7 +65,19 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         }
     }
 
-    private val selectMediaImgUriCallBack : SingleCallBack<Uri>
+    private val mCaptureImgCallBack: SingleCallBack<Bitmap>
+        = object : SingleCallBack<Bitmap> {
+        override fun onSuccess(avatarBitmap: Bitmap) {
+            vm.uploadAvatar(avatarBitmap.toInputStream())
+            mImgAvatar.setImageBitmap(avatarBitmap)
+        }
+    }
+
+    private fun uploadAvatarWithCapturedImage() {
+        captureImage(mCaptureImgCallBack)
+    }
+
+    private val mSelectMediaImgUriCallBack : SingleCallBack<Uri>
         = object : SingleCallBack<Uri> {
         override fun onSuccess(avatarUri: Uri) {
             vm.uploadAvatar(openInputStream(avatarUri))
@@ -71,8 +85,8 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         }
     }
 
-    private fun uploadAvatar() {
-        selectMediaImage(selectMediaImgUriCallBack)
+    private fun uploadAvatarWithSelectedImage() {
+        selectMediaImage(mSelectMediaImgUriCallBack)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -121,6 +135,7 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
                 ImageViewerDialog.show(it, childFragmentManager)
             } else showToastMsg(R.string.no_avatar)
         })
+
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile
 
+import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -43,7 +44,7 @@ class ProfileViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMod
         userRepo.getCurAppUser(getCurrentUserCallBack)
     }
 
-    val uploadAvatarCallBack: CallBack<String, String> =
+    private val uploadAvatarCallBack: CallBack<String, String> =
         object : CallBack<String, String> {
             override fun onSuccess(data: String?) {
                 isLoading.postValue(false)

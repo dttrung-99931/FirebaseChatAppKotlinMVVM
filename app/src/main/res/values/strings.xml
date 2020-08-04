@@ -46,4 +46,5 @@
     <string name="new_msg">New message</string>
     <string name="see_avatar">See avatar</string>
     <string name="no_avatar">No avatar</string>
+    <string name="developing_feature">Developing feature</string>
 </resources>

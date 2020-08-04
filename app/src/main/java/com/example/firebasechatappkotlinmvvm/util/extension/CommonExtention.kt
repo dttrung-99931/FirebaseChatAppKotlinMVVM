@@ -3,10 +3,14 @@ package com.example.firebasechatappkotlinmvvm.util.extension
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
+import android.graphics.Bitmap
 import com.example.firebasechatappkotlinmvvm.di.App
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,4 +68,10 @@ fun Context.isAppRunning(): Boolean{
         }
     }
     return false
+}
+
+fun Bitmap.toInputStream(): InputStream{
+    val byteArrayOS = ByteArrayOutputStream()
+    compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOS)
+    return ByteArrayInputStream(byteArrayOS.toByteArray())
 }

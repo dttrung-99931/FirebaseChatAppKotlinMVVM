@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_item_image"
-        android:title="@string/upload_image"
-        android:icon="@drawable/ic_image_24px"
+        android:id="@+id/menu_item_mic"
+        android:title="@string/sound_msg"
+        android:icon="@drawable/ic_voice_search_24dp"
         app:showAsAction="always"/>
 
     <item
@@ -15,9 +15,9 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/menu_item_mic"
-        android:title="@string/sound_msg"
-        android:icon="@drawable/ic_voice_search_24dp"
+        android:id="@+id/menu_item_image"
+        android:title="@string/upload_image"
+        android:icon="@drawable/ic_image_24px"
         app:showAsAction="always"/>
 
 </menu>
