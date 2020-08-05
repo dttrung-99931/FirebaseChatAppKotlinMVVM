@@ -22,8 +22,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/mImgAvatar"
-                android:layout_width="@dimen/size_avatar"
-                android:layout_height="@dimen/size_avatar"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
                 android:layout_alignParentTop="true"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:src="@drawable/ic_no_avatar_100px"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Panda"
                 android:textColor="#000"
-                android:textSize="17sp"
+                android:textSize="@dimen/_21ssp"
                 android:textStyle="italic"
                 android:layout_below="@id/mImgAvatar"
                 android:layout_marginStart="50dp"

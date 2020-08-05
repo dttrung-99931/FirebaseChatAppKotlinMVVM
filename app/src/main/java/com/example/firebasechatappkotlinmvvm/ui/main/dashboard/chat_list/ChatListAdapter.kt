@@ -97,8 +97,7 @@ class ChatListAdapter(
 
             itemView.mTvNickname.text = chatUser.nickname
 
-            itemView.mTvThumbMsg.text =
-                CommonUtil.getShortString(chat.thumbMsg,30)
+            setThumbMsg(chat)
 
             setNewMsgNum(chat)
 
@@ -107,6 +106,14 @@ class ChatListAdapter(
             setUserStatus(chatUser)
 
             setAvatar(chatUser)
+        }
+
+        private fun setThumbMsg(chat: UserChat) {
+            if (chat.thumbMsg.isNotEmpty()) {
+                itemView.mTvThumbMsg.text =
+                    CommonUtil.getShortString(chat.thumbMsg, 30)
+                itemView.mTvThumbMsg.visibility = View.VISIBLE
+            } else itemView.mTvThumbMsg.visibility = View.GONE
         }
 
         private fun setNewMsgNum(userChat: UserChat) {

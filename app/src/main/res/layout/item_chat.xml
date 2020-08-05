@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/ClickAnimStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dp">
+    android:padding="@dimen/_5sdp">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/mImgAvatar"
-        android:layout_width="@dimen/size_avatar_search"
-        android:layout_height="@dimen/size_avatar_search"
+        android:layout_width="@dimen/_48sdp"
+        android:layout_height="@dimen/_48sdp"
         android:padding="5dp"
         android:src="@drawable/ic_no_avatar_50px"
         app:civ_border_color="#CFC8CF"
@@ -19,7 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="15dp">
+        android:paddingStart="@dimen/_10sdp"
+        android:layout_toEndOf="@id/mImgAvatar"
+        android:layout_centerVertical="true">
 
         <TextView
             android:id="@+id/mTvNickname"
@@ -31,7 +33,7 @@
             android:paddingEnd="5dp"
             android:text="Panda"
             android:textColor="#000"
-            android:textSize="19sp"
+            android:textSize="@dimen/_17ssp"
             android:textStyle="italic"/>
 
         <LinearLayout
@@ -49,7 +51,8 @@
                 android:paddingEnd="5dp"
                 android:text="Hello. What's your name? dfsd s"
                 android:textColor="#D3000000"
-                android:textSize="14sp" />
+                android:textSize="@dimen/_13ssp"
+                android:paddingStart="4dp" />
 
             <TextView
                 android:id="@+id/mTvViewBadgeNewMsg"
@@ -57,7 +60,7 @@
                 android:layout_height="match_parent"
                 android:text="5+"
                 android:textColor="#FFFFFF"
-                android:textSize="10sp"
+                android:textSize="@dimen/_10ssp"
                 android:background="@drawable/shape_view_badge"
                 android:gravity="center"
                 android:paddingHorizontal="3dp"
@@ -72,8 +75,9 @@
             android:gravity="start"
             android:paddingEnd="5dp"
             android:text="3:09 sun"
-            android:textSize="11sp" />
+            android:textSize="@dimen/_11ssp"
+            android:paddingStart="4dp"/>
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

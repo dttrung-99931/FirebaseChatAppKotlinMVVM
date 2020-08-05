@@ -15,11 +15,11 @@
         tools:showIn="@layout/fragment_explore">
 
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:src="@drawable/ic_search_32px" />
 
         <EditText
@@ -29,15 +29,15 @@
             android:background="@drawable/shape_search_bar"
             android:hint="@string/search"
             android:inputType="text"
-            android:paddingHorizontal="28dp"
-            android:paddingVertical="5dp"
-            android:textSize="15sp"
+            android:paddingHorizontal="@dimen/_24sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:textSize="@dimen/_14ssp"
             android:text="@={viewModel.searchText}"/>
 
         <ImageButton
             style="@style/ClickAnimStyle"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_margin="3dp"

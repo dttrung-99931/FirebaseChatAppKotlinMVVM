@@ -14,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".di.App">
+
         <activity android:name=".ui.start.StartActivity"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/SplashTheme">
@@ -23,9 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ui.chat.ChatActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".ui.auth.AuthActivity" />
+
+        <activity android:name=".ui.auth.AuthActivity"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity android:name=".ui.main.MainActivity" />
 
         <service android:name=".service.UpdateTokenService"

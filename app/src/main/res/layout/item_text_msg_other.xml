@@ -11,7 +11,7 @@
         android:text="6:09"
         android:gravity="center"
         android:visibility="gone"
-        android:textSize="12sp"/>
+        android:textSize="@dimen/_11ssp"/>
 
     <TextView
         android:id="@+id/mTvMsg"
@@ -21,7 +21,7 @@
         android:paddingHorizontal="12dp"
         android:background="@drawable/shape_chat_other"
         android:text="Hi. My name's Trung"
-        android:textSize="16sp"
+        android:textSize="@dimen/_14ssp"
         android:textColor="#000"
         android:layout_marginEnd="50dp"
         android:layout_marginStart="30dp"
