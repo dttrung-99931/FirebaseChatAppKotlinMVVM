@@ -2,7 +2,6 @@ package com.example.firebasechatappkotlinmvvm.ui.base
 
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
@@ -14,18 +13,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.fragment.findNavController
 import com.example.firebasechatappkotlinmvvm.R
 import com.example.firebasechatappkotlinmvvm.data.callback.SingleCallBack
-import com.example.firebasechatappkotlinmvvm.data.repo.user.AppUser
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import dagger.android.support.AndroidSupportInjection
 import java.io.InputStream
-import java.io.Serializable
 import java.lang.Exception
 
 abstract class BaseFragment<TViewBinding : ViewDataBinding, TVModel : BaseViewModel> : Fragment() {
@@ -132,7 +125,7 @@ abstract class BaseFragment<TViewBinding : ViewDataBinding, TVModel : BaseViewMo
         return mBaseActivity.contentResolver.openInputStream(uri)
     }
 
-    protected fun captureImage(captureImgCallBack: SingleCallBack<Bitmap>){
+    protected fun captureImage(captureImgCallBack: SingleCallBack<Uri>){
         mBaseActivity.captureImage(captureImgCallBack)
     }
 

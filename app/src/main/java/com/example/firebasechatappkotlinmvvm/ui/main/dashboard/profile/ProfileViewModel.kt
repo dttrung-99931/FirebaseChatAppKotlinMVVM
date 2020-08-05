@@ -47,6 +47,7 @@ class ProfileViewModel @Inject constructor(val userRepo: UserRepo) : BaseViewMod
     private val uploadAvatarCallBack: CallBack<String, String> =
         object : CallBack<String, String> {
             override fun onSuccess(data: String?) {
+                curAppUser.value?.avatarUrl = data!!
                 isLoading.postValue(false)
             }
 

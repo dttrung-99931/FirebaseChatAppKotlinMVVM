@@ -1,6 +1,5 @@
 package com.example.firebasechatappkotlinmvvm.ui.chat.chat
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,8 +20,6 @@ import com.example.firebasechatappkotlinmvvm.ui.base.BaseFragment
 import com.example.firebasechatappkotlinmvvm.ui.base.OnItemClickListener
 import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
-import com.example.firebasechatappkotlinmvvm.util.CommonUtil
-import com.example.firebasechatappkotlinmvvm.util.extension.toInputStream
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.android.synthetic.main.fragment_chat.*
 import javax.inject.Inject
@@ -92,7 +89,7 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
     private fun setupBtnMediaMsgMenu() {
         mBtnMediaMsgMenu.setOnClickListener {
             val mediaMsgMenu = PopupMenu(requireContext(), mBtnMediaMsgMenu)
-            mediaMsgMenu.setOnMenuItemClickListener(mOnMediaMsgOptionItemClicwk)
+            mediaMsgMenu.setOnMenuItemClickListener(mOnMediaMsgOptionItemClick)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 mediaMsgMenu.setForceShowIcon(true)
             }
@@ -101,11 +98,11 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
         }
     }
 
-    private val mOnMediaMsgOptionItemClicwk: PopupMenu.OnMenuItemClickListener =
+    private val mOnMediaMsgOptionItemClick: PopupMenu.OnMenuItemClickListener =
         PopupMenu.OnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_item_image ->{
-                    selectMediaImage(mOnSelectImageResult)
+                    selectMediaImage(mOnSelectImageCallBack)
                     return@OnMenuItemClickListener true
                 }
                 R.id.menu_item_camera ->{
@@ -120,17 +117,17 @@ class ChatFragment : BaseFragment<FragmentChatBinding, ChatViewModel>() {
             }
         }
 
-    private val mOnSelectImageResult : SingleCallBack<Uri> =
+    private val mOnSelectImageCallBack : SingleCallBack<Uri> =
         object : SingleCallBack<Uri> {
             override fun onSuccess(imgUri: Uri) {
                 vm.sendImageMessage(openInputStream(imgUri))
             }
         }
 
-    private val mCaptureImageCallBack: SingleCallBack<Bitmap> =
-        object : SingleCallBack<Bitmap> {
-            override fun onSuccess(data: Bitmap) {
-                vm.sendImageMessage(data.toInputStream())
+    private val mCaptureImageCallBack: SingleCallBack<Uri> =
+        object : SingleCallBack<Uri> {
+            override fun onSuccess(data: Uri) {
+                vm.sendImageMessage(openInputStream(data))
             }
         }
 

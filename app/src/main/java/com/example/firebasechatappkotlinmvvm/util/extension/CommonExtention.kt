@@ -4,13 +4,14 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Bitmap
-import com.example.firebasechatappkotlinmvvm.di.App
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
+import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 

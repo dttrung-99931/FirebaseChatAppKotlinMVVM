@@ -23,9 +23,14 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
         val avatarRef = avatarRef(uid)
         avatarRef.putStream(avatarInputStream!!)
             .addOnSuccessListener {
+                avatarInputStream.close()
                 avatarRef.downloadUrl.addOnSuccessListener {
                     resultCallBack.onSuccess(it.toString())
                 }
+            }
+            .addOnFailureListener{
+                avatarInputStream.close()
+                CommonUtil.log("uploadAvatar failed ${it.message}")
             }
     }
 
@@ -52,7 +57,7 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
         msgImgRef
             .putStream(messageInfoProvider.imgStream!!)
             .addOnSuccessListener {
-                messageInfoProvider.imgStream!!.close()
+                messageInfoProvider.imgStream?.close()
                 msgImgRef.downloadUrl
                     .addOnSuccessListener {
                         resultCallBack.onSuccess(it.toString())
@@ -62,6 +67,7 @@ class FireBaseStorageServiceImpl @Inject constructor(val storage: FirebaseStorag
                     }
             }
             .addOnFailureListener {
+                messageInfoProvider.imgStream?.close()
                 CommonUtil.log("uploadMsgImg error ${it.message}")
             }
     }

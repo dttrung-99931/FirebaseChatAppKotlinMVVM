@@ -8,8 +8,7 @@
         android:id="@+id/mImageViewer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000"
-        app:initScaleType="centerCrop"/>
+        android:background="#000" />
 
     <ProgressBar
         android:id="@+id/mProgressBar"

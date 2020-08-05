@@ -1,7 +1,6 @@
 package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile
 
 import android.content.DialogInterface
-import android.graphics.Bitmap
 import android.net.Uri
 import android.view.Menu
 import android.view.MenuInflater
@@ -20,7 +19,6 @@ import com.example.firebasechatappkotlinmvvm.ui.base.OptionBottomSheetDialogFrag
 import com.example.firebasechatappkotlinmvvm.ui.common.ImageViewerDialog
 import com.example.firebasechatappkotlinmvvm.ui.main.dashboard.profile.change_password.ChangePasswordDialog
 import com.example.firebasechatappkotlinmvvm.util.AppConstants
-import com.example.firebasechatappkotlinmvvm.util.extension.toInputStream
 import kotlinx.android.synthetic.main.fragment_profile.*
 import javax.inject.Inject
 
@@ -65,11 +63,15 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         }
     }
 
-    private val mCaptureImgCallBack: SingleCallBack<Bitmap>
-        = object : SingleCallBack<Bitmap> {
-        override fun onSuccess(avatarBitmap: Bitmap) {
-            vm.uploadAvatar(avatarBitmap.toInputStream())
-            mImgAvatar.setImageBitmap(avatarBitmap)
+    private val mCaptureImgCallBack: SingleCallBack<Uri>
+        = object : SingleCallBack<Uri> {
+        override fun onSuccess(avatar: Uri) {
+            vm.uploadAvatar(openInputStream(avatar))
+            Glide.with(requireContext())
+                .load(avatar)
+                .placeholder(R.drawable.ic_no_avatar_100px)
+                .centerCrop()
+                .into(mImgAvatar)
         }
     }
 
@@ -81,7 +83,11 @@ class ProfileFragment : BaseFragment<FragmentChatListBinding, ProfileViewModel>(
         = object : SingleCallBack<Uri> {
         override fun onSuccess(avatarUri: Uri) {
             vm.uploadAvatar(openInputStream(avatarUri))
-            mImgAvatar.setImageURI(avatarUri)
+            Glide.with(requireContext())
+                .load(avatarUri)
+                .placeholder(R.drawable.ic_no_avatar_100px)
+                .centerCrop()
+                .into(mImgAvatar)
         }
     }
 
