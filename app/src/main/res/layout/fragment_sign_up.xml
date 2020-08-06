@@ -6,7 +6,8 @@
             type="com.example.firebasechatappkotlinmvvm.ui.auth.sign_up.SignUpViewModel" />
     </data>
 
-    <ScrollView style="@style/MachParentChild">
+    <ScrollView style="@style/MachParentChild"
+        android:background="@color/background">
 
         <RelativeLayout
             android:layout_width="match_parent"
