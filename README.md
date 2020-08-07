@@ -12,9 +12,6 @@ An android chat app built with Firebase (Authentication, Firestore, Storage) in 
    <a target="_blank" rel="noopener noreferrer" href="https://github.com/pandahacker9x/FirebaseChatAppKotlinMVVM/blob/master/screenshots/chat.png">
       <img src="https://github.com/pandahacker9x/FirebaseChatAppKotlinMVVM/blob/master/screenshots/chat.png" alt="Chat" title="Chat" style="max-width:100%">
    </a>
-   <a target="_blank" rel="noopener noreferrer" href="https://github.com/pandahacker9x/FirebaseChatAppKotlinMVVM/blob/master/screenshots/profile.png">
-      <img src="https://github.com/pandahacker9x/FirebaseChatAppKotlinMVVM/blob/master/screenshots/profile.png" alt="Profile" title="Profile" style="max-width:100%">
-   </a>
 </p>
 
 ## Library and concept references
