@@ -14,14 +14,22 @@ An android chat app built with Firebase (Authentication, Firestore, Storage) in 
    </a>
 </p>
 
+## Features
+<ul>
+  <li>Realtime chat: text message, image message, emoji</li>
+  <li>User searching</li>
+  <li>Profile: avatar</li>
+  <li>New message notification</li>
+</ul>
+
 ## Library and concept references
-<ol>
+<ul>
   <li>Dependency Injection with <a href="https://medium.com/@iammert/new-android-injector-with-dagger-2-part-1-8baa60152abe">Dagger2</a></li>
   <li>Android MVVM architecture with <a href="https://www.journaldev.com/22561/android-mvvm-livedata-data-binding">LiveData and DataBinding</a> </li>
   <li>Data storage and realtime chat with <a href="https://firebase.google.com/docs/firestore/quickstart">Firebase Cloud Firestore</a> </li>
   <li>Authentication with <a href="https://firebase.google.com/docs/auth/android/firebaseui">Firebase Authentication</a> </li>
   <li>Image storage with <a href="https://firebase.google.com/docs/storage/android/start">Firebase Cloud Storage</a> </li>
-</ol>
+</ul>
 
 ## Data structure
 #### Firebase Authentication
