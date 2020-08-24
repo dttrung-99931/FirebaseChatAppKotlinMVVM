@@ -76,7 +76,8 @@
             android:paddingEnd="5dp"
             android:text="3:09 sun"
             android:textSize="@dimen/_11ssp"
-            android:paddingStart="4dp"/>
+            android:paddingStart="4dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

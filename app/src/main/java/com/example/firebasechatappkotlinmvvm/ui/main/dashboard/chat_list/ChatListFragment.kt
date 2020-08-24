@@ -2,7 +2,6 @@ package com.example.firebasechatappkotlinmvvm.ui.main.dashboard.chat_list
 
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebasechatappkotlinmvvm.BR
 import com.example.firebasechatappkotlinmvvm.R
@@ -33,7 +32,7 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
     }
 
     override fun setupViews() {
-        setChatListRecyclerView()
+        setupChatListRecyclerView()
     }
 
     private val onUserChatItemClick: OnItemClickListener<UserChat> =
@@ -45,24 +44,24 @@ class ChatListFragment : BaseFragment<FragmentChatListBinding, ChatListViewModel
 
     private val chatListAdapter = ChatListAdapter(onUserChatItemClick)
 
-    private fun setChatListRecyclerView() {
+    private fun setupChatListRecyclerView() {
         chatListAdapter.meUserId = vm.meUserId
         mRecyclerView.adapter = chatListAdapter
         mRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun observe() {
-        vm.cachedUserChats.observe(this, Observer {
-            if (it.isEmpty() && vm.loadedRefreshUserChats){
-                if (parentFragment is DashboardFragment) {
-                    (parentFragment as DashboardFragment).suggestExploreFriendWithDelay()
-                }
-            }
-            else {
-                chatListAdapter.userChats = it.toMutableList()
-                chatListAdapter.notifyDataSetChanged()
-            }
-        })
+//        vm.cachedUserChats.observe(this, Observer {
+//            if (it.isEmpty() && vm.loadedRefreshUserChats){
+//                if (parentFragment is DashboardFragment) {
+//                    (parentFragment as DashboardFragment).suggestExploreFriendWithDelay()
+//                }
+//            }
+//            else {
+//                chatListAdapter.userChats = it.toMutableList()
+//                chatListAdapter.notifyDataSetChanged()
+//            }
+//        })
 
         vm.changedOrAddedUserChat.observe(this, Observer {
             chatListAdapter.updateOrAddChat(it)

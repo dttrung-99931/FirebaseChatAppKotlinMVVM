@@ -11,6 +11,7 @@ import com.example.firebasechatappkotlinmvvm.util.CommonUtil
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
+import java.util.*
 import javax.inject.Inject
 
 
@@ -24,6 +25,9 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
         const val COLLECTION_USERS = "users"
         const val FIELD_EMAIL = "email"
         const val FIELD_NICKNAME = "nickname"
+
+        /*FIELD_LOWERCASE_NICKNAME = lowercase(FIELD_NICKNAME)*/
+        const val FIELD_LOWERCASE_NICKNAME = "lowercaseNickname"
         const val FIELD_AVATAR_URL = "avatarUrl"
 
         const val COLLECTION_CHATS = "chats"
@@ -51,7 +55,8 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
 
 
     override fun addUser(user: AppUser, callBack: CallBack<Unit, String>) {
-        if (!user.id.isNullOrEmpty())
+        if (!user.id.isNullOrEmpty()) {
+            user.lowercaseNickname = user.nickname.toLowerCase(Locale.getDefault())
             firestore.collection(COLLECTION_USERS)
                 .document(user.id!!)
                 .set(user)
@@ -62,6 +67,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     callBack.onFailure(AppConstants.CommonErr.UNKNOWN)
                     Log.d(TAG, "addUser: " + it.message)
                 }
+        }
         else {
             callBack.onFailure(AppConstants.CommonErr.UNKNOWN)
             Log.d(TAG, "addUser: " + " Empty uid")
@@ -99,13 +105,14 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
     }
 
     override fun searchUsers(
-        userOrEmail: String,
+        usernameOrEmail: String,
         resultCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     ) {
-        val searchUserResult = ExploreViewModel.SearchUserResult(userOrEmail)
+        val searchUserResult = ExploreViewModel.SearchUserResult(usernameOrEmail)
         firestore.collection(COLLECTION_USERS)
             // find users by nickname first
-            .whereEqualTo(FIELD_NICKNAME, userOrEmail)
+            .whereEqualTo(FIELD_LOWERCASE_NICKNAME,
+                usernameOrEmail.toLowerCase(Locale.ROOT))
             .get()
             .addOnSuccessListener {
                 if (!it.isEmpty) {
@@ -114,7 +121,7 @@ class FireStoreServiceImpl @Inject constructor(val firestore: FirebaseFirestore)
                     resultCallBack.onSuccess(searchUserResult)
                 }
                 // Keep start time in searchUserResult
-                else searchUsersByEmail(userOrEmail, resultCallBack, searchUserResult)
+                else searchUsersByEmail(usernameOrEmail, resultCallBack, searchUserResult)
             }
     }
 

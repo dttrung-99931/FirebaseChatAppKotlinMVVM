@@ -26,7 +26,7 @@ interface FireStoreService {
     )
 
     fun searchUsers(
-        userOrEmail: String,
+        usernameOrEmail: String,
         resultCallBack: CallBack<ExploreViewModel.SearchUserResult, String>
     )
 

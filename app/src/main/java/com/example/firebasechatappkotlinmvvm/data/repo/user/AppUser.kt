@@ -22,10 +22,15 @@ data class AppUser(var nickname: String  = "",
                    var avatarUrl: String = "",
                    @get: Exclude var id: String? = "",
 
-                // @SupperWarning: Error on field's name = isOnline
+                // @SupperWarning: Error if this field named 'isOnline'
                    var online: Boolean = false,
+
                    @ServerTimestamp var offlineAt: Date? = null,
-                   val token: String = ""): Serializable {
+                   val token: String = "",
+
+                // For search user
+                   var lowercaseNickname: String = ""
+): Serializable {
 
     fun toChatUser(): ChatUser {
         return ChatUser(id!!, nickname, avatarUrl, online, offlineAt)
